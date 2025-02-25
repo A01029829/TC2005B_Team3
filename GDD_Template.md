@@ -1,10 +1,19 @@
-# **Game Name Here**
+# **The Cursed Return**
 
 ## _Game Design Document_
 
 ---
 
-##### **Copyright notice / author information / boring legal stuff nobody likes**
+##### **© 2025 Infinite Horizon Studios. Todos los derechos reservados.**
+
+**"The Cursed Return"** y todos los contenidos relacionados, incluyendo pero no limitado a: diseño del juego, personajes, historia, arte, música, código fuente y documentación, son propiedad intelectual de **Infinite Horizon Studios**.
+
+Queda estrictamente prohibida la reproducción, distribución, modificación o uso no autorizado de cualquier parte de este documento o del juego sin el consentimiento previo por escrito de **Infinite Horizon Studios**.
+
+**Autores**
+- Valentina Castilla
+- Diego de la Vega Saishio
+- Luis Emilio Veledíaz
 
 ##
 ## _Index_
@@ -58,7 +67,10 @@ El objetivo del juego es completar diferentes niveles, mientras el jugador inten
 
 ### **Mindset**
 
-What kind of mindset do you want to provoke in the player? Do you want them to feel powerful, or weak? Adventurous, or nervous? Hurried, or calm? How do you intend to provoke those emotions?
+Queremos hacer que el jugador se sienta poderoso de manera progresiva, mientras se mantiene alerta de los riesgos que su personaje corre. Queremos provocar este mindset colocando al jugador en situaciones donde deberán decidir si aumentar su poder (a un costo) o mantenerse con su poder original.
+También buscamos que los jugadores se sientan aventureros mientras avanzan por los niveles en búsqueda de una manera de romper la maldición. Los diferentes entornos provocarán un sentido de aventura para el jugador, ya que explorarán zonas que siempre serán completamente diferentes.
+Finalmente, queremos provocar una sensación de precaución, con la que el jugador deberá decidir de manera estratégica las acciones que realizará, para llegar lo más lejos posible antes de que la maldición lo elimine. Además deberán elegir su clase considerando los posibles peligros que se presentarán en cada nivel.
+
 
 ## _Technical_
 
@@ -66,15 +78,26 @@ What kind of mindset do you want to provoke in the player? Do you want them to f
 
 ### **Screens**
 
-1. Title Screen
-    1. Options
-2. Level Select
-3. Game
-    1. Inventory
-    2. Assessment / Next Level
-4. End Credits
+1. **Pantalla Inicial**  
+   i. Empezar nueva partida  
+   ii. Cargar partida  
+   iii. Opciones  
 
-_(example)_
+2. **Selección de clase**  
+   i. Guerrero  
+   ii. Arquero  
+   iii. Mago  
+   iv. Confirmar Selección  
+
+3. **Juego**  
+   i. HUD  
+   ii. Menú de pausa  
+   iii. Inventario  
+
+4. **Pantalla de muerte/reinicio**  
+   i. Mensaje de derrota con estadísticas de la partida  
+   ii. Opción para reiniciar partida  
+   iii. Volver al menú principal  
 
 ### **Controls**
 
