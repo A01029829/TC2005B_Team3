@@ -99,13 +99,48 @@ Finalmente, queremos provocar una sensación de precaución, con la que el jugad
    ii. Opción para reiniciar partida  
    iii. Volver al menú principal  
 
-### **Controls**
+### **Controles**
+El jugador podrá usar una serie de teclas para jugar “Cursed Return”. Estos controles permitirán que el personaje pueda moverse, interactuar con el entorno, y entrar en combates.
 
-How will the player interact with the game? Will they be able to choose the controls? What kind of in-game events are they going to be able to trigger, and how? (e.g. pressing buttons, opening doors, etc.)
+1. **Movimiento**  
+    i. El personaje se puede mover en cuatro direcciones diferentes.  
+    ii. El movimiento será fluido y preciso, permitiendo al jugador esquivar ataques y mantener posiciones estratégicas.
+ 
+2. **Combate**  
+    i. El personaje puede realizar un ataque básico con la tecla “K”. En el caso del arquero, si se deja presionada la tecla, se realizará un ataque básico con más fuerza.  
 
-### **Mechanics**
+3. **Interacciones**  
+    i. El jugador podrá interactuar con objetos (cofres, armas, pócimas, etc.) y personajes (médicos y armeros).  
 
-Are there any interesting mechanics? If so, how are you going to accomplish them? Physics, algorithms, etc.
+4. **Navegación por el menú**  
+    i. El jugador puede acceder a los menús (por ejemplo, inventario, selección de clase) usando una tecla dedicada (por ejemplo, "Tab").  
+    ii. Se navegará por los menús utilizando el mouse o entradas direccionales.
+
+### **Mecánicas**  
+Nuestro juego introduce una mecánica en específico que consideramos muy innovadora, que refuerza la temática de la maldición y el loop temporal. Pero algunas de las principales mecánicas son:  
+
+1. **Barra de maldición**  
+    i. La barra de maldición se agota con el tiempo y fuerza al jugador a adaptarse de manera rápida.  
+    ii. Puede regenerarse parcialmente eliminando a enemigos.  
+    iii. Su implementación está basada en un temporizador en segundo plano.  
+
+2. **Generación aleatoria de niveles**  
+    i. Cada partida será diferente gracias a la generación aleatoria de mapas.  
+
+3. **Progresión de las clases con mejoras y desventajas**  
+    i. El jugador podrá obtener mejoras temporales o permanentes durante su partida.  
+    ii. Algunas mejoras incluyen resistencia, ataques más poderosos o reducción en la pérdida de la maldición.  
+    iii. Mientras que las desventajas pueden reducir la velocidad, disminuir el daño realizado o acelerar el aumento de la maldición.  
+
+4. **Combate rápido y estratégico**  
+    Cada clase tiene un estilo de combate único:  
+    i. El guerrero tiene ataques cuerpo a cuerpo con gran daño.  
+    ii. El arquero tiene disparos a distancia con la mecánica de cargar el tiro para causar más daño.  
+    iii. El mago tiene la habilidad de lanzar hechizos con efectos variados.  
+    Se utilizará un sistema de detección de colisiones y físicas para hacer que los ataques sean precisos y satisfactorios.  
+
+
+
 
 ## _Level Design_
 
