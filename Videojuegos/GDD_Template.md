@@ -11,10 +11,14 @@
 Queda estrictamente prohibida la reproducción, distribución, modificación o uso no autorizado de cualquier parte de este documento o del juego sin el consentimiento previo por escrito de **Infinite Horizon Studios**.
 
 **Autores**
-- Valentina Castilla
-- Diego de la Vega Saishio
-- Luis Emilio Veledíaz
+- Valentina Castilla | A01028209
+- Diego de la Vega Saishio | A01420632
+- Luis Emilio Veledíaz | A01029829
 
+**Profesores**
+- Esteban Castillo Juarez
+- Gilberto Echerría Furió
+- Octavio Navarro Hinojosa
 ##
 ## _Index_
 
