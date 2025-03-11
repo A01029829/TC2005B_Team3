@@ -1,19 +1,3 @@
----
-name: My Custom Issue
-about: example of an issue
-title: ''
-labels: ''
-assignees: ''
-
----
-
----
-## New Task / Issue🚀
-about: Structured issue description for GitHub Projects
-title: "[TITLE] Brief description of the problem or task"
-assignees:
-- responsible_user
----
 ## Issue Name📌
 <!-- Brief title describing the problem or task -->
 ## Technical Description📖
