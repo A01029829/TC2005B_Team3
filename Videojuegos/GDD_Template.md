@@ -1,3 +1,4 @@
+![tec](Images/TecLogo.png)
 # **The Cursed Return**
 
 ## _Game Design Document_
@@ -53,8 +54,7 @@ Queda estrictamente prohibida la reproducción, distribución, modificación o u
 
 ---
 ### **Logo**
-GitHub Image md
-
+![Logo](Images/LogoTheCursedReturn.jpg)
 
 ### **Summary**
 
@@ -97,7 +97,8 @@ El juego contará con varias pantallas clave, cada una diseñada con una interfa
 - *Botón de "Salir"*: Opción para cerrar el juego de manera inmediata.
 
 A continuación se muestra un boceto de cómo se vería:
-GitHub image md
+![Menu](Images/MenuTheCursedReturn.jpg)
+
 
 2. **Menú de Opciones**
 
@@ -118,13 +119,22 @@ GitHub image md
 - *Menú de pausa*: Permite acceder a configuraciones, controles y otras opciones sin salir del juego.
 
 A continuación se muestra una secuencia de bocetos:
-GitHub image md
-Las tres clases para nuestro juego, Mago, Arquero y Soldado. En ese orden
+![Classes](Images/ClassesTheCursedReturn.jpg)
+
+*Las tres clases para nuestro juego, Mago, Arquero y Soldado. En ese orden*
 
 Al inicio se tenían en cuenta otros sprites, pero esos sprites limitaban el movimiento que queríamos implementar, por lo que optamos por rediseñar nuestros sprites para facilitarnos el proceso de animación.
-Sprites originales (no íbamos a usar todos)
-Boceto de cómo se verían los personajes respecto a un pedazo del mapa
-Boceto de cómo se vería un personaje en relación a un nivel, con su heads-up display que muestra la barra de maldición (corazón morado), la barra de vida (corazón rojo) y dos apartados, uno muestra los enemigos derrotados y otro muestra el nivel de dificultad.
+![OG](Images/OriginalSpritesTheCursedReturn.jpg)
+
+*Sprites originales (no íbamos a usar todos)*
+
+![Perspective](Images/PerspectiveDraftTheCursedReturn.jpg)
+
+*Boceto de cómo se verían los personajes respecto a un pedazo del mapa*
+
+![HUD](Images/HUDTheCursedReturn.jpg)
+
+*Boceto de cómo se vería un personaje en relación a un nivel, con su heads-up display que muestra la barra de maldición (corazón morado), la barra de vida (corazón rojo) y dos apartados, uno muestra los enemigos derrotados y otro muestra el nivel de dificultad.*
 
 4. **Créditos del juego**  
 
@@ -185,6 +195,25 @@ Nuestro juego introduce una mecánica en específico que consideramos muy innova
 
     Los siguientes bocetos ilustran el progreso de cómo es que la barra de maldición va bajando con el tiempo. En el boceto, diferenciamos la barra de vida de la barra de maldición por el color del corazón al inicio de la barra, la barra de maldición tiene un corazón morado, mientras que la barra de vida tiene un corazón rojo. 
 
+![CBF](Images/CurseBarFull.png)
+
+*Boceto de la barra de maldición al 100%*
+
+![CBY](Images/CurseBarYellow.png)
+
+*Boceto de la barra de maldición entre el 50% y 75%*
+
+![CBO](Images/CurseBarOrange.png)
+
+*Boceto de la barra de maldición entre el 25% y 50%*
+
+![CBR](Images/CurseBarRed.png)
+
+*Boceto de la barra de maldición entre el 0% y 25%*
+
+![HBF](Images/HealthBarFull.png)
+
+*Boceto de la barra de vida entre al 100%*
 
 2. **Generación aleatoria de niveles**
 
@@ -273,6 +302,20 @@ En cuanto al armero, este podrá aparecer en una sala única que no tendrá enem
 
 En cuanto a la curandera, también aparecerá en una sala única que no tendrá enemigos, en el momento en el que el jugador interactúe con ella, se  le asignará una pócima al jugador, la cuál le regenerará vida, más no maldición.
 
+A continuación se muestran bocetos de la Curandera y del Armero:
+
+<img src="Images/CuranderaTheCursedReturn.jpg" alt="Curandera" width="600">
+
+*Boceto de la Curandera*
+
+![Arm](Images/ArmeroTheCursedReturn.jpg)
+
+*Boceto del Armero*
+
+![Cof](Images/CofreTheCursedReturn.jpg)
+
+*Boceto de cómo se verán los cofres abiertos y cerrados respectivamente* 
+
 6. **Armas secundarias**
 
 Como se mencionó previamente, a lo largo del run, el jugador encontrará armas secundarias que le darán una ventaja por cierto tiempo.
@@ -349,7 +392,7 @@ Para fomentar la rejugabilidad y la competencia entre jugadores, se añadirá un
 
 Boceto de un nivel del desierto:
 
-GitHub Image md
+![Des](Images/DraftTheCursedReturnDESERTBLANK.png)
 
 2. Bosque
     1. Atmósfera
@@ -369,7 +412,7 @@ GitHub Image md
 
 Boceto de un nivel del bosque:
 
-GitHub Image md
+![Woo](Images/DraftTheCursedReturnBlank2.png)
 
 2. Nieve
     1. Atmósfera
@@ -391,7 +434,7 @@ GitHub Image md
 
 Boceto de un nivel de la nieve:
 
-GitHub Image md
+![Sno](Images/DraftTheCursedReturnSNOWBLANK.png)
 
 ### **Game Flow**
 
@@ -452,7 +495,7 @@ Parte c) y d)
 - Tiempo restante total: Aquí se calcula el tiempo restante (tiempo inicial-tiempo perdido) al terminar el nivel, con los dos escenarios.
 - Tiempo restante promedio: Se calcula un promedio de ambos escenarios, para utilizarlo como referencia en el calculo del siguiente nivel.
 
-GitHub Image md
+![N1](Images/TablaNivel1.jpg)
 
 **Nivel 2** 
 
@@ -461,7 +504,7 @@ En esta sección se hace el mismo proceso partiendo de 533.7 segundos, lo único
 - El tiempo base de recuperación pasa de 30% a 20%
 - El tiempo restante final (promedio) de recuperación es de 361 segundos.
 
-GitHub Image md
+![N2](Images/TablaNivel2.jpg)
 
 **Nivel 3**
 
@@ -470,7 +513,7 @@ Los cambios son:
 - El tiempo base de recuperación pasa de 20% a 10%.
 - El tiempo restante estimado al terminar el juego sería de 80 segundos.
 
-GitHub Image md
+![N3](Images/TablaNivel3.jpg)
 
 ## _Development_
 
