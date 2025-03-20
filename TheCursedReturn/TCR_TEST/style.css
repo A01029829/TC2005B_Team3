@@ -1,0 +1,15 @@
+body {
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
+    height: 100vh; /* Full viewport height */
+    margin: 0;
+    background-color: #222; /* Optional background color */
+}
+
+
+#canvas1 {
+    border: 5px solid black;
+    width: 900px;
+    height: 600px;
+}
