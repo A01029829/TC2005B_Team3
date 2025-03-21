@@ -39,7 +39,11 @@ const keyMap = {
     ArrowLeft: { frameY: 9, dx: -1, dy: 0 },
     ArrowUp: { frameY: 8, dx: 0, dy: -1 },
     ArrowDown: { frameY: 10, dx: 0, dy: 1 },
-    ' ': { attacking: true }
+    w: { frameY: 8, dx: 0, dy: -1 },
+    a: { frameY: 9, dx: -1, dy: 0 },
+    s: { frameY: 10, dx: 0, dy: 1 },
+    d: { frameY: 11, dx: 1, dy: 0 },
+    'k': { attacking: true }
 };
 
 let keysPressed = {};
@@ -48,7 +52,7 @@ window.addEventListener("keydown", (event) => {
     if (keyMap[event.key]) {
         keysPressed[event.key] = true;
 
-        if (event.key === ' ') {
+        if (event.key === 'k') {
             player.attacking = true;
         } else {
             frameY = keyMap[event.key].frameY;
@@ -57,13 +61,13 @@ window.addEventListener("keydown", (event) => {
         }
     }
 
-    if (keysPressed['ArrowUp'] && keysPressed[' ']) {
+    if ((keysPressed['ArrowUp'] || keysPressed['w']) && keysPressed['k']) {
         player.attackDirection = 0;
-    } else if (keysPressed['ArrowLeft'] && keysPressed[' ']) {
+    } else if ((keysPressed['ArrowLeft'] || keysPressed['a']) && keysPressed['k']) {
         player.attackDirection = 1;
-    } else if (keysPressed['ArrowDown'] && keysPressed[' ']) {
+    } else if ((keysPressed['ArrowDown'] || keysPressed['s']) && keysPressed['k']) {
         player.attackDirection = 2;
-    } else if (keysPressed['ArrowRight'] && keysPressed[' ']) {
+    } else if ((keysPressed['ArrowRight'] || keysPressed['d']) && keysPressed['k']) {
         player.attackDirection = 3;
     }
 });
@@ -71,7 +75,7 @@ window.addEventListener("keydown", (event) => {
 window.addEventListener("keyup", (event) => {
     if (keyMap[event.key]) {
         delete keysPressed[event.key];
-        if (event.key === ' ') {
+        if (event.key === 'k') {
             player.attacking = false;
         }
         if (Object.keys(keysPressed).length === 0) {
@@ -88,7 +92,7 @@ function animate() {
 
     // Player movement logic
     for (let key in keysPressed) {
-        if (keyMap[key] && key !== ' ') {
+        if (keyMap[key] && key !== 'k') {
             player.x += keyMap[key].dx * player.speed;
             player.y += keyMap[key].dy * player.speed;
         }

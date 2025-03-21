@@ -1,0 +1,65 @@
+/* Estilos básicos para controles de audio */
+.audio-controls {
+    margin: 20px;
+    padding: 15px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.slider-container {
+    margin: 15px 0;
+}
+
+.slider {
+    width: 80%;
+    height: 15px;
+}
+
+/* Estilo simplificado para usar una sola imagen */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: url('../imagenes/tu-imagen.png') no-repeat;
+    background-size: cover;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: url('../imagenes/tu-imagen.png') no-repeat;
+    background-size: cover;
+    cursor: pointer;
+    border: none;
+}
+
+.button-container {
+    margin: 15px 0;
+}
+
+button {
+    padding: 8px 15px;
+    margin: 5px;
+    cursor: pointer;
+    background-color: #4a4a4a;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #6a6a6a;
+}
+
+.centered {
+    text-align: center;
+}
+
+h1, h2 {
+    text-align: center;
+}

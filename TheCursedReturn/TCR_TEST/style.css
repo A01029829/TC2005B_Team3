@@ -1,15 +1,32 @@
 body {
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    height: 100vh; /* Full viewport height */
+    flex-direction: column;
+    min-height: 100vh;
     margin: 0;
-    background-color: #222; /* Optional background color */
+    padding: 0;
 }
 
+#headerContainer {
+    width: 100%;
+    text-align: center;
+}
 
-#canvas1 {
-    border: 5px solid black;
-    width: 900px;
-    height: 600px;
+canvas {
+    flex-grow: 1;
+    display: block;
+    width: 100%;
+    /* Ajusta el tamaño según necesites */
+}
+
+#controls {
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: auto;
 }
