@@ -1,29 +1,28 @@
+
 <!DOCTYPE html>
-<html lang = "en">
-    <head>
-        <meta charset = "UTF-8">
-        <meta http-equiv = "X-UA-Compatible" content = "IE=edge">
-        <meta name = "viewport" content = "width=device-width, initial-scale=1.0">
-        <title>inicio</title>
-        <link rel ="stylesheet" href="inicio.css" />
-    </head>
-    <body>
-        <canvas id="canvas1"></canvas>
-        <nav>
-            <div id="controls">
-                <a href="Interfaz.html">
-                    <button id="CargarPartida">Cargar Partida</button>
-                </a>
-                <a href="Interfaz.html">
-                    <button id="NuevaPartida">Nueva Partida</button>
-                </a>
-                <a href="creditos.html">
-                    <button id="Creditos">Creditos</button>
-                </a>      
-            </div>
-        </nav>
-        <footer>
-            <p>© 2025 The Cursed Return, Infinite Horizon Studios</p>
-        </footer>
-    </body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="inicio.css">
+    <title>The Cursed Return</title>
+</head>
+<body>
+    <div id="logo_equipo">
+        <img src="../images/logo_equipo.png" width="150px">
+    </div>
+    <div id="logo_juego">
+        <img src="../images/logo_juego.png" width="650px">
+    </div>
+    <nav>
+        <div class="buttons">
+        <button id="button" onclick="location.href='interfaz.html'">START</button>
+        <button id="button" onclick="location.href='interfaz.html'">RESUME</button>
+        <button id="button" onclick="location.href='creditos.html'">CREDITS</button>
+    </div>
+    </nav>
+    <footer>
+        <p>© 2025 The Cursed Return, Infinite Horizon Studios</p>
+    </footer>
+</body>
 </html>

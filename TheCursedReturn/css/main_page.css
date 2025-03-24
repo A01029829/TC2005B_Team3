@@ -1,6 +1,9 @@
 body {
     background-image: url("../images/background_animation_mp.gif");
-    background-size: cover;
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;;
 }
 
 #logo_equipo {
@@ -43,6 +46,13 @@ body {
   background-color: #3e3d3d;
   box-shadow: 3px 1px #ad1324;
   transform: translateY(4px);
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: auto;
 }
 
 
