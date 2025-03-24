@@ -1,36 +1,51 @@
 body {
-    margin: 0;
-    padding: 0;
-    height: 100vh;
-    width: 100%;
-    overflow: hidden;
-    background-image: url('PantallaInicio.png');
-
+    background-image: url("../images/background_animation_mp.gif");
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    background-attachment: fixed;;
+}
 
-    font-family: Arial, sans-serif;
+#logo_equipo {
+    display: flex;
+    justify-content: center;
+}
+
+#logo_juego {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.buttons {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+    padding: 50px 650px;
+    gap: 10px;
 }
 
-#headerContainer {
-    width: 100%;
-    text-align: center;
+#button {
+    display: flex;
+    justify-content: center;
+    background-color: black;
+    color: #d5d4cc;
+    padding: 10px 16px;
+    font-size: 25px;
+    border-radius: 12px;
+    box-shadow: 3px 3px #ad1324;
+    font-family: copperplate;
+    text-shadow: 2px 2px #ad1324;
 }
 
-canvas {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+#button:hover {
+    background-color: #3e3d3d
 }
 
-#controls {
-    width: 100%;
-    text-align: center;
-    margin: 10px 0;
+#button:active {
+  background-color: #3e3d3d;
+  box-shadow: 3px 1px #ad1324;
+  transform: translateY(4px);
 }
 
 footer {
@@ -39,3 +54,5 @@ footer {
     padding: 10px 0;
     margin-top: auto;
 }
+
+
