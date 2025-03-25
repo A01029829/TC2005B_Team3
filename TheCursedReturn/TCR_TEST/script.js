@@ -4,20 +4,41 @@ const ctx = canvas.getContext('2d');
 const CANVAS_WIDTH = (canvas.width = 900);
 const CANVAS_HEIGHT = (canvas.height = 600);
 
+// Retrieve selected class from localStorage (default to knight)
+let selectedClass = localStorage.getItem("selectedClass") || "knight";
+
+// Define class properties
+const classes = {
+    knight: {
+        sprite: 'KnightSpriteSheetFINAL.png',
+        movementFrames: { right: 11, left: 9, up: 8, down: 10 },
+        attackRow: 53
+    },
+    archer: {
+        sprite: 'ArcherSpriteSheetFINAL.png',
+        movementFrames: { right: 11, left: 9, up: 8, down: 10 },
+        attackRow: 16
+    },
+    wizard: {
+        sprite: 'WizardSpriteSheetFINAL.png',
+        movementFrames: { right: 11, left: 9, up: 8, down: 10  },
+        attackRow: 4
+    }
+};
+
 // Load background image
 const backgroundImage = new Image();
-backgroundImage.src = 'WoodsLVL1.png';
+backgroundImage.src = 'WoodsLVL4.png';
 
-// Load player sprite
+// Load player sprite based on selected class
 const playerImage = new Image();
-playerImage.src = 'KnightSpriteSheetFINAL.png';
+playerImage.src = classes[selectedClass].sprite;
 
 // Scaling factors
-const knightScale = 1; // Adjust if needed
 const spriteWidth = 64;
 const spriteHeight = 65;
-const scaledSpriteWidth = spriteWidth * knightScale;
-const scaledSpriteHeight = spriteHeight * knightScale;
+const scaledSpriteWidth = spriteWidth;
+const scaledSpriteHeight = spriteHeight;
 
 let frameX = 0;
 let frameY = 0;
@@ -34,20 +55,22 @@ let player = {
     attackFrame: 0
 };
 
+// Key mapping for movement and attacks
 const keyMap = {
-    ArrowRight: { frameY: 11, dx: 1, dy: 0 },
-    ArrowLeft: { frameY: 9, dx: -1, dy: 0 },
-    ArrowUp: { frameY: 8, dx: 0, dy: -1 },
-    ArrowDown: { frameY: 10, dx: 0, dy: 1 },
-    w: { frameY: 8, dx: 0, dy: -1 },
-    a: { frameY: 9, dx: -1, dy: 0 },
-    s: { frameY: 10, dx: 0, dy: 1 },
-    d: { frameY: 11, dx: 1, dy: 0 },
+    ArrowRight: { frameY: classes[selectedClass].movementFrames.right, dx: 1, dy: 0 },
+    ArrowLeft: { frameY: classes[selectedClass].movementFrames.left, dx: -1, dy: 0 },
+    ArrowUp: { frameY: classes[selectedClass].movementFrames.up, dx: 0, dy: -1 },
+    ArrowDown: { frameY: classes[selectedClass].movementFrames.down, dx: 0, dy: 1 },
+    w: { frameY: classes[selectedClass].movementFrames.up, dx: 0, dy: -1 },
+    a: { frameY: classes[selectedClass].movementFrames.left, dx: -1, dy: 0 },
+    s: { frameY: classes[selectedClass].movementFrames.down, dx: 0, dy: 1 },
+    d: { frameY: classes[selectedClass].movementFrames.right, dx: 1, dy: 0 },
     'k': { attacking: true }
 };
 
 let keysPressed = {};
 
+// Event listeners for movement and attack
 window.addEventListener("keydown", (event) => {
     if (keyMap[event.key]) {
         keysPressed[event.key] = true;
@@ -84,6 +107,7 @@ window.addEventListener("keyup", (event) => {
     }
 });
 
+// Main game loop
 function animate() {
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
@@ -102,24 +126,21 @@ function animate() {
     player.x = Math.max(0, Math.min(CANVAS_WIDTH - scaledSpriteWidth, player.x));
     player.y = Math.max(0, Math.min(CANVAS_HEIGHT - scaledSpriteHeight, player.y));
 
+    // Handle attack animation
     if (player.attacking && player.attackDirection !== null) {
         player.attackFrame = Math.floor(gameFrame / staggerFrames) % 6;
-        frameY = 53 + player.attackDirection;
+        frameY = classes[selectedClass].attackRow + player.attackDirection;
         frameX = player.attackFrame * spriteWidth;
-
-        ctx.drawImage(
-            playerImage, frameX, frameY * spriteHeight, spriteWidth, spriteHeight,
-            player.x, player.y, scaledSpriteWidth, scaledSpriteHeight
-        );
     } else {
         let position = Math.floor(gameFrame / staggerFrames) % 8;
         frameX = spriteWidth * position;
-
-        ctx.drawImage(
-            playerImage, frameX, frameY * spriteHeight, spriteWidth, spriteHeight,
-            player.x, player.y, scaledSpriteWidth, scaledSpriteHeight
-        );
     }
+
+    // Draw the player sprite
+    ctx.drawImage(
+        playerImage, frameX, frameY * spriteHeight, spriteWidth, spriteHeight,
+        player.x, player.y, scaledSpriteWidth, scaledSpriteHeight
+    );
 
     if (player.moving || player.attacking) gameFrame++;
 
