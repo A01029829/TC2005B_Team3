@@ -8,8 +8,11 @@
         <link rel="stylesheet" href="audio.css" />
     </head>
     <body>
+        <header>
         <h1>Configuración de Audio</h1>
-        
+        </header>
+
+        <div class="settings">
         <div class="audio-notice" style="text-align: center; background-color: #f8d7da; color: #721c24; padding: 10px; margin: 10px 0; border-radius: 4px; display: none;" id="audioNotice">
             <p>Haz clic en cualquier lugar de la página para activar el audio</p>
         </div>
@@ -105,7 +108,11 @@ Estado: ${music.paused ? 'Pausado' : 'Reproduciendo'}
                 document.removeEventListener('click', hideNotice);
             }, { once: true });
         </script>
+</div>
         <footer>
+            <div class="button-container-centered">
+                <a href="interfaz.html"></a>
+            </div>
             <div class="button-container centered">
                 <a href="Interfaz.html">
                     <button id="backButton">Regresar</button>
