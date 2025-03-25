@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Class</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+        .class-button {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Choose Your Class</h1>
+    <button class="class-button" onclick="selectClass('knight')">Knight</button>
+    <button class="class-button" onclick="selectClass('archer')">Archer</button>
+    <button class="class-button" onclick="selectClass('wizard')">Wizard</button>
+
+    <script>
+        function selectClass(playerClass) {
+            localStorage.setItem("selectedClass", playerClass);
+            window.location.href = "interfaz.html"; // Redirect to the game
+        }
+    </script>
+</body>
+</html>
