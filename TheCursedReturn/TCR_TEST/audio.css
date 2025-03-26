@@ -107,9 +107,10 @@ button:active {
   transform: translateY(4px);
 }
 
-.button-container-centered button {
+.button_container_centered button {
     height: 50px;
-    font-size: 40px;
+    font-size: 30px;
+    padding: 10px;
 }
 
 a {
