@@ -4,9 +4,8 @@ const ctx = canvas.getContext('2d');
 const CANVAS_WIDTH = (canvas.width = 900);
 const CANVAS_HEIGHT = (canvas.height = 600);
 
-const backgroundImage = new Image();
-const maps={
-    woods: 'WoodsLVL1.png',
+const maps = {
+    woods1: 'WoodsLVL1.png',
     woods2: 'WoodsLVL2.png',
     woods3: 'WoodsLVL3.png',
     woods4: 'WoodsLVL4.png'
@@ -29,18 +28,13 @@ const classes = {
     },
     wizard: {
         sprite: 'WizardSpriteSheetFINAL.png',
-        movementFrames: { right: 11, left: 9, up: 8, down: 10  },
+        movementFrames: { right: 11, left: 9, up: 8, down: 10 },
         attackRow: 4
     }
 };
 
-let imagesLoaded = {
-    background: false,
-    player: false
-};
-
 const portal = {
-    x: CANVAS_WIDTH-30,
+    x: CANVAS_WIDTH - 30,
     y: 0,
     width: 30,
     height: CANVAS_HEIGHT,
@@ -48,12 +42,23 @@ const portal = {
     active: true,
 };
 
+// Load background image
+const backgroundImage = new Image();
+backgroundImage.src = 'WoodsLVL4.png';
+
+// Load player sprite based on selected class
+const playerImage = new Image();
+playerImage.src = classes[selectedClass].sprite;
+
+// Load enemy sprite
+const enemyImage = new Image();
+enemyImage.src = 'Goblin01SpriteSheetFINAL.png';
+
 // Scaling factors
-const knightScale = 1; // Adjust if needed
 const spriteWidth = 64;
 const spriteHeight = 65;
-const scaledSpriteWidth = spriteWidth * knightScale;
-const scaledSpriteHeight = spriteHeight * knightScale;
+const scaledSpriteWidth = spriteWidth;
+const scaledSpriteHeight = spriteHeight;
 
 let frameX = 0;
 let frameY = 0;
@@ -61,8 +66,8 @@ let gameFrame = 0;
 const staggerFrames = 5;
 
 let player = {
-    x: CANVAS_WIDTH / 2 - scaledSpriteWidth / 2,
-    y: CANVAS_HEIGHT / 2 - scaledSpriteHeight / 2,
+    x: 50,
+    y: 50,
     speed: 3,
     moving: false,
     attacking: false,
@@ -70,11 +75,8 @@ let player = {
     attackFrame: 0
 };
 
+// Key mapping for movement and attacks
 const keyMap = {
-    ArrowRight: { frameY: classes[selectedClass].movementFrames.right, dx: 1, dy: 0 },
-    ArrowLeft: { frameY: classes[selectedClass].movementFrames.left, dx: -1, dy: 0 },
-    ArrowUp: { frameY: classes[selectedClass].movementFrames.up, dx: 0, dy: -1 },
-    ArrowDown: { frameY: classes[selectedClass].movementFrames.down, dx: 0, dy: 1 },
     w: { frameY: classes[selectedClass].movementFrames.up, dx: 0, dy: -1 },
     a: { frameY: classes[selectedClass].movementFrames.left, dx: -1, dy: 0 },
     s: { frameY: classes[selectedClass].movementFrames.down, dx: 0, dy: 1 },
@@ -83,35 +85,103 @@ const keyMap = {
 };
 
 let keysPressed = {};
-// Load player sprite based on selected class
-const playerImage = new Image();
-playerImage.src = classes[selectedClass].sprite;
 
-//Asigna una nueva ruta de imagen al objeto backgroundImage (fondo)
-function changeMap(mapImagePath){
-    if(window.animationFrame){
-        cancelAnimationFrame(window.animationFrame);
-    }
-    imagesLoaded.background=false;
-    console.log("Cambiando mapa a:", mapImagePath);
-    //Se usa esta nueva imagen en el evento onload
+// Function to change map
+function changeMap(mapImagePath) {
     backgroundImage.src = mapImagePath;
 }
 
-function selectRandomMap(){
-    const mapKeys= Object.keys(maps);
-    const randomKeyMap= mapKeys[Math.floor(Math.random()*mapKeys.length)];
-    console.log("Mapa seleccionado aleatoriamente:", randomKeyMap);
+function selectRandomMap() {
+    const mapKeys = Object.keys(maps);
+    const randomKeyMap = mapKeys[Math.floor(Math.random() * mapKeys.length)];
     changeMap(maps[randomKeyMap]);
     return randomKeyMap;
 }
 
-function loadNewMap(){
-    const selectedMap=selectRandomMap();
-    console.log("Nuevo mapa cargado:", selectedMap);
-    return selectedMap;
+// Vec class
+class Vec {
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    plus(other) {
+        return new Vec(this.x + other.x, this.y + other.y);
+    }
+
+    minus(other) {
+        return new Vec(this.x - other.x, this.y - other.y);
+    }
+
+    times(scalar) {
+        return new Vec(this.x * scalar, this.y * scalar);
+    }
+
+    magnitude() {
+        return Math.sqrt(this.x ** 2 + this.y ** 2);
+    }
 }
 
+// Define the enemy extending from Vec
+class Enemy extends Vec {
+    constructor(x, y, speed) {
+        super(x, y);  // Call the Vec constructor
+        this.speed = speed;
+        this.moving = false;
+    }
+
+    moveToward(player) {
+        let direction = new Vec(player.x - this.x, player.y - this.y);
+        if (direction.magnitude() < 300) {  // within a certain distance start to chase the player
+            let movement = direction.times(this.speed / direction.magnitude());
+            this.x += movement.x;
+            this.y += movement.y;
+            this.moving = true;
+        } else {
+            this.moving = false;
+        }
+    }
+}
+
+let enemy = new Enemy(200, 200, 1.25);
+
+// Check portal collision
+function checkPortalCollision() {
+    if (portal.active &&
+        player.x < portal.x + portal.width &&
+        player.x + scaledSpriteWidth > portal.x &&
+        player.y < portal.y + portal.height &&
+        player.y + scaledSpriteHeight > portal.y) {
+        
+        portal.active = false;
+        
+        let currentMap = null;
+        for (const [mapName, mapPath] of Object.entries(maps)) {
+            if (mapPath === backgroundImage.src || backgroundImage.src.endsWith(mapPath)) {
+                currentMap = mapName;
+                break;
+            }
+        }
+        
+        const mapKeys = Object.keys(maps).filter(key => key !== currentMap);
+        const randomMapKey = mapKeys[Math.floor(Math.random() * mapKeys.length)];
+        
+        changeMap(maps[randomMapKey]);
+        
+        // Reposition player and enemy
+        player.x = 50;
+        enemy.x = 200;
+        enemy.y = 200;
+        
+        setTimeout(() => {
+            portal.active = true;
+        }, 1000);
+        return true;
+    }
+    return false;
+}
+
+// Event listeners for movement and attack
 window.addEventListener("keydown", (event) => {
     if (keyMap[event.key]) {
         keysPressed[event.key] = true;
@@ -148,123 +218,93 @@ window.addEventListener("keyup", (event) => {
     }
 });
 
-function animate(){
+// Main game loop
+function animate() {
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+    // Draw scaled background
     ctx.drawImage(backgroundImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    
-    //Dibujar salida
-    if (portal.active){
+
+    // Draw portal
+    if (portal.active) {
         ctx.fillStyle = portal.color;
         ctx.fillRect(portal.x, portal.y, portal.width, portal.height);
     }
 
     // Player movement logic
-    for(let key in keysPressed){
-        if (keyMap[key]&&key!== 'k') {
+    for (let key in keysPressed) {
+        if (keyMap[key] && key !== 'k') {
             player.x += keyMap[key].dx * player.speed;
             player.y += keyMap[key].dy * player.speed;
         }
     }
 
-    //Colisiones del jugador con canvas
+    // Collision with canvas borders
     player.x = Math.max(0, Math.min(CANVAS_WIDTH - scaledSpriteWidth, player.x));
     player.y = Math.max(0, Math.min(CANVAS_HEIGHT - scaledSpriteHeight, player.y));
-    
+
+    // Check portal collision
     checkPortalCollision();
 
-    //Dibujar jugador...
+    // Update enemy movement
+    enemy.moveToward(player);
+
+    if (Math.abs(enemy.x - player.x) > Math.abs(enemy.y - player.y)) {
+        if (enemy.x < player.x) {
+            enemy.frameY = 11;  // Walk right
+        } else {
+            enemy.frameY = 9;  // Walk left
+        }
+    } else {
+        if (enemy.y < player.y) {
+            enemy.frameY = 10;  // Walk down
+        } else {
+            enemy.frameY = 8;  // Walk up
+        }
+    }
+
+    // Ensure enemy updates frames properly in left/right
+    if (enemy.moving) {
+        enemy.frameX = Math.floor(gameFrame / staggerFrames) % 9;  // Update animation for movement
+    } else {
+        enemy.frameX = 0; // Idle state
+    }
+
+    // Draw the enemy sprite
+    ctx.drawImage(
+        enemyImage,
+        enemy.frameX * spriteWidth, enemy.frameY * spriteHeight, spriteWidth, spriteHeight,
+        enemy.x, enemy.y,
+        scaledSpriteWidth, scaledSpriteHeight
+    );
+
+    // Handle attack animation
     if (player.attacking && player.attackDirection !== null) {
         player.attackFrame = Math.floor(gameFrame / staggerFrames) % 6;
         frameY = classes[selectedClass].attackRow + player.attackDirection;
         frameX = player.attackFrame * spriteWidth;
-
-        ctx.drawImage(
-            playerImage, frameX, frameY * spriteHeight, spriteWidth, spriteHeight,
-            player.x, player.y, scaledSpriteWidth, scaledSpriteHeight
-        );
     } else {
         let position = Math.floor(gameFrame / staggerFrames) % 8;
         frameX = spriteWidth * position;
-
-        ctx.drawImage(
-            playerImage, frameX, frameY * spriteHeight, spriteWidth, spriteHeight,
-            player.x, player.y, scaledSpriteWidth, scaledSpriteHeight
-        );
     }
 
-    if (player.moving||player.attacking) gameFrame++;
+    // Draw the player sprite
+    ctx.drawImage(
+        playerImage, frameX, frameY * spriteHeight, spriteWidth, spriteHeight,
+        player.x, player.y, scaledSpriteWidth, scaledSpriteHeight
+    );
 
-    window.animationFrame = requestAnimationFrame(animate);
+    if (player.moving || player.attacking) gameFrame++;
+
+    requestAnimationFrame(animate);
 }
 
-//Funcion para detectar colision con el portal
-function checkPortalCollision() {
-    if (portal.active &&
-        player.x<portal.x+portal.width&&
-        player.x+scaledSpriteWidth>portal.x&&
-        player.y<portal.y+portal.height&&
-        player.y+scaledSpriteHeight>portal.y) {
-        
-        //Desactivar el portal temporalmente para evitar múltiples activaciones
-        portal.active = false;
-        
-        //Cambiar al mapa de destino
-        let currentMap= null;
-        for (const[mapName, mapPath] of Object.entries(maps)) {
-            if (mapPath===backgroundImage.src||backgroundImage.src.endsWith(mapPath)){
-                currentMap= mapName;
-                break;
-            }
-        }
-        
-        //Con esta variable me aseguro de agarrar un mapa que no sea el anterior
-        const mapKeys= Object.keys(maps).filter(key=>key!==currentMap);
-        
-        //Seleccionar un mapa aleatorio de los disponibles
-        const randomMapKey= mapKeys[Math.floor(Math.random()*mapKeys.length)];
-        
-        //Cambiar al mapa aleatorio
-        changeMap(maps[randomMapKey]);
-        
-        //Reposicionar al jugador en el lado izquierdo del nuevo mapa
-        player.x = 50;
-        
-        //Reactivar el portal después de un tiempo
-        setTimeout(() => {
-            portal.active = true;
-        }, 1000);
-        return true;
-    }
-    return false;
-}
-
-//Me aseguro de que carguen las imagenes correctamente antes de hacer su display en el fondo
+// Ensure images are loaded before starting
 backgroundImage.onload = function () {
-    imagesLoaded.background=true;
-    checkStartGame();
+    playerImage.onload = function () {
+        enemyImage.onload = function () {
+            selectRandomMap(); // Start with a random map
+            animate();
+        };
+    };
 };
-
-playerImage.onload = function () {
-    imagesLoaded.player=true;
-    checkStartGame();
-};
-
-//Funcion que junta la aparicion del fondo y del jugador para evitar conflictos
-function checkStartGame() {
-    if (imagesLoaded.background && imagesLoaded.player) {
-        console.log("Todas las imágenes cargadas, iniciando animación");
-        animate();
-    } else {
-        console.log("Esperando a que todas las imágenes carguen...");
-    }
-}
-
-//Inicializar al cargar la página
-window.addEventListener('load', function() {
-    //Asignar un mapa inicial
-    selectRandomMap();
-});
-
-window.changeMap=changeMap;
-window.selectRandomMap=selectRandomMap;
-window.loadNewMap= loadNewMap;
