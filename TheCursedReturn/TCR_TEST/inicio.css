@@ -21,7 +21,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding: 50px 650px;
+    align-items: center;
     gap: 10px;
 }
 
