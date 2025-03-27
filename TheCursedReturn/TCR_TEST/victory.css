@@ -1,9 +1,20 @@
 body {
-    background-image: url("../images/background_animation_mp.gif");
+    background-image: url("../images/TheCursedReturnVictory.png");
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;;
+    background-attachment: fixed;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+nav {
+    margin-top: auto;
+    width: 100%;
 }
 
 #logo_equipo {
@@ -19,10 +30,10 @@ body {
 
 .buttons {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: center;
-    align-items: center;
-    gap: 10px;
+    gap: 20px;
+    padding: 20px 0;
 }
 
 #button {
@@ -34,13 +45,13 @@ body {
     font-size: 25px;
     border-radius: 12px;
     box-shadow: 3px 3px #ad1324;
-    font-family: copperplate;
+    font-family: copperplate, serif;
     text-shadow: 2px 2px #ad1324;
     cursor: pointer;
 }
 
 #button:hover {
-    background-color: #3e3d3d
+    background-color: #3e3d3d;
 }
 
 #button:active {
@@ -53,7 +64,8 @@ footer {
     width: 100%;
     text-align: center;
     padding: 10px 0;
-    margin-top: auto;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
 

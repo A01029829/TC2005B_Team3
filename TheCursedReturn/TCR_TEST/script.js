@@ -4,12 +4,27 @@ const ctx = canvas.getContext('2d');
 const CANVAS_WIDTH = (canvas.width = 900);
 const CANVAS_HEIGHT = (canvas.height = 600);
 
-const maps = {
-    woods1: 'WoodsLVL1.png',
+const maps={
+    woods: 'WoodsLVL1.png',
     woods2: 'WoodsLVL2.png',
     woods3: 'WoodsLVL3.png',
-    woods4: 'WoodsLVL4.png'
+    woods4: 'WoodsLVL4.png',
+    dessert: 'DesertLVL1.png',
+    dessert2: 'DesertLVL2.png',
+    dessert3: 'DesertLVL3.png',
+    dessert4: 'DesertLVL4.png',
+    snow: 'WoodsLVL1.png',
+    snow2: 'WoodsLVL2.png',
+    snow3: 'WoodsLVL3.png',
+    snow4: 'WoodsLVL4.png',
 };
+
+const progress={
+    visited: 0,
+    level: 1,
+    rooms: 4,
+    maxLevels: 3
+}
 
 // Retrieve selected class from localStorage (default to knight)
 let selectedClass = localStorage.getItem("selectedClass") || "knight";
@@ -31,6 +46,11 @@ const classes = {
         movementFrames: { right: 11, left: 9, up: 8, down: 10 },
         attackRow: 4
     }
+};
+
+let imagesLoaded = {
+    background: false,
+    player: false
 };
 
 const portal = {
@@ -86,16 +106,29 @@ const keyMap = {
 
 let keysPressed = {};
 
-// Function to change map
-function changeMap(mapImagePath) {
+//Asigna una nueva ruta de imagen al objeto backgroundImage (fondo)
+function changeMap(mapImagePath){
+    if(window.animationFrame){
+        cancelAnimationFrame(window.animationFrame);
+    }
+    imagesLoaded.background=false;
+    console.log("Cambiando mapa a:", mapImagePath);
+    //Se usa esta nueva imagen en el evento onload
     backgroundImage.src = mapImagePath;
 }
 
-function selectRandomMap() {
-    const mapKeys = Object.keys(maps);
-    const randomKeyMap = mapKeys[Math.floor(Math.random() * mapKeys.length)];
+function selectRandomMap(){
+    const mapKeys= Object.keys(maps);
+    const randomKeyMap= mapKeys[Math.floor(Math.random()*mapKeys.length)];
+    console.log("Mapa seleccionado aleatoriamente:", randomKeyMap);
     changeMap(maps[randomKeyMap]);
     return randomKeyMap;
+}
+
+function loadNewMap(){
+    const selectedMap=selectRandomMap();
+    console.log("Nuevo mapa cargado:", selectedMap);
+    return selectedMap;
 }
 
 // Vec class
@@ -143,9 +176,43 @@ class Enemy extends Vec {
     }
 }
 
-let enemy = new Enemy(200, 200, 1.25);
+let enemy = new Enemy(CANVAS_WIDTH/2 + 100, CANVAS_HEIGHT/2, 1.25);
 
-// Check portal collision
+//Funcion que en principio no se usa, pero se podria usar si se requiere en el futuro
+// function showVictoryScreen(){
+//     const victory="../images/TheCursedReturnVictory.png";
+//     const victoryImage = new Image();
+//     victoryImage.src = victory;
+//     victoryImage.onload = function() {
+//         ctx.drawImage(victoryImage, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+//     };
+// }
+
+function showLevelNotification(){
+    const notification = document.createElement('div');
+    notification.className = 'level-notification';
+    notification.innerText = `Nivel ${progress.level}`;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.remove();
+    }, 2000);
+}
+
+function newLevel(){
+    progress.level+=1;
+    progress.visited=0;
+    console.log("Nuevo nivel:", progress.level);
+    showLevelNotification();
+    if(progress.level>progress.maxLevels){
+        console.log("Victoria!");
+        window.location.href = "victory.html";
+        // showVictoryScreen();
+        return;
+    }
+}
+
+//Funcionamiento de la colision del portal
 function checkPortalCollision() {
     if (portal.active &&
         player.x < portal.x + portal.width &&
@@ -154,6 +221,13 @@ function checkPortalCollision() {
         player.y + scaledSpriteHeight > portal.y) {
         
         portal.active = false;
+        progress.visited+=1;
+
+        console.log("Portal activado, visitado:", progress.visited);
+
+        if(progress.visited==progress.rooms){
+            newLevel();
+        }
         
         let currentMap = null;
         for (const [mapName, mapPath] of Object.entries(maps)) {
@@ -170,8 +244,6 @@ function checkPortalCollision() {
         
         // Reposition player and enemy
         player.x = 50;
-        enemy.x = 200;
-        enemy.y = 200;
         
         setTimeout(() => {
             portal.active = true;
