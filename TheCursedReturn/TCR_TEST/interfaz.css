@@ -10,7 +10,7 @@ canvas {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 88.5vh;
+    height: 94vh;
     z-index: -1;
 }
 
@@ -28,27 +28,6 @@ footer {
     padding-top: 10px;
     z-index: 1;
     text-align: center;
-}
-
-button {
-    background-color: black;
-    color: #d5d4cc;
-    padding: 10px 16px;
-    font-size: 20px;
-    border-radius: 12px;
-    box-shadow: 3px 3px #ad1324;
-    font-family: copperplate;
-    text-shadow: 2px 2px #ad1324;
-}
-
-button:hover {
-    background-color: #3e3d3d
-}
-
-button:active {
-  background-color: #3e3d3d;
-  box-shadow: 3px 1px #ad1324;
-  transform: translateY(4px);
 }
 
 p {

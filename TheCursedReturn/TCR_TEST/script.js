@@ -4,6 +4,11 @@ const ctx = canvas.getContext('2d');
 const CANVAS_WIDTH = (canvas.width = 900);
 const CANVAS_HEIGHT = (canvas.height = 600);
 
+// Pause
+let paused = false;
+// Game over
+let gameOver = false;
+
 const maps = {
     woods1: 'WoodsLVL1.png',
     woods2: 'WoodsLVL2.png',
@@ -53,6 +58,10 @@ playerImage.src = classes[selectedClass].sprite;
 // Load enemy sprite
 const enemyImage = new Image();
 enemyImage.src = 'Goblin01SpriteSheetFINAL.png';
+
+// Load game over image
+const gameOverImage = new Image();
+gameOverImage.src = '../images/gameover.png';
 
 // Scaling factors
 const spriteWidth = 64;
@@ -204,6 +213,13 @@ window.addEventListener("keydown", (event) => {
     } else if ((keysPressed['ArrowRight'] || keysPressed['d']) && keysPressed['k']) {
         player.attackDirection = 3;
     }
+
+    if (event.key == "p") {
+        if (!paused) {
+            paused = true;
+            drawPause();
+        }
+    } 
 });
 
 window.addEventListener("keyup", (event) => {
@@ -218,8 +234,37 @@ window.addEventListener("keyup", (event) => {
     }
 });
 
+// Curse bar
+let barwidth = 100;
+let cursewidth = barwidth;
+
+class Bar extends GameObject {
+    constructor(position, width, height, color) {
+        super(position, width, height, color, "bar"); // Llama al constructor de la clase padre, es decir GameObject
+    }
+
+    update() {
+        if (this.width > 0) {
+            this.width -= 0.014; // Reduce the curse bar width so it lasts 2 min
+        }
+        else {
+            this.width = 0;
+        }
+    }
+}
+
+const bar = new Bar (new Vec(750, 25), barwidth, 20, "white");
+let curse = new Bar (new Vec(750, 25), cursewidth, 20, "red");
+
 // Main game loop
 function animate() {
+    if (paused) {
+        return;
+    }  
+    if (gameOver) {
+        return;
+    }
+
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
     // Draw scaled background
@@ -296,7 +341,34 @@ function animate() {
 
     if (player.moving || player.attacking) gameFrame++;
 
-    requestAnimationFrame(animate);
+    // Draw curse bar
+    bar.draw(ctx);
+    curse.draw(ctx);
+
+    curse.update();
+    
+    if (curse.width > barwidth / 4 * 3 && curse.width < barwidth) {
+        curse.color = "rgb(89, 214, 89)";
+    }
+    else if (curse.width > barwidth / 2 && curse.width < barwidth / 4 * 3) {
+        curse.color = "rgb(238, 195, 1)";
+    }
+    else if (curse.width > barwidth / 4 && curse.width < barwidth / 2) {
+        curse.color = "rgb(222, 152, 23)";
+    }
+    else if (curse.width > 0 && curse.width < barwidth / 4) {
+        curse.color = "rgb(175, 17, 17)";
+    }
+
+    // Game over si la barra de maldición llega a 0
+    if (curse.width === 0) {
+        gameOver = true;
+        ctx.drawImage(gameOverImage, 300, 100, 300, 300);
+    }
+
+    if (!paused && !gameOver) {
+        requestAnimationFrame(animate);
+    }
 }
 
 // Ensure images are loaded before starting

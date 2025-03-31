@@ -22,12 +22,12 @@ header {
 h1 {
     padding-top: 10px;
     text-align: center;
-    background-color: black;
+    background-color: #ad1324;
     color: #d5d4cc;
     border-radius: 12px;
-    box-shadow: 3px 3px #ad1324;
+    box-shadow: 3px 3px black;
     font-family: copperplate;
-    text-shadow: 2px 2px #ad1324;
+    text-shadow: 2px 2px black;
     width: 450px;
     height: 45px;
 }
@@ -52,7 +52,7 @@ h1 {
 .slider {
     width: 80%;
     height: 15px;
-    accent-color: #ad1324;
+    accent-color: #c12f40;
 }
 
 /* Estilo simplificado para usar una sola imagen */
