@@ -1,0 +1,124 @@
+/* Estilos básicos para controles de audio */
+body {
+    background-image: url("../images/settings.gif");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-content: center;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    padding-top: 50px;
+}
+
+h1 {
+    padding-top: 10px;
+    text-align: center;
+    background-color: black;
+    color: #d5d4cc;
+    border-radius: 12px;
+    box-shadow: 3px 3px #ad1324;
+    font-family: copperplate;
+    text-shadow: 2px 2px #ad1324;
+    width: 450px;
+    height: 45px;
+}
+
+.settings {
+    display: flex;
+    justify-content: center;
+}
+
+.audio-controls {
+    margin: 20px;
+    padding: 15px;
+    background-color: #f8f4f2;
+    border-radius: 8px;
+    max-width: 500px;
+}
+
+.slider-container {
+    margin: 15px 0;
+}
+
+.slider {
+    width: 80%;
+    height: 15px;
+    accent-color: #ad1324;
+}
+
+/* Estilo simplificado para usar una sola imagen */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: url('../imagenes/tu-imagen.png') no-repeat;
+    background-size: cover;
+    cursor: pointer;
+}
+
+.slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    background: url('../imagenes/tu-imagen.png') no-repeat;
+    background-size: cover;
+    cursor: pointer;
+    border: none;
+}
+
+.centered {
+    text-align: center;
+}
+
+h1, h2 {
+    text-align: center;
+}
+
+button {
+    display: flex;
+    justify-content: center;
+    background-color: black;
+    color: #d5d4cc;
+    padding: 5px 5px;
+    font-size: 15px;
+    border-radius: 12px;
+    box-shadow: 3px 3px #ad1324;
+    font-family: copperplate;
+    text-shadow: 2px 2px #ad1324;
+    height: 35px;
+}
+
+button:hover {
+    background-color: #3e3d3d
+}
+
+button:active {
+  background-color: #3e3d3d;
+  box-shadow: 3px 1px #ad1324;
+  transform: translateY(4px);
+}
+
+.button_container_centered button {
+    height: 50px;
+    font-size: 30px;
+    padding: 10px;
+}
+
+a {
+    text-decoration: none;
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 50px;
+}
