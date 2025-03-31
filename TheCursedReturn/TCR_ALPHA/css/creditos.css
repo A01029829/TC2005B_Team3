@@ -1,0 +1,91 @@
+body {
+    background-image: url("../images/creditos.gif");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color:whitesmoke;
+
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.grid-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-content: flex-end;
+}
+
+.column1 {
+    padding-left: 100px;
+    padding-right: 50px;
+    width: 500px;
+}
+
+.column2 {
+    padding-right: 100px;
+    padding-left: 50px;
+    width: 500px;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    padding-top: 100px;
+}
+
+h1 {
+    padding-top: 15px;
+    text-align: center;
+    background-color: black;
+    color: #d5d4cc;
+    border-radius: 12px;
+    box-shadow: 3px 3px #ad1324;
+    font-family: copperplate;
+    text-shadow: 2px 2px #ad1324;
+    width: 400px;
+    height: 50px;
+}
+
+button {
+    display: flex;
+    justify-content: center;
+    background-color: black;
+    color: #d5d4cc;
+    padding: 10px 16px;
+    font-size: 25px;
+    border-radius: 12px;
+    box-shadow: 3px 3px #ad1324;
+    font-family: copperplate;
+    text-shadow: 2px 2px #ad1324;
+}
+
+button:hover {
+    background-color: #3e3d3d
+}
+
+button:active {
+  background-color: #3e3d3d;
+  box-shadow: 3px 1px #ad1324;
+  transform: translateY(4px);
+}
+
+footer {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 100px;
+}
+
+p, ol, ul {
+    line-height: 30px;
+}
+
+a {
+    text-decoration: none;
+    color: whitesmoke;
+}

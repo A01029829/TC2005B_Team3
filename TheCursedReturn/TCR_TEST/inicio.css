@@ -36,6 +36,7 @@ body {
     box-shadow: 3px 3px #ad1324;
     font-family: copperplate;
     text-shadow: 2px 2px #ad1324;
+    cursor: pointer;
 }
 
 #button:hover {

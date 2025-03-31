@@ -1,0 +1,32 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+#headerContainer {
+    width: 100%;
+    text-align: center;
+}
+
+canvas {
+    flex-grow: 1;
+    display: block;
+    width: 100%;
+    /* Ajusta el tamaño según necesites */
+}
+
+#controls {
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+}
+
+footer {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+    margin-top: auto;
+}
