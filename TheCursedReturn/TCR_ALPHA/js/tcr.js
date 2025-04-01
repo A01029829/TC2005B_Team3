@@ -4,6 +4,11 @@ const ctx = canvas.getContext('2d');
 const CANVAS_WIDTH = canvas.width = 912;
 const CANVAS_HEIGHT = canvas.height = 608;
 
+// Pause
+let paused = false;
+// Game Over
+let gameOver = false;
+
 // === Sprite and Map Config ===
 const maps = {
     woods1: '../levels/WoodsLVL1.png',
@@ -55,6 +60,10 @@ const enemyImage = new Image();
 backgroundImage.src = '../levels/WoodsLVL1.png';
 playerImage.src = classes[selectedClass].sprite;
 enemyImage.src = '../sprites/Goblin01SpriteSheetFINAL.png';
+
+// Create curse bar
+const bar = new Bar (new Vect(750, 25), barwidth, 20, "white");
+let curse = new Bar (new Vect(750, 25), cursewidth, 20, "red");
 
 // === Start Game When Images Are Loaded ===
 backgroundImage.onload = () => {

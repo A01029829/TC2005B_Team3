@@ -73,9 +73,19 @@ class Game {
     }
 
     loop() {
+        if (paused) {
+            return
+        }
+        if (gameOver) {
+            return
+        }
+
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx.drawImage(this.assets.backgroundImage, 0, 0);
         this.portal.draw(this.ctx);
+
+        bar.draw(ctx);
+        curse.draw(ctx);
 
         this.player.handleInput(
             this.inputManager.keysPressed,
@@ -104,8 +114,19 @@ class Game {
             this.gameFrame++;
         }
 
-        window.animationFrame = requestAnimationFrame(() => this.loop());
+        curse.update();
+
+        curse.colorTransition(this.curse);
+
+        if (curse.width === 0) {
+            GameOver();
+        }
+
+        if (!paused && !gameOver) {
+            window.animationFrame = requestAnimationFrame(() => this.loop());
+        }
+
+        
 
     }
-    
 }

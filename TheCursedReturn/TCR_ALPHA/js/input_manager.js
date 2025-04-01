@@ -10,6 +10,12 @@ class InputManager {
             if (this.keyMap[event.key]) {
                 this.keysPressed[event.key] = true;
             }
+            if (!paused) {
+                if (event.key == "Escape") {
+                    paused = true;
+                    drawPause();
+                }
+            }
         });
 
         window.addEventListener("keyup", (event) => {
