@@ -99,7 +99,7 @@ Promise.all([
             mouseY >= resumeY && mouseY <= resumeY + resumeHeight) {
             paused = false;
             cancelAnimationFrame(drawPause);
-            Game.loop();
+            window.game.loop();
         }
     });
 

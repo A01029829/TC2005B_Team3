@@ -73,7 +73,7 @@ backgroundImage.onload = () => {
             // Temporary empty collision map
             const emptyCollision = new CollisionMap(new Array(57 * 38).fill(0), 57, 16);
 
-            const game = new Game(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, {
+            window.game = new Game(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, {
                 maps,
                 keyMap,
                 backgroundImage,
@@ -85,7 +85,7 @@ backgroundImage.onload = () => {
             });
 
             // Optional: preload correct collision for the first map
-            game.updateCollisionMap();
+            window.game.updateCollisionMap();
         };
     };
 };
