@@ -9,6 +9,8 @@ class Enemy extends AnimatedObject {
         this.attacking = false;
         this.attackRow = { up: 53, left: 54, down: 55, right: 56 };
         this.lastDirection = 'down';
+        // Change depending on the enemy
+        this.attackMagnitude = 1;
 
     }
 

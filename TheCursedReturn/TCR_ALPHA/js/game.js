@@ -45,6 +45,9 @@ class Game {
             maxLevels: 3
         };
 
+        // Reduce life bar width
+        this.lifeReduction = this.enemy.attackMagnitude * lifeBarwidth / this.player.maxHealth;
+
         this.setupStart();
     }
 
@@ -108,10 +111,6 @@ class Game {
         this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
         this.ctx.drawImage(this.assets.backgroundImage, 0, 0);
         this.portal.draw(this.ctx);
-
-        bar.draw(this.ctx);
-        curse.draw(this.ctx);
-
     
         this.player.handleInput(
             this.inputManager.keysPressed,
@@ -131,8 +130,17 @@ class Game {
                 // Goblin attacks
                 if (!enemy.hasHitPlayer) {
                     enemy.attacking = true;
-                    this.player.health--;
+                    this.player.health -= enemy.attackMagnitude;
                     enemy.hasHitPlayer = true;
+                    // Reduce life bar width
+                    life.width -= this.lifeReduction;
+                    if (life.width <= 0) {
+                        life.width = 0;
+                    }
+                    if (this.player.health <= 0) {
+                        GameOver();
+                    }
+
                     setTimeout(() => {
                         enemy.hasHitPlayer = false;
                         enemy.attacking = false;
@@ -190,6 +198,14 @@ class Game {
             this.gameFrame++;
         }
 
+        // Draw the curse bar
+        bar.draw(this.ctx);
+        curse.draw(this.ctx);
+        this.ctx.drawImage(curseLogo, 725, 55, 20, 20);
+        // Draw the life bar
+        lifeBar.draw(this.ctx);
+        life.draw(this.ctx);
+        this.ctx.drawImage(lifeLogo, 723, 25, 25, 25);
     
         if (this.player.health <= 0) {
             GameOver();

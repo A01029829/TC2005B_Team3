@@ -61,8 +61,12 @@ playerImage.src = classes[selectedClass].sprite;
 enemyImage.src = '../sprites/Goblin01SpriteSheetFINAL.png';
 
 // Curse bar setup
-const bar = new Bar (new Vect(750, 25), barwidth, 20, "white");
-let curse = new Bar (new Vect(750, 25), cursewidth, 20, "red");
+const bar = new Bar (new Vect(750, 55), barwidth, 20, "white");
+let curse = new Bar (new Vect(750, 55), cursewidth, 20, "red");
+
+// Life bar setup
+const lifeBar = new Bar (new Vect(750, 25), lifeBarwidth, 20, "white");
+let life = new Bar (new Vect(750, 25), lifewidth, 20, "#ad1324");
 
 
 // === Start Game When Images Are Loaded ===
