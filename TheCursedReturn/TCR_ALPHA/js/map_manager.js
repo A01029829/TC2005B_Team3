@@ -17,16 +17,24 @@ class MapManager {
             (key) => this.maps[key] === mapImagePath
         );
     }
-    selectRandomMap(currentMapName = null) {
+    
+    selectRandomMap(currentMapKey = null, usedSet = new Set()) {
         const mapKeys = Object.keys(this.maps);
-        const filteredKeys = currentMapName
-            ? mapKeys.filter((key) => key !== currentMapName)
-            : mapKeys;
-
-        const randomKey = filteredKeys[Math.floor(Math.random() * filteredKeys.length)];
+        const filteredKeys = mapKeys.filter(key => key !== currentMapKey && !usedSet.has(key));
+    
+        if (filteredKeys.length === 0) {
+            usedSet.clear();
+        }
+    
+        const finalPool = mapKeys.filter(key => key !== currentMapKey && !usedSet.has(key));
+        const randomKey = finalPool[Math.floor(Math.random() * finalPool.length)];
+    
+        usedSet.add(randomKey);
         this.changeMap(this.maps[randomKey]);
+        this.currentMapKey = randomKey;
         return randomKey;
     }
+    
 
     getCurrentMapName() {
         for (const [name, path] of Object.entries(this.maps)) {

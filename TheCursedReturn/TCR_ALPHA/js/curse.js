@@ -8,7 +8,7 @@ class Bar extends GameObject {
 
     update() {
         if (this.width > 0) {
-            this.width -= 0.5;
+            this.width -= 0.014;
             //0.014 Reduce the curse bar width so it lasts 2 min
         }
         else {
