@@ -4,6 +4,9 @@ class Game {
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
         this.assets = assets;
+        this.usedMaps = new Set();
+        this.enemies = [];
+        this.enemyFrame = 0;
 
         this.gameFrame = 0;
         this.staggerFrames = 5;
@@ -46,8 +49,10 @@ class Game {
     }
 
     setupStart() {
-        this.mapManager.selectRandomMap();
+        this.usedMaps.clear();
+        this.mapManager.selectRandomMap(null, this.usedMaps);
         this.loop();
+
     }
 
     onNewLevel() {
@@ -72,6 +77,26 @@ class Game {
         }
     }
 
+    spawnEnemiesForRoom() {
+        this.enemies = [];
+        const margin = 48;
+    
+        for (let i = 0; i < 3; i++) {
+            const spawnX = Math.floor(Math.random() * (this.canvasWidth - 2 * margin)) + margin;
+            const spawnY = Math.floor(Math.random() * (this.canvasHeight - 2 * margin)) + margin;
+    
+            const goblin = new Enemy(
+                { x: spawnX, y: spawnY },
+                1.25,
+                this.assets.enemyImagePath
+            );
+    
+            this.enemies.push(goblin);
+        }
+    }
+    
+    
+
     loop() {
         if (paused) {
             return
@@ -84,39 +109,94 @@ class Game {
         this.ctx.drawImage(this.assets.backgroundImage, 0, 0);
         this.portal.draw(this.ctx);
 
-        bar.draw(ctx);
-        curse.draw(ctx);
+        bar.draw(this.ctx);
+        curse.draw(this.ctx);
 
+    
         this.player.handleInput(
             this.inputManager.keysPressed,
             this.assets.keyMap,
             this.collisionMap
         );
+    
+        this.enemies.forEach((enemy, i) => {
+            enemy.moveToward(this.player);
+            enemy.updateAnimation(this.player, this.enemyFrame, this.staggerFrames);
+    
+            const dx = enemy.position.x - this.player.position.x;
+            const dy = enemy.position.y - this.player.position.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+    
+            if (distance < 32) {
+                // Goblin attacks
+                if (!enemy.hasHitPlayer) {
+                    enemy.attacking = true;
+                    this.player.health--;
+                    enemy.hasHitPlayer = true;
+                    setTimeout(() => {
+                        enemy.hasHitPlayer = false;
+                        enemy.attacking = false;
+                    }, 1000);
+                }
 
-        this.enemy.moveToward(this.player);
-        this.enemy.updateAnimation(this.player, this.gameFrame, this.staggerFrames);
-        this.enemy.draw(this.ctx);
-
+                // Prevent overlap
+                const overlap = 32 - distance;
+                if (overlap > 0) {
+                    const pushX = (dx / distance) * (overlap / 2);
+                    const pushY = (dy / distance) * (overlap / 2);
+    
+                    this.player.position.x -= pushX;
+                    this.player.position.y -= pushY;
+    
+                    enemy.position.x += pushX;
+                    enemy.position.y += pushY;
+                }
+    
+                // Knight attacks
+                if (this.player.attacking && !this.player.hasHitEnemy) {
+                    enemy.health--;
+                    console.log("Goblin hit! Health:", enemy.health);
+                    this.player.hasHitEnemy = true;
+                    setTimeout(() => { this.player.hasHitEnemy = false; }, 400);
+                }
+            }
+    
+            // Goblin dies
+            if (enemy.health <= 0) {
+                this.enemies.splice(i, 1);
+            }
+    
+            enemy.draw(this.ctx);
+        });
+    
         this.player.clampToBounds(this.canvasWidth, this.canvasHeight);
         this.player.updateAnimation(this.gameFrame, this.staggerFrames);
         this.player.draw(this.ctx);
-
+    
         this.portal.checkCollision(
             this.player,
             this.assets.maps,
             this.progress,
             this.assets.backgroundImage,
-            (newMap) => this.mapManager.changeMap(newMap),
+            () => {
+                this.mapManager.selectRandomMap(this.mapManager.currentMapKey, this.usedMaps);
+                this.updateCollisionMap();
+                this.spawnEnemiesForRoom();
+            },
             () => this.onNewLevel()
         );
-
+    
         if (this.player.moving || this.player.attacking) {
             this.gameFrame++;
         }
 
-        curse.update();
+    
+        if (this.player.health <= 0) {
+            GameOver();
+        }
 
-        curse.colorTransition(this.curse);
+        curse.update();
+        curse.colorTransition();
 
         if (curse.width === 0) {
             GameOver();
@@ -124,9 +204,8 @@ class Game {
 
         if (!paused && !gameOver) {
             window.animationFrame = requestAnimationFrame(() => this.loop());
+            this.enemyFrame++;
         }
 
-        
-
     }
-}
+    }

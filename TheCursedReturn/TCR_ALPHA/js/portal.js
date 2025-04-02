@@ -39,9 +39,9 @@ class Portal extends GameObject {
                 }
             }
 
-            const mapKeys = Object.keys(maps).filter(key => key !== currentMap);
-            const randomMapKey = mapKeys[Math.floor(Math.random() * mapKeys.length)];
-            changeMapCallback(maps[randomMapKey]);
+            changeMapCallback(); // the Game object now handles the logic
+
+
 
             // Tell the game to update the collision map
             if (player.gameRef && player.gameRef.updateCollisionMap) {

@@ -4,10 +4,9 @@ const ctx = canvas.getContext('2d');
 const CANVAS_WIDTH = canvas.width = 912;
 const CANVAS_HEIGHT = canvas.height = 608;
 
-// Pause
 let paused = false;
-// Game Over
 let gameOver = false;
+
 
 // === Sprite and Map Config ===
 const maps = {
@@ -61,31 +60,34 @@ backgroundImage.src = '../levels/WoodsLVL1.png';
 playerImage.src = classes[selectedClass].sprite;
 enemyImage.src = '../sprites/Goblin01SpriteSheetFINAL.png';
 
-// Create curse bar
+// Curse bar setup
 const bar = new Bar (new Vect(750, 25), barwidth, 20, "white");
 let curse = new Bar (new Vect(750, 25), cursewidth, 20, "red");
 
+
 // === Start Game When Images Are Loaded ===
-backgroundImage.onload = () => {
-    playerImage.onload = () => {
-        enemyImage.onload = () => {
+let loadedImages = 0;
 
-            // Temporary empty collision map
-            const emptyCollision = new CollisionMap(new Array(57 * 38).fill(0), 57, 16);
+function tryStartGame() {
+    loadedImages++;
+    if (loadedImages === 3) {
+        const emptyCollision = new CollisionMap(new Array(57 * 38).fill(0), 57, 16);
 
-            const game = new Game(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, {
-                maps,
-                keyMap,
-                backgroundImage,
-                playerImagePath: classes[selectedClass].sprite,
-                playerFrames: classes[selectedClass].movementFrames,
-                playerAttackRow: classes[selectedClass].attackRow,
-                enemyImagePath: '../sprites/Goblin01SpriteSheetFINAL.png',
-                collisionMap: emptyCollision
-            });
+        window.game = new Game(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, {
+            maps,
+            keyMap,
+            backgroundImage,
+            playerImagePath: playerImage.src,
+            playerFrames: classes[selectedClass].movementFrames,
+            playerAttackRow: classes[selectedClass].attackRow,
+            enemyImagePath: enemyImage.src,
+            collisionMap: emptyCollision
+        });
 
-            // Optional: preload correct collision for the first map
-            game.updateCollisionMap();
-        };
-    };
-};
+        window.game.updateCollisionMap();
+    }
+}
+
+backgroundImage.onload = tryStartGame;
+playerImage.onload = tryStartGame;
+enemyImage.onload = tryStartGame;
