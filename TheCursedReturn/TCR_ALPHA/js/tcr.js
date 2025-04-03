@@ -78,6 +78,11 @@ let curse = new Bar(new Vect(750, 55), cursewidth, 20, "red");
 const lifeBar = new Bar(new Vect(750, 25), lifeBarwidth, 20, "white");
 let life = new Bar(new Vect(750, 25), lifewidth, 20, "#ad1324");
 
+// Pantalla de controles
+const controls = new Image();
+controls.src = "../images/movimiento.png";
+let showControls = false;
+
 // === Start Game When Images Are Loaded ===
 // waits for all 3 images to be ready before creating the game instance
 let loadedImages = 0;

@@ -21,6 +21,9 @@ class MapManager {
         this.currentMapKey = Object.keys(this.maps).find(
             (key) => this.maps[key] === mapImagePath
         );
+
+        // Stop showing controls
+        showControls = false; // hide controls when level changes
     }
 
     // === Select a Random Map (Avoid Repeats Until All Are Used) ===

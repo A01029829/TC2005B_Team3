@@ -61,8 +61,11 @@ class Game {
     setupStart() {
         this.usedMaps.clear();
         this.mapManager.selectRandomMap(null, this.usedMaps);
-        this.loop();
 
+        // Show the controls on screen
+        showControls = true;
+
+        this.loop();
     }
 
     // === Display Level Notification on Screen ===
@@ -231,6 +234,11 @@ class Game {
         lifeBar.draw(this.ctx);
         life.draw(this.ctx);
         this.ctx.drawImage(lifeLogo, 723, 25, 25, 25);
+
+        // === Draw Controls Image ===
+        if (showControls) {
+            this.ctx.drawImage(controls, 10, 10, 350, 250);
+        }
 
         // === Handle Death by Health ===
         if (this.player.health <= 0) {
