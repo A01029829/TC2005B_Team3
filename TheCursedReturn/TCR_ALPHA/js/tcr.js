@@ -80,7 +80,7 @@ let life = new Bar(new Vect(750, 25), lifewidth, 20, "#ad1324");
 
 // Pantalla de controles
 const controls = new Image();
-controls.src = "../images/movimiento.png";
+controls.src = "../images/controles_2.png";
 let showControls = false;
 
 // === Start Game When Images Are Loaded ===

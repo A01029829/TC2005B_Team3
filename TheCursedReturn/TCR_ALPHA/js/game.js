@@ -123,6 +123,11 @@ class Game {
         this.ctx.drawImage(this.assets.backgroundImage, 0, 0);
         this.portal.draw(this.ctx);
 
+        // === Draw Controls Image ===
+        if (showControls) {
+            this.ctx.drawImage(controls, 10, 1, 425, 325);
+        }
+
         // === Handle Player Movement and Input ===
         this.player.handleInput(
             this.inputManager.keysPressed,
@@ -234,11 +239,6 @@ class Game {
         lifeBar.draw(this.ctx);
         life.draw(this.ctx);
         this.ctx.drawImage(lifeLogo, 723, 25, 25, 25);
-
-        // === Draw Controls Image ===
-        if (showControls) {
-            this.ctx.drawImage(controls, 10, 10, 350, 250);
-        }
 
         // === Handle Death by Health ===
         if (this.player.health <= 0) {
