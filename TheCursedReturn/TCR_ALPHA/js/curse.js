@@ -1,5 +1,14 @@
 let barwidth = 100;
 let cursewidth = barwidth;
+let lifeBarwidth = 100;
+let lifewidth = lifeBarwidth;
+
+// Curse logo
+const curseLogo = new Image();
+curseLogo.src = "../images/curse_image.png";
+// Life logo
+const lifeLogo = new Image();
+lifeLogo.src = "../images/life_image.png";
 
 class Bar extends GameObject {
     constructor(position, width, height, color) {
@@ -8,7 +17,7 @@ class Bar extends GameObject {
 
     update() {
         if (this.width > 0) {
-            this.width -= 0.5;
+            this.width -= 0.01;
             //0.014 Reduce the curse bar width so it lasts 2 min
         }
         else {

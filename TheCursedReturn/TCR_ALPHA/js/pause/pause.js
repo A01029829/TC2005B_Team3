@@ -99,7 +99,7 @@ Promise.all([
             mouseY >= resumeY && mouseY <= resumeY + resumeHeight) {
             paused = false;
             cancelAnimationFrame(drawPause);
-            Game.loop();
+            window.game.loop();
         }
     });
 
@@ -115,4 +115,12 @@ Promise.all([
                 drawPause();
             }
     }
+
+    window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && !paused && !gameOver) {
+            paused = true;
+            drawPause();
+        }
+    });
+    
 });})

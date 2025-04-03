@@ -1,22 +1,22 @@
 class Player extends AnimatedObject {
     constructor(position, spritePath, movementFrames, attackRow) {
         super(position, 64, 65, 'rgba(0,0,0,0)', 'player', 12);
-
         this.speed = 3;
         this.movementFrames = movementFrames;
-        this.attackRow = attackRow; // Now an object with directions
+        this.attackRow = attackRow;
         this.attacking = false;
         this.attackTimer = null;
         this.moving = false;
-        this.lastDirection = 'down'; // default facing direction
-
+        this.lastDirection = 'down';
         this.setSprite(spritePath, { x: 0, y: 0, width: 64, height: 65 });
+        this.maxHealth = 10;
+        this.health = this.maxHealth;
     }
 
     handleInput(keysPressed, keyMap, collisionMap) {
         this.moving = false;
 
-        // ✅ Handle attack
+        // handle attack
         if (keysPressed['k']) {
             this.attacking = true;
             this.spriteRect.y = this.attackRow[this.lastDirection];
@@ -24,7 +24,7 @@ class Player extends AnimatedObject {
             return;
         }
 
-        // ✅ Handle attack timing
+        //  attack timing
         if (this.attacking && this.attackTimer !== null) {
             this.attackTimer--;
             if (this.attackTimer <= 0) {
@@ -34,7 +34,7 @@ class Player extends AnimatedObject {
             return;
         }
 
-        // ✅ Handle movement and update last direction
+        // movement and update last direction
         for (let key in keysPressed) {
             if (keyMap[key] && key !== 'k') {
                 const nextX = this.position.x + keyMap[key].dx * this.speed;
@@ -44,7 +44,7 @@ class Player extends AnimatedObject {
                     this.position.x = nextX;
                     this.position.y = nextY;
                     this.spriteRect.y = keyMap[key].frameY;
-                    this.lastDirection = this._getDirection(key); // Track direction
+                    this.lastDirection = this._getDirection(key); // track direction
                     this.moving = true;
                 }
             }
