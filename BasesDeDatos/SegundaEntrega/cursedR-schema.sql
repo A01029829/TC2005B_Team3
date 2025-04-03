@@ -112,7 +112,7 @@ CREATE TABLE Partida_Enemigo(
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE Partida_Enemigo 
-ADD puntos TINYINT DEFAULT 0;
+ADD puntos INT DEFAULT 0;
 
 -- Luego crear trigger para actualizarla
 DELIMITER //
