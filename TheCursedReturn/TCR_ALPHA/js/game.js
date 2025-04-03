@@ -62,6 +62,7 @@ class Game {
         this.usedMaps.clear();
         this.mapManager.selectRandomMap(null, this.usedMaps);
         this.loop();
+
     }
 
     // === Display Level Notification on Screen ===
@@ -217,7 +218,7 @@ class Game {
             },
             () => this.onNewLevel()
         );
-
+    
         if (this.player.moving || this.player.attacking) {
             this.gameFrame++;
         }
@@ -257,4 +258,4 @@ class Game {
             this.enemyFrame++;
         }
     }
-}
+    }

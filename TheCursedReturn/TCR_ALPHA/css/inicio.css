@@ -56,4 +56,31 @@ footer {
     margin-top: auto;
 }
 
+#login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    width: 400px;
+    background: #fff;
+    border-radius: 6px;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.1);
+    text-align: center;
+    visibility: hidden;
+    transition: tranform 0.4s, top 0.4s;
+}
+
+#login input {
+    margin: 2px 0;
+}
+
+.open_login {
+    visibility: visible;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1);
+}
 

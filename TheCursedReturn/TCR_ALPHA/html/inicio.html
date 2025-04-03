@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/inicio.css">
     <title>The Cursed Return</title>
 </head>
+
 <body>
     <div id="logo_equipo">
         <img src="../images/logo_equipo.png" width="150px">
@@ -15,13 +17,35 @@
     </div>
     <nav>
         <div class="buttons">
-        <button id="button" onclick="location.href='../html/clases.html'">START</button>
-        <button id="button" onclick="location.href='../html/interfaz.html'">RESUME</button>
-        <button id="button" onclick="location.href='../html/creditos.html'">CREDITS</button>
-    </div>
+            <button id="button" onclick="openLogin()">Login</button>
+            <div class="login">
+                <form id="login">
+                    <input type="text" name="userID" placeholder="Type your user id">
+                    <input type="text" name="password" placeholder="Type your password">
+                    <input type="submit" value="Login">
+                    <button id="button" onclick="closeLogin()">Close</button>
+                </form>
+            </div>
+            <button id="button" onclick="location.href='../html/clases.html'">START</button>
+            <button id="button" onclick="location.href='../html/interfaz.html'">RESUME</button>
+            <button id="button" onclick="location.href='../html/creditos.html'">CREDITS</button>
+        </div>
     </nav>
     <footer>
         <p>© 2025 The Cursed Return, Infinite Horizon Studios</p>
     </footer>
+
+    <script>
+        let login = document.getElementById("login");
+
+        function openLogin() {
+            login.classList.add("open_login");
+        }
+        function closeLogin() {
+            login.classList.remove("open_login");
+        }
+    </script>
+
 </body>
+
 </html>

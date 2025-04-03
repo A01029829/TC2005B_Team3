@@ -8,6 +8,7 @@ const CANVAS_HEIGHT = canvas.height = 608;
 let paused = false;
 let gameOver = false;
 
+
 // === Sprite and Map Config ===
 // maps object contains all level backgrounds grouped by biome
 const maps = {

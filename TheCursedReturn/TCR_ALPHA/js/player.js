@@ -6,7 +6,6 @@ class Player extends AnimatedObject {
         // === Player Setup ===
         // uses AnimatedObject (so player has sprites/animation support)
         super(position, 64, 65, 'rgba(0,0,0,0)', 'player', 12);
-
         this.speed = 3;
         this.movementFrames = movementFrames;
         this.attackRow = attackRow;
