@@ -1,15 +1,20 @@
+// === Get Audio Canvas Element ===
+// grabs the canvas element
 const canvas = document.getElementById('audio');
 
-// Configura el volumen inicial (0.5 = 50%)
+// === Set Initial Background Music Volume ===
+// sets default music volume to 50% when the page loads
 document.getElementById('backgroundMusic').volume = 0.5;
 
-// Guardar el estado de reproducción en localStorage
+// === Save Music Play State to localStorage ===
+// when music starts playing, save that info and the volume to localStorage
 document.getElementById('backgroundMusic').addEventListener('play', function() {
     localStorage.setItem('musicPlaying', 'true');
     localStorage.setItem('musicVolume', this.volume);
 });
 
-// Comprobar si la música ya estaba reproduciéndose
+// === Auto-Play Music if It Was Playing Last Time ===
+// when the page loads, check if music was playing before and resume it
 window.addEventListener('load', function() {
     const music = document.getElementById('backgroundMusic');
     if (localStorage.getItem('musicPlaying') === 'true') {
@@ -20,7 +25,8 @@ window.addEventListener('load', function() {
     }
 });
 
-// Referencias a elementos DOM - Verificamos si existen primero
+// === Get DOM Elements for Audio Controls ===
+// grab all the audio-related elements from the HTML
 const backgroundMusic = document.getElementById('backgroundMusic');
 const soundEffect = document.getElementById('soundEffect');
 const musicVolume = document.getElementById('musicVolume');
@@ -30,42 +36,44 @@ const effectsVolume = document.getElementById('effectsVolume');
 const effectsVolumeValue = document.getElementById('effectsVolumeValue');
 const testSound = document.getElementById('testSound');
 
-// Inicializar configuración de audio
+// === Initialize Audio Settings ===
+// this sets up initial volumes, mute, and tries to play music
 function initAudioSettings() {
-    console.log("Inicializando configuración de audio");
-    
-    // Verificar si los elementos existen antes de interactuar con ellos
+    console.log("Initializing audio settings");
+
+    // === Background Music Setup ===
+    // load saved music volume or use default, also update the UI
     if (backgroundMusic) {
-        // Configurar el volumen inicial de la música
         const savedMusicVolume = localStorage.getItem('musicVolume') || "0.5";
         backgroundMusic.volume = parseFloat(savedMusicVolume);
-        console.log("Volumen de música establecido a:", backgroundMusic.volume);
-        
-        // Actualizar el deslizador de volumen si existe
+        console.log("Music volume set to:", backgroundMusic.volume);
+
+        // update volume slider and label
         if (musicVolume && musicVolumeValue) {
             musicVolume.value = savedMusicVolume;
             musicVolumeValue.textContent = `${Math.round(parseFloat(savedMusicVolume) * 100)}%`;
         }
-        
-        // Verificar estado de silencio
+
+        // set mute/unmute label based on saved setting
         if (localStorage.getItem('musicMuted') === 'true') {
             backgroundMusic.muted = true;
-            if (muteMusic) muteMusic.textContent = '🔊 Activar sonido';
+            if (muteMusic) muteMusic.textContent = '🔊 Turn On Sound';
         } else {
             backgroundMusic.muted = false;
-            if (muteMusic) muteMusic.textContent = '🔇 Silenciar';
+            if (muteMusic) muteMusic.textContent = '🔇 Mute';
         }
-        
-        // Siempre intenta reproducir la música automáticamente
+
+        // try to play music right away
         playBackgroundMusic();
     }
-    
-    // Configurar el volumen inicial de los efectos
+
+    // === Sound Effects Setup ===
+    // load saved sound effects volume or use default
     if (soundEffect) {
         const savedEffectsVolume = localStorage.getItem('effectsVolume') || "0.7";
         soundEffect.volume = parseFloat(savedEffectsVolume);
-        
-        // Actualizar el deslizador de efectos si existe
+
+        // update slider and label
         if (effectsVolume && effectsVolumeValue) {
             effectsVolume.value = savedEffectsVolume;
             effectsVolumeValue.textContent = `${Math.round(parseFloat(savedEffectsVolume) * 100)}%`;
@@ -73,114 +81,122 @@ function initAudioSettings() {
     }
 }
 
-// Configurar los eventos para los controles
+// === Setup All Event Listeners for Audio Controls ===
+// adds interactivity to the sliders and buttons
 function setupEventListeners() {
-    // Control de volumen de música
+
+    // === Music Volume Slider ===
+    // change music volume live and save the new value
     if (musicVolume && backgroundMusic && musicVolumeValue) {
         musicVolume.addEventListener('input', function() {
             const value = this.value;
             musicVolumeValue.textContent = `${Math.round(parseFloat(value) * 100)}%`;
             backgroundMusic.volume = parseFloat(value);
             localStorage.setItem('musicVolume', value);
-            console.log("Volumen de música ajustado a:", value);
+            console.log("Music volume changed to:", value);
         });
     }
-    
-    // Control de volumen de efectos
+
+    // === Effects Volume Slider ===
+    // change sound effect volume live and save it
     if (effectsVolume && soundEffect && effectsVolumeValue) {
         effectsVolume.addEventListener('input', function() {
             const value = this.value;
             effectsVolumeValue.textContent = `${Math.round(parseFloat(value) * 100)}%`;
             soundEffect.volume = parseFloat(value);
             localStorage.setItem('effectsVolume', value);
-            console.log("Volumen de efectos ajustado a:", value);
+            console.log("Effects volume changed to:", value);
         });
     }
-    
-    // Botón para probar efectos de sonido
+
+    // === Test Sound Effect Button ===
+    // plays a sample effect sound when button is clicked
     if (testSound && soundEffect) {
         testSound.addEventListener('click', function() {
-            console.log("Probando efecto de sonido");
+            console.log("Testing sound effect");
             soundEffect.currentTime = 0;
-            soundEffect.play().catch(e => console.log("Error al reproducir efecto:", e));
+            soundEffect.play().catch(e => console.log("Error playing sound effect:", e));
         });
     }
 }
 
-// Función para silenciar/activar el sonido
+// === Toggle Mute/Unmute Music Function ===
+// allows user to mute or unmute background music
 function toggleMute() {
     if (!backgroundMusic) return;
-    
+
     if (backgroundMusic.muted) {
         backgroundMusic.muted = false;
-        if (muteMusic) muteMusic.textContent = '🔇 Silenciar';
+        if (muteMusic) muteMusic.textContent = '🔇 Mute';
         localStorage.setItem('musicMuted', 'false');
-        console.log("Audio activado");
+        console.log("Sound unmuted");
     } else {
         backgroundMusic.muted = true;
-        if (muteMusic) muteMusic.textContent = '🔊 Activar sonido';
+        if (muteMusic) muteMusic.textContent = '🔊 Turn On Sound';
         localStorage.setItem('musicMuted', 'true');
-        console.log("Audio silenciado");
+        console.log("Sound muted");
     }
 }
 
-// Exponer la función para uso global
+// === Make Toggle Mute Available Globally ===
+// allows toggleMute() to be called from HTML using onclick
 window.toggleMute = toggleMute;
 
-// Función para intentar reproducir la música
+// === Try Playing Background Music Automatically ===
+// tries to play music right away; if blocked, waits for user to interact with it
 function playBackgroundMusic() {
     if (!backgroundMusic) return;
-    
+
     let playPromise = backgroundMusic.play();
-    
+
     if (playPromise !== undefined) {
         playPromise.then(_ => {
-            console.log("Reproducción de música iniciada con éxito");
+            console.log("Music started playing successfully");
             localStorage.setItem('musicPlaying', 'true');
         })
         .catch(error => {
-            console.log("Error al reproducir música automáticamente:", error);
-            
-            // Configurar evento para reproducir después de la interacción del usuario
+            console.log("Auto-play failed:", error);
+
+            // === Fallback: Wait for User Interaction to Play ===
+            // this handles browsers blocking auto-play
             const startAudio = function() {
-                console.log("Intentando reproducir después de interacción del usuario");
+                console.log("Trying to play after user interaction");
                 backgroundMusic.play()
                     .then(() => {
-                        console.log("Reproducción iniciada después de interacción");
+                        console.log("Music started after interaction");
                         localStorage.setItem('musicPlaying', 'true');
                     })
-                    .catch(e => console.log("Error al reproducir después de interacción:", e));
-                
-                // Limpiar eventos
+                    .catch(e => console.log("Error after interaction:", e));
+
+                // remove once-only event listeners
                 document.removeEventListener('click', startAudio);
                 document.removeEventListener('touchstart', startAudio);
                 document.removeEventListener('keydown', startAudio);
             };
-            
-            // Múltiples tipos de interacción para mayor compatibilidad
+
+            // add fallback listeners for multiple interaction types
             document.addEventListener('click', startAudio, { once: true });
             document.addEventListener('touchstart', startAudio, { once: true });
             document.addEventListener('keydown', startAudio, { once: true });
-            
-            // Mensaje para el usuario
-            console.log("Esperando interacción del usuario para reproducir audio...");
+
+            console.log("Waiting for user interaction to play audio...");
         });
     }
 }
 
-// Inicialización cuando el DOM esté listo
+// === Initialize Audio Setup When DOM Is Ready ===
+// starts setup once HTML is fully loaded (not waiting for images or other stuff)
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("DOM cargado, iniciando configuración de audio");
-    
+    console.log("DOM ready, setting up audio");
     initAudioSettings();
     setupEventListeners();
 });
 
-// También intentamos iniciar la reproducción cuando la página está completamente cargada
+// === Retry Playing Music on Full Page Load ===
+// in case music didn’t start earlier, try again after full page load
 window.addEventListener('load', function() {
-    // Si aún no se está reproduciendo, intentamos de nuevo
     if (backgroundMusic && backgroundMusic.paused) {
-        console.log("Intentando reproducir en evento 'load'");
+        console.log("Trying to play music on load event");
         playBackgroundMusic();
     }
 });
