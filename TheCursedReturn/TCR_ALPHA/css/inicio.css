@@ -62,25 +62,40 @@ footer {
     align-items: center;
     flex-direction: column;
 
+    padding: 100px 0px;
+    border: #ad1324 solid 5px;
+
     width: 400px;
-    background: #fff;
+    background: #3e3d3d;
     border-radius: 6px;
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: 0; 
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.1);
+    transform: translate(-50%, -50%) scale(0.1); 
     text-align: center;
-    visibility: hidden;
-    transition: tranform 0.4s, top 0.4s;
+    visibility: hidden;  
+    transition: transform 0.4s, top 0.4s;
 }
 
-#login input {
+#login input{
     margin: 2px 0;
 }
 
+#login #submit, #login button {
+    background-color: #ad1324;
+    color: #d5d4cc;
+    padding: 5px 16px;
+    font-size: 25px;
+    border-radius: 12px;
+    box-shadow: 3px 3px #ad1324;
+    font-family: copperplate;
+    text-shadow: 2px 2px #ad1324;
+    cursor: pointer;
+}
+
 .open_login {
-    visibility: visible;
-    top: 50%;
-    transform: translate(-50%, -50%) scale(1);
+    visibility: visible !important; 
+    top: 50% !important;
+    transform: translate(-50%, -50%) scale(1) !important;
 }
 
