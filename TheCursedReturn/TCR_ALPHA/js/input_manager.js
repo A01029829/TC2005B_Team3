@@ -1,5 +1,6 @@
 // === InputManager Class ===
 // handles keyboard input by tracking key states based on a key map
+
 class InputManager {
     constructor(keyMap) {
         // === keysPressed stores which keys are currently held down ===
