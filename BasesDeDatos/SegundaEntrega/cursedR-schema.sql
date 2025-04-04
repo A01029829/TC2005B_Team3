@@ -31,24 +31,39 @@ CREATE TABLE Enemigo(
     bioma ENUM('desierto', 'bosque', 'nieve') NOT NULL,
     nivel TINYINT DEFAULT 1 NOT NULL,
     HP SMALLINT NOT NULL,
+    puntos INT DEFAULT 0,
     CONSTRAINT chk_HP_bioma CHECK (
         (bioma = 'desierto' AND nombreEnemigo = 'esqueleto' AND (
-            (nivel = 1 AND HP = 70) OR
-            (nivel = 2 AND HP = 100) OR
-            (nivel = 3 AND HP = 150)
+            (tipoEnemigo= 'comun' AND nivel = 1 AND HP = 70 AND puntos=10) OR
+            (tipoEnemigo= 'comun' AND nivel = 2 AND HP = 100 AND puntos=20) OR
+            (tipoEnemigo= 'comun' AND nivel = 3 AND HP = 150 AND puntos=30) OR
+            (tipoEnemigo= 'fuerte' AND nivel = 1 AND HP = 200 AND puntos=30) OR
+            (tipoEnemigo= 'fuerte' AND nivel = 2 AND HP = 350 AND puntos=40) OR
+            (tipoEnemigo= 'fuerte' AND nivel = 3 AND HP = 500 AND puntos=50) OR
+            (tipoEnemigo= 'jefe' AND nivel = 1 AND HP = 1000 AND puntos=100) OR
+            (tipoEnemigo= 'jefe' AND nivel = 2 AND HP = 1500 AND puntos=100) OR
+            (tipoEnemigo= 'jefe' AND nivel = 3 AND HP = 2000 AND puntos=100)
         )) OR
         (bioma = 'bosque' AND nombreEnemigo IN ('duende', 'lagarto') AND (
-            (tipoEnemigo = 'comun' AND HP = 70) OR
-            (tipoEnemigo = 'fuerte' AND HP = 200)
+            (tipoEnemigo = 'comun' AND nivel=1 AND HP = 70 AND puntos=10) OR
+            (tipoEnemigo = 'comun' AND nivel=2 AND HP = 100 AND puntos=20) OR
+            (tipoEnemigo = 'comun' AND nivel=3 AND HP = 150 AND puntos=30) OR
+            (tipoEnemigo = 'fuerte' AND nivel=1 AND HP = 200 AND puntos=30) OR
+            (tipoEnemigo = 'fuerte' AND nivel=2 AND HP = 350 AND puntos=40) OR
+            (tipoEnemigo = 'fuerte' AND nivel=3 AND HP = 500 AND puntos=50) OR
+            (tipoEnemigo = 'jefe' AND nivel=1 AND HP = 1000 AND puntos=100) OR
+            (tipoEnemigo = 'jefe' AND nivel=2 AND HP = 1500 AND puntos=100) OR
+            (tipoEnemigo = 'jefe' AND nivel=3 AND HP = 2000 AND puntos=100)
         )) OR
-        (bioma = 'nieve' AND nombreEnemigo IN ('lobo', 'minotauro') AND HP = 200) OR
-        (tipoEnemigo = 'jefe' AND (
-            (nivel = 1 AND HP = 1000) OR
-            (nivel = 2 AND HP = 1500) OR
-            (nivel = 3 AND HP = 2000)
-        ))
-    )
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        (bioma = 'nieve' AND nombreEnemigo IN ('lobo', 'minotauro') AND (
+            (tipoEnemigo = 'fuerte' AND nivel=1 AND HP = 200 AND puntos=30) OR
+            (tipoEnemigo = 'fuerte' AND nivel=2 AND HP = 350 AND puntos=40) OR
+            (tipoEnemigo = 'fuerte' AND nivel=3 AND HP = 500 AND puntos=50) OR
+            (tipoEnemigo = 'jefe' AND nivel=1 AND HP = 1000 AND puntos=100) OR
+            (tipoEnemigo = 'jefe' AND nivel=2 AND HP = 1500 AND puntos=100) OR
+            (tipoEnemigo = 'jefe' AND nivel=3 AND HP = 2000 AND puntos=100)
+    ))
+)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Tabla Armas (actualizada)
 CREATE TABLE Armas(
@@ -69,8 +84,8 @@ CREATE TABLE Armas(
 -- Tabla Objetos (mejorada)
 CREATE TABLE Objetos(
     id_objeto INT AUTO_INCREMENT PRIMARY KEY,
-    tipoObjeto ENUM('curandero', 'armero', 'cofre') NOT NULL,
     id_recompensa INT NOT NULL,
+    tipoObjeto ENUM('curandero', 'armero', 'cofre') NOT NULL,
     FOREIGN KEY (id_recompensa) REFERENCES Recompensas(id_recompensa)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -95,6 +110,7 @@ CREATE TABLE Partida(
     nivelActual TINYINT DEFAULT 1 NOT NULL,
     salaActual TINYINT DEFAULT 1 NOT NULL,
     longitudMaldicion DECIMAL(5,2) NOT NULL,
+    puntajeTotal INT DEFAULT 0,
     FOREIGN KEY (id_jugador) REFERENCES Jugador(id_jugador),
     FOREIGN KEY (id_clase) REFERENCES Clases(id_clase)
     -- Restricciones CHECK permanecen igual
@@ -111,58 +127,58 @@ CREATE TABLE Partida_Enemigo(
     FOREIGN KEY (id_enemigo) REFERENCES Enemigo(id_enemigo)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-ALTER TABLE Partida_Enemigo 
-ADD puntos INT DEFAULT 0;
+-- ALTER TABLE Partida_Enemigo 
+-- ADD puntos INT DEFAULT 0;
 
--- Luego crear trigger para actualizarla
-DELIMITER //
-CREATE TRIGGER calcular_puntos_enemigo
-BEFORE INSERT ON Partida_Enemigo
-FOR EACH ROW
-BEGIN
-    DECLARE tipo_e VARCHAR(10);
+-- -- Luego crear trigger para actualizarla
+-- DELIMITER //
+-- CREATE TRIGGER calcular_puntos_enemigo
+-- BEFORE INSERT ON Partida_Enemigo
+-- FOR EACH ROW
+-- BEGIN
+--     DECLARE tipo_e VARCHAR(10);
     
-    -- Obtener el tipo de enemigo
-    SELECT tipoEnemigo INTO tipo_e
-    FROM Enemigo
-    WHERE id_enemigo = NEW.id_enemigo;
+--     -- Obtener el tipo de enemigo
+--     SELECT tipoEnemigo INTO tipo_e
+--     FROM Enemigo
+--     WHERE id_enemigo = NEW.id_enemigo;
     
-    -- Calcular puntos basados en el tipo y número de enemigos derrotados
-    IF tipo_e = 'comun' THEN
-        SET NEW.puntos = NEW.EneDerrotados * 10;
-    ELSEIF tipo_e = 'fuerte' THEN
-        SET NEW.puntos = NEW.EneDerrotados * 30;
-    ELSEIF tipo_e = 'jefe' THEN
-        SET NEW.puntos = NEW.EneDerrotados * 100;
-    END IF;
-END //
-DELIMITER ;
+--     -- Calcular puntos basados en el tipo y número de enemigos derrotados
+--     IF tipo_e = 'comun' THEN
+--         SET NEW.puntos = NEW.EneDerrotados * 10;
+--     ELSEIF tipo_e = 'fuerte' THEN
+--         SET NEW.puntos = NEW.EneDerrotados * 30;
+--     ELSEIF tipo_e = 'jefe' THEN
+--         SET NEW.puntos = NEW.EneDerrotados * 100;
+--     END IF;
+-- END //
+-- DELIMITER ;
 
 -- También necesitamos un trigger para UPDATE
-DELIMITER //
-CREATE TRIGGER actualizar_puntos_enemigo
-BEFORE UPDATE ON Partida_Enemigo
-FOR EACH ROW
-BEGIN
-    DECLARE tipo_e VARCHAR(10);
+-- DELIMITER //
+-- CREATE TRIGGER actualizar_puntos_enemigo
+-- BEFORE UPDATE ON Partida_Enemigo
+-- FOR EACH ROW
+-- BEGIN
+--     DECLARE tipo_e VARCHAR(10);
     
-    -- Obtener el tipo de enemigo
-    SELECT tipoEnemigo INTO tipo_e
-    FROM Enemigo
-    WHERE id_enemigo = NEW.id_enemigo;
+--     -- Obtener el tipo de enemigo
+--     SELECT tipoEnemigo INTO tipo_e
+--     FROM Enemigo
+--     WHERE id_enemigo = NEW.id_enemigo;
     
-    -- Recalcular puntos si cambia el número de enemigos derrotados
-    IF NEW.EneDerrotados != OLD.EneDerrotados THEN
-        IF tipo_e = 'comun' THEN
-            SET NEW.puntos = NEW.EneDerrotados * 10;
-        ELSEIF tipo_e = 'fuerte' THEN
-            SET NEW.puntos = NEW.EneDerrotados * 30;
-        ELSEIF tipo_e = 'jefe' THEN
-            SET NEW.puntos = NEW.EneDerrotados * 100;
-        END IF;
-    END IF;
-END //
-DELIMITER ;
+--     -- Recalcular puntos si cambia el número de enemigos derrotados
+--     IF NEW.EneDerrotados != OLD.EneDerrotados THEN
+--         IF tipo_e = 'comun' THEN
+--             SET NEW.puntos = NEW.EneDerrotados * 10;
+--         ELSEIF tipo_e = 'fuerte' THEN
+--             SET NEW.puntos = NEW.EneDerrotados * 30;
+--         ELSEIF tipo_e = 'jefe' THEN
+--             SET NEW.puntos = NEW.EneDerrotados * 100;
+--         END IF;
+--     END IF;
+-- END //
+-- DELIMITER ;
 
 -- Esta tabla deberá tener un trigger en el futuro para evitar que se generen más de 1 objeto por sala y
 -- 2 por nivel
@@ -173,6 +189,7 @@ CREATE TABLE Partida_Objetos(
     PRIMARY KEY (id_partida, id_objeto),
     FOREIGN KEY (id_partida) REFERENCES Partida(id_partida),
     FOREIGN KEY (id_objeto) REFERENCES Objetos(id_objeto)
+    -- CONSTRAINT chk_ObjGenerados CHECK (ObjGenerados <= 1)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE Partida_Armas(
@@ -184,13 +201,14 @@ CREATE TABLE Partida_Armas(
     FOREIGN KEY (id_arma) REFERENCES Armas(id_arma)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Vista de Puntuaciones
+-- Vista de Puntuaciones adaptada al nuevo esquema
 CREATE VIEW Puntuaciones AS
 SELECT 
     p.id_partida,
     j.nombreUsuario,
-    SUM(pe.puntos) AS puntuacion_total
+    SUM(e.puntos * pe.EneDerrotados) AS puntuacion_total
 FROM Partida p
 JOIN Jugador j ON p.id_jugador = j.id_jugador
 JOIN Partida_Enemigo pe ON p.id_partida = pe.id_partida
+JOIN Enemigo e ON pe.id_enemigo = e.id_enemigo
 GROUP BY p.id_partida, j.nombreUsuario;

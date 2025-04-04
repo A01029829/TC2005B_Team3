@@ -17,34 +17,38 @@
     </div>
     <nav>
         <div class="buttons">
-            <!-- <button id="button" onclick="openLogin()">Login</button>
+            <!-- <button id="login_button" onclick="openLogin()">Login</button>
             <div class="login">
+    
                 <form id="login">
+                    <h2>Login</h2>
                     <input type="text" name="userID" placeholder="Type your user id">
                     <input type="text" name="password" placeholder="Type your password">
-                    <input type="submit" value="Login">
-                    <button id="button" onclick="closeLogin()">Close</button>
+                    <input id="submit" type="submit" value="Login">
+                    <button type="button" id="close_button" onclick="closeLogin()">Close</button>
                 </form>
             </div> -->
-            <button id="button" onclick="location.href='../html/clases.html'">START</button>
-            <button id="button" onclick="location.href='../html/interfaz.html'">RESUME</button>
-            <button id="button" onclick="location.href='../html/creditos.html'">CREDITS</button>
+            <button id="button" onclick="location.href='../html/clases.html'">NUEVA PARTIDA</button>
+            <button id="button" onclick="location.href='../html/interfaz.html'">RESUMIR PARTIDA</button>
+            <button id="button" onclick="location.href='../html/creditos.html'">CREDITOS</button>
         </div>
     </nav>
     <footer>
         <p>© 2025 The Cursed Return, Infinite Horizon Studios</p>
     </footer>
 
-    <!-- <script>
+    <script>
         let login = document.getElementById("login");
 
         function openLogin() {
+            console.log("openLogin");
             login.classList.add("open_login");
+            console.log("change");
         }
         function closeLogin() {
             login.classList.remove("open_login");
         }
-    </script> -->
+    </script>
 
 </body>
 

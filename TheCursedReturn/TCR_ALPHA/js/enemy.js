@@ -1,5 +1,5 @@
 // === Enemy Class Definition ===
-// this defines the enemy behavior, movement, animation, and basic attack logic
+// This defines the enemy behavior, movement, animation, and basic attack logic
 class Enemy extends AnimatedObject {
     constructor(position, speed, spritePath) {
 
@@ -11,7 +11,7 @@ class Enemy extends AnimatedObject {
         this.setSprite(spritePath, { x: 0, y: 0, width: 64, height: 65 }); // sprite setup
 
         // === Basic Stats and State ===
-        this.maxHealth = 10;
+        this.maxHealth = 20;
         this.health = this.maxHealth;
         this.attacking = false;
 
@@ -24,14 +24,17 @@ class Enemy extends AnimatedObject {
         };
 
         this.lastDirection = 'down'; // used for facing direction
-        this.attackMagnitude = 1; // strength of attack
+        this.attackMagnitude = 2; // strength of attack
     }
 
     // === Move Enemy Toward Player (if within range) ===
     moveToward(player) {
         const dx = player.position.x - this.position.x;
         const dy = player.position.y - this.position.y;
-        const distance = Math.sqrt(dx * dx + dy * dy); // distance to player
+
+        // Math.sqrt(dx * dx + dy * dy): pythagorean theorem
+        // calculates the distance between the enemy and the player (the hypotenuse)
+        const distance = Math.sqrt(dx * dx + dy * dy);
 
         const detectionRadius = 150; // enemy starts chasing if player is within this range
         if (distance > detectionRadius) {
@@ -39,9 +42,16 @@ class Enemy extends AnimatedObject {
             return;
         }
 
-        const angle = Math.atan2(dy, dx); // direction to move in
+        // Math.atan2(dy, dx): gives you the angle from enemy to player
+        // super useful to know which direction to move in
+        const angle = Math.atan2(dy, dx);
+
+        // Math.cos(angle): gets the x-direction from the angle
+        // Math.sin(angle): gets the y-direction from the angle
+        // multiplying them by speed makes the enemy move toward the player
         this.position.x += Math.cos(angle) * this.speed;
         this.position.y += Math.sin(angle) * this.speed;
+
         this.moving = true;
     }
 
@@ -50,7 +60,8 @@ class Enemy extends AnimatedObject {
         const dx = player.position.x - this.position.x;
         const dy = player.position.y - this.position.y;
 
-        // === Determine Facing Direction Based on Player's Position ===
+        // Math.abs: gets the absolute value (we don’t care if it's negative)
+        // this helps us figure out if the enemy is more horizontal or vertical compared to the player
         if (Math.abs(dx) > Math.abs(dy)) {
             this.lastDirection = dx > 0 ? 'right' : 'left';
         } else {
@@ -61,16 +72,18 @@ class Enemy extends AnimatedObject {
         if (this.attacking) {
             this.spriteRect.y = this.attackRow[this.lastDirection]; // attack animation
         } else if (this.moving) {
+
             // walking animations
             if (this.lastDirection === 'right') this.spriteRect.y = 11;
             if (this.lastDirection === 'left') this.spriteRect.y = 9;
             if (this.lastDirection === 'down') this.spriteRect.y = 10;
             if (this.lastDirection === 'up') this.spriteRect.y = 8;
         } else {
-            this.spriteRect.y = 10; // idle (default is down)
+            this.spriteRect.y = 10; // idle
         }
 
-        // === Handle Frame Switching for Animation ===
+        // Math.floor: rounds down to nearest whole number
+        // we use it to switch frames smoothly every few game frames
         if (this.attacking || this.moving) {
             this.spriteRect.x = Math.floor(gameFrame / staggerFrames) % 4;
         }

@@ -1,48 +1,72 @@
 USE cursedR;
 
+-- Catálogo de recompensas
 INSERT INTO Recompensas (tipoR, valorR) VALUES
-('vida', '50'),
-('vida', '100'),
+('vida', '25'),
 ('arma', 'Ballesta'),
 ('arma', 'Lanza'),
 ('arma', 'HachaDeGuerra'),
 ('arma', 'Daga'),
-('pocima', 'Velocidad'),
-('pocima', 'Fuerza'),
-('pocima', 'Resistencia'),
-('pocima', 'Invisibilidad');
+('arma', 'Ballesta'),
+('arma', 'Lanza'),
+('arma', 'HachaDeGuerra'),
+('arma', 'Daga'),
+('vida', '25');
 
+-- Catálogo de daño por clase
 INSERT INTO Clases (nombreClase, danoBasico, danoCargado, alcanceClase) VALUES
 ('Guerrero', 35, 60, 0),
 ('Arquero', 15, 40, 40),
 ('Hechicero', 20, 50, 20);
 
-INSERT INTO Enemigo (nombreEnemigo, tipoEnemigo, bioma, nivel, HP) VALUES
-('esqueleto', 'comun', 'desierto', 1, 70),
-('esqueleto', 'comun', 'desierto', 2, 100),
-('esqueleto', 'comun', 'desierto', 3, 150),
-('esqueleto', 'jefe', 'desierto', 1, 1000),
-('esqueleto', 'jefe', 'desierto', 2, 1500),
-('esqueleto', 'jefe', 'desierto', 3, 2000),
-('duende', 'comun', 'bosque', 1, 70),
-('duende', 'fuerte', 'bosque', 1, 200),
-('duende', 'jefe', 'bosque', 1, 1000),
-('duende', 'jefe', 'bosque', 2, 1500),
-('duende', 'jefe', 'bosque', 3, 2000),
-('lagarto', 'comun', 'bosque', 1, 70),
-('lagarto', 'fuerte', 'bosque', 1, 200),
-('lagarto', 'jefe', 'bosque', 1, 1000),
-('lagarto', 'jefe', 'bosque', 2, 1500),
-('lagarto', 'jefe', 'bosque', 3, 2000),
-('lobo', 'comun', 'nieve', 1, 200),
-('lobo', 'jefe', 'nieve', 1, 1000),
-('lobo', 'jefe', 'nieve', 2, 1500),
-('lobo', 'jefe', 'nieve', 3, 2000),
-('minotauro', 'comun', 'nieve', 1, 200),
-('minotauro', 'jefe', 'nieve', 1, 1000),
-('minotauro', 'jefe', 'nieve', 2, 1500),
-('minotauro', 'jefe', 'nieve', 3, 2000);
+-- Catálogo de enemigos
+-- FALTA AGREGAR DAÑO DE LOS ENEMIGOS
+INSERT INTO Enemigo (nombreEnemigo, tipoEnemigo, bioma, nivel, HP, puntos) VALUES
+('esqueleto', 'comun', 'desierto', 1, 70, 10),
+('esqueleto', 'comun', 'desierto', 2, 100, 20),
+('esqueleto', 'comun', 'desierto', 3, 150, 30),
+('esqueleto', 'fuerte', 'desierto', 1, 200, 30),
+('esqueleto', 'fuerte', 'desierto', 2, 350, 40),
+('esqueleto', 'fuerte', 'desierto', 3, 500, 50),
+('esqueleto', 'jefe', 'desierto', 1, 1000, 100),
+('esqueleto', 'jefe', 'desierto', 2, 1500, 100),
+('esqueleto', 'jefe', 'desierto', 3, 2000, 100),
 
+('duende', 'comun', 'bosque', 1, 70, 10),
+('duende', 'comun', 'bosque', 2, 100, 20),
+('duende', 'comun', 'bosque', 3, 150, 30),
+('duende', 'fuerte', 'bosque', 1, 200, 30),
+('duende', 'fuerte', 'bosque', 2, 350, 40),
+('duende', 'fuerte', 'bosque', 3, 500, 50),
+('duende', 'jefe', 'bosque', 1, 1000, 100),
+('duende', 'jefe', 'bosque', 2, 1500, 100),
+('duende', 'jefe', 'bosque', 3, 2000, 100),
+
+('lagarto', 'comun', 'bosque', 1, 70, 10),
+('lagarto', 'comun', 'bosque', 2, 100, 20),
+('lagarto', 'comun', 'bosque', 3, 150, 30),
+('lagarto', 'fuerte', 'bosque', 1, 200, 30),
+('lagarto', 'fuerte', 'bosque', 2, 350, 40),
+('lagarto', 'fuerte', 'bosque', 3, 500, 50),
+('lagarto', 'jefe', 'bosque', 1, 1000, 100),
+('lagarto', 'jefe', 'bosque', 2, 1500, 100),
+('lagarto', 'jefe', 'bosque', 3, 2000, 100),
+
+('lobo', 'fuerte', 'nieve', 1, 200, 30),
+('lobo', 'fuerte', 'nieve', 2, 350, 40),
+('lobo', 'fuerte', 'nieve', 3, 500, 50),
+('lobo', 'jefe', 'nieve', 1, 1000, 100),
+('lobo', 'jefe', 'nieve', 2, 1500, 100),
+('lobo', 'jefe', 'nieve', 3, 2000, 100),
+
+('minotauro', 'fuerte', 'nieve', 1, 200, 30),
+('minotauro', 'fuerte', 'nieve', 2, 350, 40),
+('minotauro', 'fuerte', 'nieve', 3, 500, 50),
+('minotauro', 'jefe', 'nieve', 1, 1000, 100),
+('minotauro', 'jefe', 'nieve', 2, 1500, 100),
+('minotauro', 'jefe', 'nieve', 3, 2000, 100);
+
+-- Armas no sujetas a cambios
 INSERT INTO Armas (nombreArma, danoArma, distanciaArma, efectoArma, duracionArma, usaDanoClase) VALUES
 ('Ballesta', 40, 30, 'ninguno', 60, FALSE),
 ('HachaDeGuerra', 45, 0, 'ninguno', 60, FALSE),
@@ -51,11 +75,11 @@ INSERT INTO Armas (nombreArma, danoArma, distanciaArma, efectoArma, duracionArma
 
 INSERT INTO Objetos (tipoObjeto, id_recompensa) VALUES
 ('curandero', 1),
-('curandero', 2),
+('armero', 2),
 ('armero', 3),
 ('armero', 4),
 ('armero', 5),
-('armero', 6),
+('cofre', 6),
 ('cofre', 7),
 ('cofre', 8),
 ('cofre', 9),
@@ -96,32 +120,34 @@ INSERT INTO Partida (id_jugador, id_clase, tiempoPartida, nivelActual, salaActua
 (5, 1, '00:10:30', 3, 2, 0.01),
 (5, 2, '00:11:00', 3, 1, 0.02);
 
-INSERT INTO Partida_Enemigo (id_partida, id_enemigo, EneGenerados, EneDerrotados, puntos) VALUES
-(1, 1, 5, 2, 20),
-(1, 2, 1, 0, 0),
-(2, 1, 10, 7, 70),
-(2, 4, 5, 3, 300),
-(3, 5, 3, 1, 150),
-(3, 6, 8, 5, 1000),
-(4, 7, 4, 2, 20),
-(4, 10, 1, 1, 100),
-(5, 8, 7, 4, 120),
-(5, 9, 3, 2, 200),
-(6, 11, 1, 0, 0),
-(7, 1, 15, 10, 100),
-(7, 12, 1, 1, 100),
-(8, 4, 12, 9, 900),
-(8, 5, 6, 4, 600),
-(9, 6, 9, 7, 800),
-(9, 7, 5, 3, 30),
-(10, 8, 14, 12, 360),
-(10, 10, 2, 2, 200),
-(11, 1, 6, 3, 30),
-(12, 4, 8, 5, 500),
-(13, 9, 4, 2, 200),
-(14, 12, 1, 0, 0),
-(15, 11, 1, 1, 100);
+-- Inserción en Partida_Enemigo sin la columna puntos (que ya no existe en la tabla)
+INSERT INTO Partida_Enemigo (id_partida, id_enemigo, EneGenerados, EneDerrotados) VALUES
+(1, 1, 5, 2),
+(1, 2, 1, 0),
+(2, 1, 10, 7),
+(2, 4, 5, 3),
+(3, 5, 3, 1),
+(3, 6, 8, 5),
+(4, 7, 4, 2),
+(4, 10, 1, 1),
+(5, 8, 7, 4),
+(5, 9, 3, 2),
+(6, 11, 1, 0),
+(7, 1, 15, 10),
+(7, 12, 1, 1),
+(8, 4, 12, 9),
+(8, 5, 6, 4),
+(9, 6, 9, 7),
+(9, 7, 5, 3),
+(10, 8, 14, 12),
+(10, 10, 2, 2),
+(11, 1, 6, 3),
+(12, 4, 8, 5),
+(13, 9, 4, 2),
+(14, 12, 1, 0),
+(15, 11, 1, 1);
 
+-- ObjGenerados tiene un máximo de 1 por nivel (solo puedo limitarlo por partida, cómo le hago para limitarlo por sala)
 INSERT INTO Partida_Objetos (id_partida, id_objeto, ObjGenerados) VALUES
 (1, 1, 1),
 (1, 3, 1),

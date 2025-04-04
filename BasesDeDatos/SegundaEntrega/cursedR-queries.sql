@@ -27,12 +27,15 @@ AND pe.EneGenerados > pe.EneDerrotados
 ORDER BY e.tipoEnemigo;
 
 -- Armas secundarias disponibles
-SELECT a.nombreArma, a.danoArma, a.distanciaArma, a.efectoArma, a.duracionArma, 
-       a.usaDanoClase, pa.tiempoArma
-FROM Partida_Armas pa
-JOIN Armas a ON pa.id_arma = a.id_arma
-WHERE pa.id_partida = 1
-ORDER BY pa.tiempoArma DESC;
+SELECT 
+    nombreArma AS 'Nombre del Arma',
+    danoArma AS 'Daño Base',
+    distanciaArma AS 'Alcance',
+    efectoArma AS 'Efecto',
+    duracionArma AS 'Duración',
+    'Arma Secundaria' AS 'Tipo'
+FROM 
+    Armas
 
 -- Consulta que nos permite generar nuevos enemigos
 SELECT e.id_enemigo, e.nombreEnemigo, e.tipoEnemigo, e.bioma, e.nivel, e.HP
@@ -46,10 +49,15 @@ AND e.bioma = 'bosque'
 ORDER BY RAND()
 LIMIT 5;
 
--- Puntuacion total de la partida
-SELECT SUM(pe.puntos) AS puntuacion_total
-FROM Partida_Enemigo pe
-WHERE pe.id_partida = 3;
+-- Puntuacion total de la partida (adaptado al nuevo esquema)
+SELECT 
+    SUM(e.puntos * pe.EneDerrotados) AS puntuacion_total
+FROM 
+    Partida_Enemigo pe
+JOIN 
+    Enemigo e ON pe.id_enemigo = e.id_enemigo
+WHERE 
+    pe.id_partida = 3;
 
 -- Enemigos restantes en la partida 3
 SELECT 
@@ -83,3 +91,9 @@ WHERE pe.id_partida = 3
 AND e.nivel = p.nivelActual
 AND e.tipoEnemigo = 'jefe';
 
+-- Verificación de puntuacions
+-- Para todas las puntuaciones
+SELECT * FROM Puntuaciones ORDER BY puntuacion_total DESC;
+
+-- Para la puntuación de un jugador específico
+SELECT * FROM Puntuaciones WHERE nombreUsuario = 'Juanito23';
