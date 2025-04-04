@@ -8,9 +8,9 @@ const CANVAS_HEIGHT = canvas.height = 608;
 let paused = false;
 let gameOver = false;
 
-
 // === Sprite and Map Config ===
 // maps object contains all level backgrounds grouped by biome
+// used by MapManager to randomly pick maps without repeats
 const maps = {
     woods1: '../levels/WoodsLVL1.png',
     woods2: '../levels/WoodsLVL2.png',
@@ -27,11 +27,12 @@ const maps = {
 };
 
 // === Load Selected Class from LocalStorage ===
-// defaults to knight if nothing is stored
+// tries to load the last chosen character class from memory
+// if nothing was chosen, it defaults to "knight"
 const selectedClass = localStorage.getItem("selectedClass") || "knight";
 
 // === Class Definitions: Knight, Archer, Wizard ===
-// each has a sprite, movement frame rows, and attack animation rows
+// each class has a different sprite, movement row numbers, and attack animation row
 const classes = {
     knight: {
         sprite: '../sprites/KnightSpriteSheetFINAL.png',
@@ -51,7 +52,8 @@ const classes = {
 };
 
 // === Key Bindings ===
-// maps keys to movement (and their frame row) or attack
+// maps keyboard keys to directions and their animation row
+// 'k' is used for attacking
 const keyMap = {
     w: { frameY: classes[selectedClass].movementFrames.up, dx: 0, dy: -1 },
     a: { frameY: classes[selectedClass].movementFrames.left, dx: -1, dy: 0 },
@@ -61,40 +63,45 @@ const keyMap = {
 };
 
 // === Image Assets ===
-// these images are preloaded before the game starts
+// these are loaded into memory before the game starts
 const backgroundImage = new Image();
 const playerImage = new Image();
 const enemyImage = new Image();
+const wolfImage = new Image();
 
 backgroundImage.src = '../levels/WoodsLVL1.png';
 playerImage.src = classes[selectedClass].sprite;
 enemyImage.src = '../sprites/Goblin01SpriteSheetFINAL.png';
+wolfImage.src = '../sprites/WolfSpriteSheetFINAL.png';
 
 // === UI Bars Setup (Curse and Life Bars) ===
-// these bars appear on the top-right of the game screen
+// these bars appear on the top-right of the game screen to show health and time
 const bar = new Bar(new Vect(750, 55), barwidth, 20, "white");
 let curse = new Bar(new Vect(750, 55), cursewidth, 20, "red");
 
 const lifeBar = new Bar(new Vect(750, 25), lifeBarwidth, 20, "white");
 let life = new Bar(new Vect(750, 25), lifewidth, 20, "#ad1324");
 
-// Pantalla de controles
+// === Control Tutorial Screen ===
+// shows control instructions at the start of the game
 const controls = new Image();
-controls.src = "../images/controles_2.png";
-let showControls = false;
+controls.src = "../images/movimiento.png"; // may be replaced by the next line
+controls.src = "../images/controles_2.png"; // this will overwrite the one above
+let showControls = false; // true = display controls on screen
 
 // === Start Game When Images Are Loaded ===
-// waits for all 3 images to be ready before creating the game instance
+// we wait for all 4 images to load before starting the game
 let loadedImages = 0;
 
 function tryStartGame() {
     loadedImages++;
-    if (loadedImages === 3) {
+    if (loadedImages === 4) {
 
         // === Create an Empty Collision Map to Start With ===
+        // creates a blank 57x38 tile grid filled with 0s (no obstacles)
         const emptyCollision = new CollisionMap(new Array(57 * 38).fill(0), 57, 16);
 
-        // === Create the Game Instance and Store Globally ===
+        // === Create the Game Instance and Store It Globally ===
         window.game = new Game(ctx, CANVAS_WIDTH, CANVAS_HEIGHT, {
             maps,
             keyMap,
@@ -103,15 +110,19 @@ function tryStartGame() {
             playerFrames: classes[selectedClass].movementFrames,
             playerAttackRow: classes[selectedClass].attackRow,
             enemyImagePath: enemyImage.src,
+            wolfImagePath: wolfImage.src,
             collisionMap: emptyCollision
         });
 
-        // load the proper collision data for the current map
+        // loads the correct collision data for the initial map
         window.game.updateCollisionMap();
     }
 }
 
 // === Hook Up Image Loaders to Game Start ===
+// when each image loads, we call tryStartGame() to increment counter
+// once all images are loaded (loadedImages === 4), the game starts
 backgroundImage.onload = tryStartGame;
 playerImage.onload = tryStartGame;
 enemyImage.onload = tryStartGame;
+wolfImage.onload = tryStartGame;

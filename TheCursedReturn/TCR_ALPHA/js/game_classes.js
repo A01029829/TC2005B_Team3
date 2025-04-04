@@ -1,5 +1,5 @@
 // === Vect Class (Vector Math Utility) ===
-// 2D vector class with basic math operations
+// vector class with basic math operations
 class Vect {
     constructor(x, y) {
         this.x = x;
