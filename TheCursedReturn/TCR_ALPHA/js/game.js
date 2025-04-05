@@ -18,6 +18,8 @@ class Game {
 
         this.flashScreen = false; // used to flash the screen red when the player takes damage
 
+        this.healer = null; // healer state
+
         // === Instantiate Managers and Player ===
         this.mapManager = new MapManager(assets.maps, assets.backgroundImage); // controls map switching
         this.inputManager = new InputManager(assets.keyMap); // tracks key inputs
@@ -68,6 +70,8 @@ class Game {
 
     // === Display Level Notification on Screen ===
     onNewLevel() {
+        this.healer = null;
+        this.roomForHealer = null;
         const notification = document.createElement('div');
         notification.className = 'level-notification';
 
@@ -82,6 +86,8 @@ class Game {
         setTimeout(() => {
             notification.remove(); // remove the notification after 2 seconds
         }, 2000);
+
+        this.healer = null;
     }
 
     // === Update Collision Map Based on Current Map ===
@@ -152,6 +158,20 @@ class Game {
 
         this.portal.active = false; // deactivate portal until enemies are cleared
     }
+
+spawnHealerForLevel() {
+    if (!this.healer && this.progress.visited < this.progress.rooms) {
+        const randomRoom = Math.floor(Math.random() * this.progress.rooms);
+        this.roomForHealer = randomRoom;
+    }
+    if (!this.healer && this.progress.visited === this.roomForHealer) {
+        const x = (this.canvasWidth / 2) - 32;
+        const y = (this.canvasHeight / 2) - 32;
+        this.healer = new Healer({ x, y }, this.assets.healerImagePath);
+    }
+}
+
+    
 
     
 // === Main Game Loop ===
@@ -319,6 +339,7 @@ loop() {
             this.mapManager.selectRandomMap(this.mapManager.currentMapKey, this.usedMaps);
             this.updateCollisionMap();
             this.spawnEnemiesForRoom();
+            this.spawnHealerForLevel();
         },
         () => this.onNewLevel()
     );
@@ -327,6 +348,15 @@ loop() {
         this.gameFrame++; // Only animate if doing something
     }
 
+    if (this.healer) {
+        this.healer.update();
+        this.healer.updateAnimation(this.gameFrame, this.staggerFrames);
+        this.healer.draw(this.ctx);
+        const inRange = this.healer.checkPlayerInRange(this.player);
+        this.healer.drawInteractionPrompt(this.ctx, inRange);
+        this.healer.interact(this.player, this.inputManager.keysPressed);
+    }
+    
     // === Draw UI Bars ===
     bar.draw(this.ctx);
     curse.draw(this.ctx);

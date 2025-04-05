@@ -52,9 +52,14 @@ class Player extends AnimatedObject {
 
         // === Move in Direction Based on Pressed Keys ===
         for (let key in keysPressed) {
-            if (keyMap[key] && key !== 'k') {
+            if (
+                keyMap[key] &&
+                typeof keyMap[key].dx === "number" &&
+                typeof keyMap[key].dy === "number"
+            ) {
                 const nextX = this.position.x + keyMap[key].dx * this.speed;
                 const nextY = this.position.y + keyMap[key].dy * this.speed;
+        
 
                 // check for collisions before moving
                 if (!collisionMap || !collisionMap.isBlockedPixel(nextX, nextY)) {
