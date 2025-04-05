@@ -17,7 +17,7 @@ Los controles disponibles hasta el momento se muestran al iniciar el juego:
 - `W`, `A`, `S`, `D`: Movimiento del personaje.
 - `Esc`: Abre el menú de pausa.
 - `K`: Ataque cuerpo a cuerpo.
-- 'F': Interactuar con la curandera.
+- `F`: Interactuar con la curandera.
 
 ## Mecánicas del Juego
 
@@ -54,7 +54,7 @@ Presionando `Esc` durante la partida se accede al menú de pausa, que contiene l
 
 ## ¿En qué escena comienza el prototipo? 
 
-- El prototipo comienza después de un breve contexto (por añadir en futuras versiones), donde el personaje principal debe regresar a su reino, trss una guerra que duró mucho tiempo.
+- El prototipo comienza después de un breve contexto (por añadir en futuras versiones), donde el personaje principal debe regresar a su reino, tras una guerra que duró mucho tiempo.
 - El personaje comenzará en la primera sala que formó parte de su viaje durante la guerra, pero estos irán alternándose debido a la maldición.
 
 ## ¿Qué funcionalidades ya está terminada?
@@ -69,7 +69,7 @@ Presionando `Esc` durante la partida se accede al menú de pausa, que contiene l
 - El ataque a distancia para el **Hechicero** y el **Arquero** aún está en desarrollo, las animaciones ya funcionan, solo falta implementar un sistema de proyectiles.
 - La generación aleatoria de enemigos por nivel (4 salas) está por implementarse, por ahora solo aparece un número establecido y enemigos determinados.
 - La implementación de la API y la conexión con base de datos aún falta por implementarse.
-- La generación aleatoria de objetos (armas secundarias temporales o pócimas) o npc's como la Curandera o el Hechicero están en espera a ser implementados, en esta entrega existe una versión muy temprana de la Curandera.
+- La generación aleatoria de objetos (armas secundarias temporales o pócimas) o npc's como la Curandera o el Armero están en espera a ser implementados, en esta entrega existe una versión muy temprana de la Curandera.
 - La implementación de música y efectos de sonido aún está en desarrollo.
 - El contenido de la página de "Créditos" está por completarse, ya que necesitamos encontrar la música para poder citar todo como se debe.
 - La implementación del "Dash" está en desarrollo, y por temas logísticos no logró desarrollarse a tiempo para esta entrega.
