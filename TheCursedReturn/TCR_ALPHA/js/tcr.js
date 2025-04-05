@@ -59,7 +59,8 @@ const keyMap = {
     a: { frameY: classes[selectedClass].movementFrames.left, dx: -1, dy: 0 },
     s: { frameY: classes[selectedClass].movementFrames.down, dx: 0, dy: 1 },
     d: { frameY: classes[selectedClass].movementFrames.right, dx: 1, dy: 0 },
-    k: { attacking: true }
+    k: { attacking: true },
+    f: { interact : true}
 };
 
 // === Image Assets ===
@@ -68,11 +69,13 @@ const backgroundImage = new Image();
 const playerImage = new Image();
 const enemyImage = new Image();
 const wolfImage = new Image();
+const healerImage = new Image();
 
 backgroundImage.src = '../levels/WoodsLVL1.png';
 playerImage.src = classes[selectedClass].sprite;
 enemyImage.src = '../sprites/Goblin01SpriteSheetFINAL.png';
 wolfImage.src = '../sprites/WolfSpriteSheetFINAL.png';
+healerImage.src = '../sprites/HealerSpriteSheetFINAL.png';
 
 // === UI Bars Setup (Curse and Life Bars) ===
 // these bars appear on the top-right of the game screen to show health and time
@@ -95,7 +98,7 @@ let loadedImages = 0;
 
 function tryStartGame() {
     loadedImages++;
-    if (loadedImages === 4) {
+    if (loadedImages === 5) {
 
         // === Create an Empty Collision Map to Start With ===
         // creates a blank 57x38 tile grid filled with 0s (no obstacles)
@@ -111,6 +114,7 @@ function tryStartGame() {
             playerAttackRow: classes[selectedClass].attackRow,
             enemyImagePath: enemyImage.src,
             wolfImagePath: wolfImage.src,
+            healerImagePath: healerImage.src,
             collisionMap: emptyCollision
         });
 
@@ -126,3 +130,4 @@ backgroundImage.onload = tryStartGame;
 playerImage.onload = tryStartGame;
 enemyImage.onload = tryStartGame;
 wolfImage.onload = tryStartGame;
+healerImage.onload = tryStartGame;
