@@ -1,3 +1,4 @@
+-- Active: 1743625010510@@127.0.0.1@3306@cursedr
 USE cursedR;
 
 -- Catálogo de recompensas
