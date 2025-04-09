@@ -19,6 +19,7 @@ class Game {
         this.flashScreen = false; // used to flash the screen red when the player takes damage
 
         this.healer = null; // healer state
+        this.healerSpawned = false; // healer condition to appear
 
         // === Instantiate Managers and Player ===
         this.mapManager = new MapManager(assets.maps, assets.backgroundImage); // controls map switching
@@ -32,6 +33,7 @@ class Game {
             assets.playerAttackRow
         );
         this.player.gameRef = this; // allow player to reference the full game instance
+        this.player.classType = selectedClass;
 
         // === Create Initial Enemy and Portal ===
         this.enemy = new Enemy(
@@ -72,6 +74,7 @@ class Game {
     onNewLevel() {
         this.healer = null;
         this.roomForHealer = null;
+        this.healerSpawned = false;
         const notification = document.createElement('div');
         notification.className = 'level-notification';
 
@@ -156,20 +159,19 @@ class Game {
             this.enemies.push(wolf);
         }
 
+
+        const healerSpawn = !this.healerSpawned && Math.random() < 0.25;
+        if (healerSpawn) {
+            const healerX = Math.floor(Math.random() * (this.canvasWidth - 2 * margin)) + margin;
+            const healerY = Math.floor(Math.random() * (this.canvasHeight - 2 * margin)) + margin;
+            this.healer = new Healer({ x: healerX, y: healerY }, this.assets.healerImagePath);
+            this.healerSpawned = true;
+        } else {
+            this.healer = null;
+        }
+
         this.portal.active = false; // deactivate portal until enemies are cleared
     }
-
-spawnHealerForLevel() {
-    if (!this.healer && this.progress.visited < this.progress.rooms) {
-        const randomRoom = Math.floor(Math.random() * this.progress.rooms);
-        this.roomForHealer = randomRoom;
-    }
-    if (!this.healer && this.progress.visited === this.roomForHealer) {
-        const x = (this.canvasWidth / 2) - 32;
-        const y = (this.canvasHeight / 2) - 32;
-        this.healer = new Healer({ x, y }, this.assets.healerImagePath);
-    }
-}
 
     
 
@@ -196,10 +198,69 @@ loop() {
         this.collisionMap
     );
 
+// === Healer Logic === 
+// === Healer Update & Interaction ===
+    if (this.healer) {
+        const playerInRange = this.healer.checkPlayerInRange(this.player);
+        const interacted = this.healer.interact(this.player, this.inputManager.keysPressed);
+
+        // If healing started, update life bar immediately
+        if (interacted) {
+            life.width = (this.player.health / this.player.maxHealth) * lifeBarwidth;
+            if (life.width > lifeBarwidth) life.width = lifeBarwidth;
+        }
+
+        this.healer.update();
+        this.healer.updateAnimation(this.gameFrame, this.staggerFrames);
+        this.healer.draw(this.ctx);
+        this.healer.drawInteractionPrompt(this.ctx, playerInRange);
+    }
+
     // === Player Logic ===
-    this.player.clampToBounds(this.canvasWidth, this.canvasHeight); // prevent leaving canvas
-    this.player.updateAnimation(this.gameFrame, this.staggerFrames); // animate movement
-    this.player.draw(this.ctx); // draw the player
+    this.player.updateAnimation(this.gameFrame, this.staggerFrames);
+
+    // Update and draw arrows
+    this.player.arrows.forEach(arrow => {
+        arrow.update();
+        arrow.draw(this.ctx);
+    });
+
+    this.enemies.forEach((enemy, enemyIndex) => {
+        this.player.arrows.forEach((arrow, arrowIndex) => {
+            const arrowBox = {
+                x: arrow.position.x,
+                y: arrow.position.y,
+                width: arrow.width,
+                height: arrow.height
+            };
+    
+            const enemyBox = {
+                x: enemy.position.x,
+                y: enemy.position.y,
+                width: enemy.width,
+                height: enemy.height
+            };
+    
+            const isColliding =
+                arrowBox.x < enemyBox.x + enemyBox.width &&
+                arrowBox.x + arrowBox.width > enemyBox.x &&
+                arrowBox.y < enemyBox.y + enemyBox.height &&
+                arrowBox.y + arrowBox.height > enemyBox.y;
+    
+            if (isColliding) {
+                enemy.health -= 10;
+                this.player.arrows.splice(arrowIndex, 1);
+            }
+        });
+    });
+
+    
+    
+    
+    // Remove expired arrows
+    this.player.arrows = this.player.arrows.filter(a => !a.isExpired());
+    this.player.draw(this.ctx);
+    
 
     // === Handle Each Enemy ===
     this.enemies.forEach((enemy, i) => {
@@ -236,6 +297,23 @@ loop() {
 
         // check if within attack range (if enemy.attackRange not set, default to 28)
         const inAttackRange = distance < (enemy.attackRange || 28);
+
+        // === Healer Update & Interaction ===
+        if (this.healer) {
+            const playerInRange = this.healer.checkPlayerInRange(this.player);
+            const interacted = this.healer.interact(this.player, this.inputManager.keysPressed);
+
+            // If healing started, update life bar immediately
+            if (interacted) {
+                life.width = (this.player.health / this.player.maxHealth) * lifeBarwidth;
+                if (life.width > lifeBarwidth) life.width = lifeBarwidth;
+            }
+
+            this.healer.update();
+            this.healer.updateAnimation(this.gameFrame, this.staggerFrames);
+            this.healer.draw(this.ctx);
+            this.healer.drawInteractionPrompt(this.ctx, playerInRange);
+        }
 
         if (isOverlapping) {
             // === Enemy Attacks Player ===
@@ -339,7 +417,7 @@ loop() {
             this.mapManager.selectRandomMap(this.mapManager.currentMapKey, this.usedMaps);
             this.updateCollisionMap();
             this.spawnEnemiesForRoom();
-            this.spawnHealerForLevel();
+
         },
         () => this.onNewLevel()
     );
@@ -348,14 +426,6 @@ loop() {
         this.gameFrame++; // Only animate if doing something
     }
 
-    if (this.healer) {
-        this.healer.update();
-        this.healer.updateAnimation(this.gameFrame, this.staggerFrames);
-        this.healer.draw(this.ctx);
-        const inRange = this.healer.checkPlayerInRange(this.player);
-        this.healer.drawInteractionPrompt(this.ctx, inRange);
-        this.healer.interact(this.player, this.inputManager.keysPressed);
-    }
     
     // === Draw UI Bars ===
     bar.draw(this.ctx);

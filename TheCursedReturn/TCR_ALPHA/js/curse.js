@@ -27,7 +27,7 @@ class Bar extends GameObject {
     // gradually reduces bar width unless it's already zero
     update() {
         if (this.width > 0) {
-            this.width -= 0.01; // controls how fast the curse drains (0.014 = ~2 min total)
+            this.width -= 0.008; // controls how fast the curse drains (0.014 = ~2 min total)
         }
         else {
             this.width = 0;

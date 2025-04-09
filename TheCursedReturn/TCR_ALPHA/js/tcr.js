@@ -55,12 +55,13 @@ const classes = {
 // maps keyboard keys to directions and their animation row
 // 'k' is used for attacking
 const keyMap = {
-    w: { frameY: classes[selectedClass].movementFrames.up, dx: 0, dy: -1 },
-    a: { frameY: classes[selectedClass].movementFrames.left, dx: -1, dy: 0 },
-    s: { frameY: classes[selectedClass].movementFrames.down, dx: 0, dy: 1 },
-    d: { frameY: classes[selectedClass].movementFrames.right, dx: 1, dy: 0 },
+    w: { frameY: classes[selectedClass].movementFrames.up, dx: 0, dy: -1, dir: 'up'},
+    a: { frameY: classes[selectedClass].movementFrames.left, dx: -1, dy: 0, dir: 'left' },
+    s: { frameY: classes[selectedClass].movementFrames.down, dx: 0, dy: 1, dir: 'down'},
+    d: { frameY: classes[selectedClass].movementFrames.right, dx: 1, dy: 0, dir: 'right' },
     k: { attacking: true },
-    f: { interact : true}
+    f: { interact : true},
+    ' ': { dash: true }
 };
 
 // === Image Assets ===

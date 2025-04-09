@@ -25,12 +25,48 @@ class Player extends AnimatedObject {
         this.health = this.maxHealth;
 
         this.attackMagnitude = 5;
+
+        // dash setup
+        this.dashing = false;
+        this.dashCooldown = false;
+        this.dashTimer = 0;
+        this.dashCooldownTimer = 0;
+
+        this.dashSpeed = 10; // dash movement speed
+        this.dashDuration = 10; // frames the dash lasts
+        this.dashCooldownDuration = 60; //frames before the player can dash again
+
+        this.arrows = [];
+        this.arrowCooldown = 0;
+
+        this.lastDirection = 'down'; // default
+
     }
 
     // === Handle Input and Move Player ===
     // handles movement, attacks, and collision detection
     handleInput(keysPressed, keyMap, collisionMap) {
         this.moving = false;
+
+        if (keyMap['k'] && keysPressed['k']) {
+            if (this.classType === 'archer' && this.arrowCooldown <= 0) {
+                setTimeout(() => {
+                    this.shootArrow();
+                }, 500); // sync with bow draw animation                
+                this.arrowCooldown = 20; // frames between shots
+            }
+        
+            this.attacking = true;
+        } else {
+            this.attacking = false;
+        }        
+
+        if (keysPressed[' '] && !this.dashing && !this.dashCooldown) {
+            this.dashing = true;
+            this.dashTimer = this.dashDuration;
+            this.dashCooldown = true;
+            this.dashCooldownTimer = this.dashCooldownDuration;
+        }        
 
         // === Start Attack ===
         if (keysPressed['k']) {
@@ -57,9 +93,14 @@ class Player extends AnimatedObject {
                 typeof keyMap[key].dx === "number" &&
                 typeof keyMap[key].dy === "number"
             ) {
-                const nextX = this.position.x + keyMap[key].dx * this.speed;
-                const nextY = this.position.y + keyMap[key].dy * this.speed;
-        
+                let currentSpeed = this.speed;
+                    if (this.dashing) {
+                        currentSpeed = this.dashSpeed;
+                    }
+
+                const nextX = this.position.x + keyMap[key].dx * currentSpeed;
+                const nextY = this.position.y + keyMap[key].dy * currentSpeed;
+                this.lastDirection = keyMap[key].dir;        
 
                 // check for collisions before moving
                 if (!collisionMap || !collisionMap.isBlockedPixel(nextX, nextY)) {
@@ -72,6 +113,23 @@ class Player extends AnimatedObject {
                 }
             }
         }
+
+        if (this.dashing) {
+            this.dashTimer--;
+            if (this.dashTimer <= 0) {
+                this.dashing = false;
+            }
+        }
+        
+        if (this.dashCooldown) {
+            this.dashCooldownTimer--;
+            if (this.dashCooldownTimer <= 0) {
+                this.dashCooldown = false;
+            }
+        }
+
+        if (this.arrowCooldown > 0) this.arrowCooldown--;
+        
     }
 
     // === Determine Direction Name from Key ===
@@ -127,4 +185,44 @@ class Player extends AnimatedObject {
         this.position.x = 50;
         this.position.y = 300;
     }
+
+    // === Arrow mechanics ===
+shootArrow() {
+    let arrowX = this.position.x;
+    let arrowY = this.position.y;
+    
+    switch (this.lastDirection) {
+        case 'up':
+            arrowX += this.width / 2 - 64;
+            arrowY -= 20;
+            break;
+        case 'down':
+            arrowX += this.width / 2 - 64;
+            arrowY += this.height - 100;
+            break;
+        case 'left':
+            arrowX -= 22;
+            arrowY += this.height / 2 - 65;
+            break;
+        case 'right':
+            arrowX += this.width - 22;
+            arrowY += this.height / 2 - 65;
+            break;
+    }
+
+    const arrow = new Arrow(
+        { x: arrowX, y: arrowY },
+        this.lastDirection,
+        this.arrowImage
+    );
+    this.arrows.push(arrow);
+}
+
+
+    // ===  Arrow direction based on animation row ===
+    getDirection() {
+            return this.lastDirection;
+    }
+    
+    
 }

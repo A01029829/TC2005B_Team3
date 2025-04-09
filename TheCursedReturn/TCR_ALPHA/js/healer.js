@@ -25,7 +25,7 @@ class Healer extends AnimatedObject {
         
         // Filas de animación (ajustar según tu spritesheet)
         this.idleRow = 2;  // Fila para animación en reposo
-        this.healRow = 0;  // Fila para animación de curación
+        this.healRow = 2;  // Fila para animación de curación
     }
     
     // Verifica si el jugador está dentro del radio de interacción
@@ -52,8 +52,6 @@ class Healer extends AnimatedObject {
             const newHealth = Math.min(player.health + this.healAmount, player.maxHealth);
             player.health = newHealth;
             
-            // Efecto visual (opcional)
-            // Podrías añadir un efecto de partículas o cambio de color aquí
             
             return true;
         }
