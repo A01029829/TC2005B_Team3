@@ -39,6 +39,9 @@ class Player extends AnimatedObject {
         this.arrows = [];
         this.arrowCooldown = 0;
 
+        this.projectiles = [];
+        this.fireballCooldown = 0;        
+
         this.lastDirection = 'down'; // default
 
     }
@@ -47,15 +50,22 @@ class Player extends AnimatedObject {
     // handles movement, attacks, and collision detection
     handleInput(keysPressed, keyMap, collisionMap) {
         this.moving = false;
-
+    
         if (keyMap['k'] && keysPressed['k']) {
             if (this.classType === 'archer' && this.arrowCooldown <= 0) {
                 setTimeout(() => {
                     this.shootArrow();
-                }, 500); // sync with bow draw animation                
+                }, 500); // sync with bow draw animation
                 this.arrowCooldown = 20; // frames between shots
             }
-        
+    
+            if (this.classType === 'wizard' && this.fireballCooldown <= 0) {
+                setTimeout(() => {
+                    this.shootFireball();
+                }, 300); // small delay to simulate casting
+                this.fireballCooldown = 30; // frames between shots
+            }
+    
             this.attacking = true;
         } else {
             this.attacking = false;
@@ -129,7 +139,9 @@ class Player extends AnimatedObject {
         }
 
         if (this.arrowCooldown > 0) this.arrowCooldown--;
+        if (this.fireballCooldown > 0) this.fireballCooldown--;
         
+
     }
 
     // === Determine Direction Name from Key ===
@@ -152,6 +164,9 @@ class Player extends AnimatedObject {
         // Math.floor(gameFrame / staggerFrames): slows down animation by dividing the game frame
         // % totalFrames: loops the animation between 0 and 5
         this.spriteRect.x = Math.floor(gameFrame / staggerFrames) % totalFrames;
+
+        this.projectiles.forEach(fb => fb.update());
+
     }
 
     // === Keep Player Inside Canvas Bounds ===
@@ -215,14 +230,53 @@ shootArrow() {
         this.lastDirection,
         this.arrowImage
     );
-    this.arrows.push(arrow);
+    this.projectiles.push(arrow);
 }
 
+   // === Fireball mechanics ===
+shootFireball() {
+    let fbX = this.position.x;
+    let fbY = this.position.y;
 
-    // ===  Arrow direction based on animation row ===
+    switch (this.lastDirection) {
+        case 'up':
+            fbX += this.width / 2 - 64;
+            fbY -= 20;
+            break;
+        case 'down':
+            fbX += this.width / 2 - 64;
+            fbY += this.height - 100;
+            break;
+        case 'left':
+            fbX -= 22;
+            fbY += this.height / 2 - 65;
+            break;
+        case 'right':
+            fbX += this.width - 22;
+            fbY += this.height / 2 - 65;
+            break;
+    }
+
+    const fireball = new Fireball(
+        { x: fbX, y: fbY }, 
+        this.lastDirection, 
+        5, 
+        this.fireballImage
+    );
+    this.projectiles.push(fireball);
+}
+
+    // ===  Projectile direction based on animation row ===
     getDirection() {
             return this.lastDirection;
     }
-    
+ 
+    draw(ctx) {
+        this.projectiles.forEach(projectile => {
+            projectile.draw(ctx);
+        });
+
+        super.draw(ctx);
+    }
     
 }
