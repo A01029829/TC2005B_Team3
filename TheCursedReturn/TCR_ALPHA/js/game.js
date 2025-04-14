@@ -226,12 +226,13 @@ loop() {
     });
 
     this.enemies.forEach((enemy, enemyIndex) => {
-        this.player.arrows.forEach((arrow, arrowIndex) => {
-            const arrowBox = {
-                x: arrow.position.x,
-                y: arrow.position.y,
-                width: arrow.width,
-                height: arrow.height
+        this.player.projectiles.forEach((projectile, projectileIndex) => {
+            // Check collision box
+            const projectileBox = {
+                x: projectile.position.x,
+                y: projectile.position.y,
+                width: projectile.width,
+                height: projectile.height
             };
     
             const enemyBox = {
@@ -242,21 +243,27 @@ loop() {
             };
     
             const isColliding =
-                arrowBox.x < enemyBox.x + enemyBox.width &&
-                arrowBox.x + arrowBox.width > enemyBox.x &&
-                arrowBox.y < enemyBox.y + enemyBox.height &&
-                arrowBox.y + arrowBox.height > enemyBox.y;
+            projectileBox.x < enemyBox.x + enemyBox.width &&
+            projectileBox.x + projBox.width > enemyBox.x &&
+            projectileBox.y < enemyBox.y + enemyBox.height &&
+            projectileBox.y + projBox.height > enemyBox.y;
     
             if (isColliding) {
-                enemy.health -= 10;
-                this.player.arrows.splice(arrowIndex, 1);
+                // Damage based on projectile type
+                if (projectile instanceof Arrow) {
+                    enemy.health -= 10;
+                } 
+                if (projectile instanceof Fireball) {
+                    enemy.health -= 15;
+                }
+    
+                // Remove the projectile on hit
+                this.player.projectiles.splice(projectileIndex, 1);
             }
         });
     });
+    
 
-    
-    
-    
     // Remove expired arrows
     this.player.arrows = this.player.arrows.filter(a => !a.isExpired());
     this.player.draw(this.ctx);

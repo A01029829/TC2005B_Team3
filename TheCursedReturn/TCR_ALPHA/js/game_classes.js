@@ -206,3 +206,57 @@ class Arrow extends GameObject {
     }
 }
 
+class Fireball extends GameObject {
+    constructor(position, direction, speed = 8) {
+        super(position, 64, 65, 'rgba(0,0,0,0)', 'fireball');
+        this.direction = direction;
+        this.speed = speed;
+
+        this.setSprite('../sprites/fireball.png', {
+            x: 0,
+            y: 0,
+            width: 64,
+            height: 65
+        });
+
+        this.spriteDirectionX = {
+            up: 0,
+            left: 1,
+            down: 2,
+            right: 3
+        }[direction];
+
+        this.lifetime = 60;
+    }
+
+    update() {
+        switch (this.direction) {
+            case 'up': this.position.y -= this.speed; break;
+            case 'down': this.position.y += this.speed; break;
+            case 'left': this.position.x -= this.speed; break;
+            case 'right': this.position.x += this.speed; break;
+        }
+
+        this.lifetime--;
+    }
+
+    draw(ctx) {
+        ctx.drawImage(
+            this.spriteImage,
+            this.spriteDirectionX * this.width,
+            0,
+            this.width,
+            this.height,
+            this.position.x,
+            this.position.y,
+            this.width,
+            this.height
+        );
+    }
+
+    isExpired() {
+        return this.lifetime <= 0;
+    }
+}
+
+
