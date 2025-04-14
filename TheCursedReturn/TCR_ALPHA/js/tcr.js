@@ -97,9 +97,18 @@ controls.src = "../images/movimiento.png"; // may be replaced by the next line
 controls.src = "../images/controles_2.png"; // this will overwrite the one above
 let showControls = false; // true = display controls on screen
 
+// Sign to indicate next level
+const sign_level = new Image();
+sign_level.src = "../images/sign_level.png"; 
+
+// === Second weapon ===
+const itemBox = new Image();
+itemBox.src = "../images/itemBox.png";
+
 // === Start Game When Images Are Loaded ===
 // we wait for all 4 images to load before starting the game
 let loadedImages = 0;
+
 
 function tryStartGame() {
     loadedImages++;
