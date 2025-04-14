@@ -22,10 +22,11 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
+    margin: 25px 0px;
 }
 
-#button {
+#button, #login_button {
     display: flex;
     justify-content: center;
     background-color: black;
@@ -62,12 +63,12 @@ footer {
     align-items: center;
     flex-direction: column;
 
-    padding: 100px 0px;
-    border: #ad1324 solid 5px;
+    padding: 75px 0px;
+    border: #2c3372 solid 8px;
 
     width: 400px;
-    background: #3e3d3d;
-    border-radius: 6px;
+    background: #5880af;
+    border-radius: 10px;
     position: fixed;
     top: 0; 
     left: 50%;
@@ -82,15 +83,40 @@ footer {
 }
 
 #login #submit, #login button {
-    background-color: #ad1324;
+    background-color: #2d508c;
     color: #d5d4cc;
     padding: 5px 16px;
     font-size: 25px;
     border-radius: 12px;
-    box-shadow: 3px 3px #ad1324;
+    box-shadow: 3px 3px #251154;
     font-family: copperplate;
-    text-shadow: 2px 2px #ad1324;
+    text-shadow: 2px 2px #251154;
     cursor: pointer;
+}
+
+#login h2 {
+    color: #d5d4cc;
+    font-family: copperplate;
+    text-shadow: 2px 2px #251154;
+    font-size: 40px;
+    margin: 25px 0;
+}
+
+.textBox {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 8px;
+}
+
+.loginButtons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin: 8px;
 }
 
 .open_login {
