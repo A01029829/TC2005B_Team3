@@ -247,6 +247,9 @@ loop() {
         this.ctx.drawImage(controls, 10, 1, 425, 325); // draw control instructions
     }
 
+    // === Sign to indicate next level ===
+    this.ctx.drawImage(sign_level, this.canvasWidth - 100, 350, 75, 75); // Draw sign
+
     // === Handle Player Movement and Input ===
     this.player.handleInput(
         this.inputManager.keysPressed,
@@ -520,6 +523,8 @@ loop() {
         this.gameFrame++; // Only animate if doing something
     }
 
+    // === Second weapon ===
+    this.ctx.drawImage(itemBox, 50, this.canvasHeight - 100, 50, 50); // Draw item box
     
     // === Draw UI Bars ===
     bar.draw(this.ctx);
