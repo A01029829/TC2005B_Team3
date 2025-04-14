@@ -43,7 +43,7 @@ class Healer extends AnimatedObject {
     interact(player, keysPressed) {
         if (!this.active || this.cooldown) return false;
         
-        if (keysPressed[this.interactionKey] && this.checkPlayerInRange(player)) {
+        if (this.active && keysPressed[this.interactionKey] && this.checkPlayerInRange(player)) {
             // Iniciar proceso de curación
             this.healing = true;
             this.healingTimer = this.healingDuration;
@@ -52,7 +52,7 @@ class Healer extends AnimatedObject {
             const newHealth = Math.min(player.health + this.healAmount, player.maxHealth);
             player.health = newHealth;
             
-            
+            this.active = false;
             return true;
         }
         
@@ -88,8 +88,9 @@ class Healer extends AnimatedObject {
         this.spriteRect.y = this.healing ? this.healRow : this.idleRow;
         
         // Controlar frames de animación
-        const totalFrames = 8; // Ajustar según tu sprite
-        this.spriteRect.x = Math.floor(gameFrame / staggerFrames) % totalFrames;
+        const totalFrames = 5;
+        this.spriteRect.y = this.healing ? this.healRow : this.idleRow;
+        this.spriteRect.x = Math.floor(gameFrame / staggerFrames) % totalFrames;        
     }
     
     // Dibuja mensaje de interacción
@@ -100,6 +101,10 @@ class Healer extends AnimatedObject {
         ctx.font = '12px Arial';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'center';
-        ctx.fillText(this.interactionMessage, this.position.x, this.position.y - 20);
+        ctx.fillText(
+            this.interactionMessage, 
+            this.position.x + this.width / 2,  // Horizontal center
+            this.position.y - 40               // Vertical height above head
+         );
     }
 }

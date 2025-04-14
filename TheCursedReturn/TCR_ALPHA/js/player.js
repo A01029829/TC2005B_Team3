@@ -44,11 +44,14 @@ class Player extends AnimatedObject {
 
         this.lastDirection = 'down'; // default
 
+        this.dying = false;  // controls if the death animation is playing
+        this.deathTimer = 0; // time to stay in death animation
     }
 
     // === Handle Input and Move Player ===
     // handles movement, attacks, and collision detection
     handleInput(keysPressed, keyMap, collisionMap) {
+        if (this.dying) return; // Prevent input if dying
         this.moving = false;
     
         if (keyMap['k'] && keysPressed['k']) {
@@ -113,16 +116,48 @@ class Player extends AnimatedObject {
                 this.lastDirection = keyMap[key].dir;        
 
                 // check for collisions before moving
-                if (!collisionMap || !collisionMap.isBlockedPixel(nextX, nextY)) {
+                let isBlocked = collisionMap && collisionMap.isBlockedPixel(nextX, nextY);
+
+                // Extra check against staticObjects
+                if (!isBlocked && this.gameRef?.staticObjects) {
+                    this.gameRef.staticObjects.forEach(obj => {
+                        const nextBox = {
+                            x: nextX,
+                            y: nextY,
+                            width: this.width,
+                            height: this.height
+                        };
+
+                        const objBox = {
+                            x: obj.position.x + 25,
+                            y: obj.position.y + 5,
+                            width: 15,
+                            height: 25                        
+                        };
+
+                        const isColliding =
+                            nextBox.x < objBox.x + objBox.width &&
+                            nextBox.x + nextBox.width > objBox.x &&
+                            nextBox.y < objBox.y + objBox.height &&
+                            nextBox.y + nextBox.height > objBox.y;
+
+                        if (isColliding) {
+                            isBlocked = true;
+                        }
+                    });
+                }
+
+                if (!isBlocked) {
                     this.position.x = nextX;
                     this.position.y = nextY;
+                }
+
 
                     this.spriteRect.y = keyMap[key].frameY; // set walking animation row
                     this.lastDirection = this._getDirection(key); // save direction for attacks
                     this.moving = true;
                 }
             }
-        }
 
         if (this.dashing) {
             this.dashTimer--;
@@ -159,15 +194,29 @@ class Player extends AnimatedObject {
     // === Update Animation Frame ===
     // controls the frame the sprite is currently showing
     updateAnimation(gameFrame, staggerFrames) {
-        const totalFrames = 6;
+        if (this.dying) {
+            // Death animation always uses row 20 and frames 2, 3, 4
+            this.spriteRect.y = 20;
+            const totalFrames = 3; // Frames 2, 3, 4
+            this.spriteRect.x = 2 + Math.floor(gameFrame / staggerFrames) % totalFrames;
+    
+            this.deathTimer--;
 
-        // Math.floor(gameFrame / staggerFrames): slows down animation by dividing the game frame
-        // % totalFrames: loops the animation between 0 and 5
-        this.spriteRect.x = Math.floor(gameFrame / staggerFrames) % totalFrames;
-
-        this.projectiles.forEach(fb => fb.update());
-
-    }
+            if (this.deathTimer <= 0 && !this.finishedDying) {
+                this.finishedDying = true; // Flag to prevent double GameOver trigger
+                setTimeout(() => {
+                    GameOver();
+                }, 500); // Small delay after death animation ends
+            }
+            
+        } else {
+            const totalFrames = 6; // Normal movement animation
+            this.spriteRect.x = Math.floor(gameFrame / staggerFrames) % totalFrames;
+        }
+    
+        this.projectiles.forEach(p => p.update());
+    }    
+    
 
     // === Keep Player Inside Canvas Bounds ===
     clampToBounds(canvasWidth, canvasHeight) {
