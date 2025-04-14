@@ -17,19 +17,23 @@
     </div>
     <nav>
         <div class="buttons">
-            <button id="login_button" onclick="openLogin()">Login</button>
+            <button id="login_button" onclick="openLogin()">Iniciar</button>
             <div class="login">
-    
+
                 <form id="login">
                     <h2>Login</h2>
-                    <input type="text" name="userID" placeholder="Type your user id">
-                    <input type="text" name="password" placeholder="Type your password">
-                    <input id="submit" type="submit" value="Login">
-                    <button type="button" id="close_button" onclick="closeLogin()">Close</button>
+                    <div class="textBox">
+                        <input type="text" name="userID" placeholder="Type your user id">
+                        <input type="text" name="password" placeholder="Type your password">
+                    </div>
+                    <div class="loginButtons">
+                        <input id="submit" type="submit" value="Login">
+                        <button type="button" id="close_button" onclick="closeLogin()">Close</button>
+                    </div>
                 </form>
             </div>
-            <button id="button" onclick="location.href='../html/clases.html'">NUEVA PARTIDA</button>
-            <button id="button" onclick="location.href='../html/interfaz.html'">RESUMIR PARTIDA</button>
+            <!-- <button id="button" onclick="location.href='../html/clases.html'">NUEVA PARTIDA</button>
+            <button id="button" onclick="location.href='../html/interfaz.html'">RESUMIR PARTIDA</button> -->
             <button id="button" onclick="location.href='../html/creditos.html'">CREDITOS</button>
         </div>
     </nav>
