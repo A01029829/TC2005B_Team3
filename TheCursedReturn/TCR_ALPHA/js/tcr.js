@@ -71,12 +71,16 @@ const playerImage = new Image();
 const enemyImage = new Image();
 const wolfImage = new Image();
 const healerImage = new Image();
+const gunsmithImage = new Image();
+const chestImage = new Image();
 
 backgroundImage.src = '../levels/WoodsLVL1.png';
 playerImage.src = classes[selectedClass].sprite;
 enemyImage.src = '../sprites/Goblin01SpriteSheetFINAL.png';
 wolfImage.src = '../sprites/WolfSpriteSheetFINAL.png';
 healerImage.src = '../sprites/HealerSpriteSheetFINAL.png';
+gunsmithImage.src = '../sprites/GunsmithSpriteSheetFINAL.png'
+chestImage.src = '../sprites/chest.png';
 
 // === UI Bars Setup (Curse and Life Bars) ===
 // these bars appear on the top-right of the game screen to show health and time
@@ -116,6 +120,8 @@ function tryStartGame() {
             enemyImagePath: enemyImage.src,
             wolfImagePath: wolfImage.src,
             healerImagePath: healerImage.src,
+            gunsmithImagePath: gunsmithImage.src,
+            chestImagePath: chestImage.src,
             collisionMap: emptyCollision
         });
 
@@ -132,3 +138,4 @@ playerImage.onload = tryStartGame;
 enemyImage.onload = tryStartGame;
 wolfImage.onload = tryStartGame;
 healerImage.onload = tryStartGame;
+gunsmithImage.onload = tryStartGame;
