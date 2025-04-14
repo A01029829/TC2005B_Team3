@@ -25,12 +25,61 @@ class Player extends AnimatedObject {
         this.health = this.maxHealth;
 
         this.attackMagnitude = 5;
+
+        // dash setup
+        this.dashing = false;
+        this.dashCooldown = false;
+        this.dashTimer = 0;
+        this.dashCooldownTimer = 0;
+
+        this.dashSpeed = 10; // dash movement speed
+        this.dashDuration = 10; // frames the dash lasts
+        this.dashCooldownDuration = 60; //frames before the player can dash again
+
+        this.arrows = [];
+        this.arrowCooldown = 0;
+
+        this.projectiles = [];
+        this.fireballCooldown = 0;        
+
+        this.lastDirection = 'down'; // default
+
+        this.dying = false;  // controls if the death animation is playing
+        this.deathTimer = 0; // time to stay in death animation
     }
 
     // === Handle Input and Move Player ===
     // handles movement, attacks, and collision detection
     handleInput(keysPressed, keyMap, collisionMap) {
+        if (this.dying) return; // Prevent input if dying
         this.moving = false;
+    
+        if (keyMap['k'] && keysPressed['k']) {
+            if (this.classType === 'archer' && this.arrowCooldown <= 0) {
+                setTimeout(() => {
+                    this.shootArrow();
+                }, 500); // sync with bow draw animation
+                this.arrowCooldown = 20; // frames between shots
+            }
+    
+            if (this.classType === 'wizard' && this.fireballCooldown <= 0) {
+                setTimeout(() => {
+                    this.shootFireball();
+                }, 300); // small delay to simulate casting
+                this.fireballCooldown = 30; // frames between shots
+            }
+    
+            this.attacking = true;
+        } else {
+            this.attacking = false;
+        }        
+
+        if (keysPressed[' '] && !this.dashing && !this.dashCooldown) {
+            this.dashing = true;
+            this.dashTimer = this.dashDuration;
+            this.dashCooldown = true;
+            this.dashCooldownTimer = this.dashCooldownDuration;
+        }        
 
         // === Start Attack ===
         if (keysPressed['k']) {
@@ -52,21 +101,82 @@ class Player extends AnimatedObject {
 
         // === Move in Direction Based on Pressed Keys ===
         for (let key in keysPressed) {
-            if (keyMap[key] && key !== 'k') {
-                const nextX = this.position.x + keyMap[key].dx * this.speed;
-                const nextY = this.position.y + keyMap[key].dy * this.speed;
+            if (
+                keyMap[key] &&
+                typeof keyMap[key].dx === "number" &&
+                typeof keyMap[key].dy === "number"
+            ) {
+                let currentSpeed = this.speed;
+                    if (this.dashing) {
+                        currentSpeed = this.dashSpeed;
+                    }
+
+                const nextX = this.position.x + keyMap[key].dx * currentSpeed;
+                const nextY = this.position.y + keyMap[key].dy * currentSpeed;
+                this.lastDirection = keyMap[key].dir;        
 
                 // check for collisions before moving
-                if (!collisionMap || !collisionMap.isBlockedPixel(nextX, nextY)) {
+                let isBlocked = collisionMap && collisionMap.isBlockedPixel(nextX, nextY);
+
+                // Extra check against staticObjects
+                if (!isBlocked && this.gameRef?.staticObjects) {
+                    this.gameRef.staticObjects.forEach(obj => {
+                        const nextBox = {
+                            x: nextX,
+                            y: nextY,
+                            width: this.width,
+                            height: this.height
+                        };
+
+                        const objBox = {
+                            x: obj.position.x + 25,
+                            y: obj.position.y + 5,
+                            width: 15,
+                            height: 25                        
+                        };
+
+                        const isColliding =
+                            nextBox.x < objBox.x + objBox.width &&
+                            nextBox.x + nextBox.width > objBox.x &&
+                            nextBox.y < objBox.y + objBox.height &&
+                            nextBox.y + nextBox.height > objBox.y;
+
+                        if (isColliding) {
+                            isBlocked = true;
+                        }
+                    });
+                }
+
+                if (!isBlocked) {
                     this.position.x = nextX;
                     this.position.y = nextY;
+                }
+
 
                     this.spriteRect.y = keyMap[key].frameY; // set walking animation row
                     this.lastDirection = this._getDirection(key); // save direction for attacks
                     this.moving = true;
                 }
             }
+
+        if (this.dashing) {
+            this.dashTimer--;
+            if (this.dashTimer <= 0) {
+                this.dashing = false;
+            }
         }
+        
+        if (this.dashCooldown) {
+            this.dashCooldownTimer--;
+            if (this.dashCooldownTimer <= 0) {
+                this.dashCooldown = false;
+            }
+        }
+
+        if (this.arrowCooldown > 0) this.arrowCooldown--;
+        if (this.fireballCooldown > 0) this.fireballCooldown--;
+        
+
     }
 
     // === Determine Direction Name from Key ===
@@ -84,12 +194,29 @@ class Player extends AnimatedObject {
     // === Update Animation Frame ===
     // controls the frame the sprite is currently showing
     updateAnimation(gameFrame, staggerFrames) {
-        const totalFrames = 6;
+        if (this.dying) {
+            // Death animation always uses row 20 and frames 2, 3, 4
+            this.spriteRect.y = 20;
+            const totalFrames = 3; // Frames 2, 3, 4
+            this.spriteRect.x = 2 + Math.floor(gameFrame / staggerFrames) % totalFrames;
+    
+            this.deathTimer--;
 
-        // Math.floor(gameFrame / staggerFrames): slows down animation by dividing the game frame
-        // % totalFrames: loops the animation between 0 and 5
-        this.spriteRect.x = Math.floor(gameFrame / staggerFrames) % totalFrames;
-    }
+            if (this.deathTimer <= 0 && !this.finishedDying) {
+                this.finishedDying = true; // Flag to prevent double GameOver trigger
+                setTimeout(() => {
+                    GameOver();
+                }, 500); // Small delay after death animation ends
+            }
+            
+        } else {
+            const totalFrames = 6; // Normal movement animation
+            this.spriteRect.x = Math.floor(gameFrame / staggerFrames) % totalFrames;
+        }
+    
+        this.projectiles.forEach(p => p.update());
+    }    
+    
 
     // === Keep Player Inside Canvas Bounds ===
     clampToBounds(canvasWidth, canvasHeight) {
@@ -122,4 +249,83 @@ class Player extends AnimatedObject {
         this.position.x = 50;
         this.position.y = 300;
     }
+
+    // === Arrow mechanics ===
+shootArrow() {
+    let arrowX = this.position.x;
+    let arrowY = this.position.y;
+    
+    switch (this.lastDirection) {
+        case 'up':
+            arrowX += this.width / 2 - 64;
+            arrowY -= 20;
+            break;
+        case 'down':
+            arrowX += this.width / 2 - 64;
+            arrowY += this.height - 100;
+            break;
+        case 'left':
+            arrowX -= 22;
+            arrowY += this.height / 2 - 65;
+            break;
+        case 'right':
+            arrowX += this.width - 22;
+            arrowY += this.height / 2 - 65;
+            break;
+    }
+
+    const arrow = new Arrow(
+        { x: arrowX, y: arrowY },
+        this.lastDirection,
+        this.arrowImage
+    );
+    this.projectiles.push(arrow);
+}
+
+   // === Fireball mechanics ===
+shootFireball() {
+    let fbX = this.position.x;
+    let fbY = this.position.y;
+
+    switch (this.lastDirection) {
+        case 'up':
+            fbX += this.width / 2 - 64;
+            fbY -= 20;
+            break;
+        case 'down':
+            fbX += this.width / 2 - 64;
+            fbY += this.height - 100;
+            break;
+        case 'left':
+            fbX -= 22;
+            fbY += this.height / 2 - 65;
+            break;
+        case 'right':
+            fbX += this.width - 22;
+            fbY += this.height / 2 - 65;
+            break;
+    }
+
+    const fireball = new Fireball(
+        { x: fbX, y: fbY }, 
+        this.lastDirection, 
+        5, 
+        this.fireballImage
+    );
+    this.projectiles.push(fireball);
+}
+
+    // ===  Projectile direction based on animation row ===
+    getDirection() {
+            return this.lastDirection;
+    }
+ 
+    draw(ctx) {
+        this.projectiles.forEach(projectile => {
+            projectile.draw(ctx);
+        });
+
+        super.draw(ctx);
+    }
+    
 }

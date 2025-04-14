@@ -8,17 +8,17 @@ class Vect {
 
     // add another vector
     plus(other) {
-        return new Vec(this.x + other.x, this.y + other.y);
+        return new Vect(this.x + other.x, this.y + other.y);
     }
 
     // subtract another vector
     minus(other) {
-        return new Vec(this.x - other.x, this.y - other.y);
+        return new Vect(this.x - other.x, this.y - other.y);
     }
 
     // multiply by a scalar
     times(scalar) {
-        return new Vec(this.x * scalar, this.y * scalar);
+        return new Vect(this.x * scalar, this.y * scalar);
     }
 
     // get the length of the vector
@@ -152,3 +152,111 @@ function boxOverlap(obj1, obj2) {
            obj1.position.y + obj1.height > obj2.position.y &&
            obj1.position.y < obj2.position.y + obj2.height;
 }
+
+class Arrow extends GameObject {
+    constructor(position, direction, speed = 8) {
+        super(position, 64, 65, 'rgba(0,0,0,0)', 'arrow');
+        this.direction = direction;
+        this.speed = speed;
+
+        this.setSprite('../sprites/arrow.png', {
+            x: 0,
+            y: 0,
+            width: 64,
+            height: 65
+        });
+
+        this.spriteDirectionX = {
+            up: 0,
+            left: 1,
+            down: 2,
+            right: 3
+        }[direction];
+
+        this.lifetime = 60;
+    }
+
+    update() {
+        switch (this.direction) {
+            case 'up': this.position.y -= this.speed; break;
+            case 'down': this.position.y += this.speed; break;
+            case 'left': this.position.x -= this.speed; break;
+            case 'right': this.position.x += this.speed; break;
+        }
+
+        this.lifetime--;
+    }
+
+    draw(ctx) {
+        ctx.drawImage(
+            this.spriteImage,
+            this.spriteDirectionX * this.width,
+            0,
+            this.width,
+            this.height,
+            this.position.x,
+            this.position.y,
+            this.width,
+            this.height
+        );
+    }
+
+    isExpired() {
+        return this.lifetime <= 0;
+    }
+}
+
+class Fireball extends GameObject {
+    constructor(position, direction, speed = 8) {
+        super(position, 64, 65, 'rgba(0,0,0,0)', 'fireball');
+        this.direction = direction;
+        this.speed = speed;
+
+        this.setSprite('../sprites/fireball.png', {
+            x: 0,
+            y: 0,
+            width: 64,
+            height: 65
+        });
+
+        this.spriteDirectionX = {
+            up: 0,
+            left: 1,
+            down: 2,
+            right: 3
+        }[direction];
+
+        this.lifetime = 60;
+    }
+
+    update() {
+        switch (this.direction) {
+            case 'up': this.position.y -= this.speed; break;
+            case 'down': this.position.y += this.speed; break;
+            case 'left': this.position.x -= this.speed; break;
+            case 'right': this.position.x += this.speed; break;
+        }
+
+        this.lifetime--;
+    }
+
+    draw(ctx) {
+        ctx.drawImage(
+            this.spriteImage,
+            this.spriteDirectionX * this.width,
+            0,
+            this.width,
+            this.height,
+            this.position.x,
+            this.position.y,
+            this.width,
+            this.height
+        );
+    }
+
+    isExpired() {
+        return this.lifetime <= 0;
+    }
+}
+
+

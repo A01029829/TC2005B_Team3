@@ -55,11 +55,13 @@ const classes = {
 // maps keyboard keys to directions and their animation row
 // 'k' is used for attacking
 const keyMap = {
-    w: { frameY: classes[selectedClass].movementFrames.up, dx: 0, dy: -1 },
-    a: { frameY: classes[selectedClass].movementFrames.left, dx: -1, dy: 0 },
-    s: { frameY: classes[selectedClass].movementFrames.down, dx: 0, dy: 1 },
-    d: { frameY: classes[selectedClass].movementFrames.right, dx: 1, dy: 0 },
-    k: { attacking: true }
+    w: { frameY: classes[selectedClass].movementFrames.up, dx: 0, dy: -1, dir: 'up'},
+    a: { frameY: classes[selectedClass].movementFrames.left, dx: -1, dy: 0, dir: 'left' },
+    s: { frameY: classes[selectedClass].movementFrames.down, dx: 0, dy: 1, dir: 'down'},
+    d: { frameY: classes[selectedClass].movementFrames.right, dx: 1, dy: 0, dir: 'right' },
+    k: { attacking: true },
+    f: { interact : true},
+    ' ': { dash: true }
 };
 
 // === Image Assets ===
@@ -68,11 +70,17 @@ const backgroundImage = new Image();
 const playerImage = new Image();
 const enemyImage = new Image();
 const wolfImage = new Image();
+const healerImage = new Image();
+const gunsmithImage = new Image();
+const chestImage = new Image();
 
 backgroundImage.src = '../levels/WoodsLVL1.png';
 playerImage.src = classes[selectedClass].sprite;
 enemyImage.src = '../sprites/Goblin01SpriteSheetFINAL.png';
 wolfImage.src = '../sprites/WolfSpriteSheetFINAL.png';
+healerImage.src = '../sprites/HealerSpriteSheetFINAL.png';
+gunsmithImage.src = '../sprites/GunsmithSpriteSheetFINAL.png'
+chestImage.src = '../sprites/chest.png';
 
 // === UI Bars Setup (Curse and Life Bars) ===
 // these bars appear on the top-right of the game screen to show health and time
@@ -98,7 +106,7 @@ let loadedImages = 0;
 
 function tryStartGame() {
     loadedImages++;
-    if (loadedImages === 4) {
+    if (loadedImages === 5) {
 
         // === Create an Empty Collision Map to Start With ===
         // creates a blank 57x38 tile grid filled with 0s (no obstacles)
@@ -114,6 +122,9 @@ function tryStartGame() {
             playerAttackRow: classes[selectedClass].attackRow,
             enemyImagePath: enemyImage.src,
             wolfImagePath: wolfImage.src,
+            healerImagePath: healerImage.src,
+            gunsmithImagePath: gunsmithImage.src,
+            chestImagePath: chestImage.src,
             collisionMap: emptyCollision
         });
 
@@ -129,3 +140,5 @@ backgroundImage.onload = tryStartGame;
 playerImage.onload = tryStartGame;
 enemyImage.onload = tryStartGame;
 wolfImage.onload = tryStartGame;
+healerImage.onload = tryStartGame;
+gunsmithImage.onload = tryStartGame;

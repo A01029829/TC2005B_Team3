@@ -18,6 +18,18 @@ class Game {
 
         this.flashScreen = false; // used to flash the screen red when the player takes damage
 
+        this.healer = null; // healer state
+        this.healerSpawned = false; // healer condition to appear
+
+        this.gunsmith = null;
+        this.gunsmithSpawned = false;
+
+        this.npcFrame = 0; // NPC animations
+
+        this.chest = null;
+
+        this.staticObjects = [];
+
         // === Instantiate Managers and Player ===
         this.mapManager = new MapManager(assets.maps, assets.backgroundImage); // controls map switching
         this.inputManager = new InputManager(assets.keyMap); // tracks key inputs
@@ -30,6 +42,7 @@ class Game {
             assets.playerAttackRow
         );
         this.player.gameRef = this; // allow player to reference the full game instance
+        this.player.classType = selectedClass;
 
         // === Create Initial Enemy and Portal ===
         this.enemy = new Enemy(
@@ -57,6 +70,15 @@ class Game {
         this.setupStart(); // begin the game
     }
 
+    getValidSpawnPosition(collisionMap, canvasWidth, canvasHeight, margin = 48) {
+        let x, y;
+        do {
+            x = Math.floor(Math.random() * (canvasWidth - 2 * margin)) + margin;
+            y = Math.floor(Math.random() * (canvasHeight - 2 * margin)) + margin;
+        } while (collisionMap.isBlockedPixel(x, y)); // Retry until it's valid
+        return { x, y };
+    }  
+
     // === Setup First Map and Start Loop ===
     setupStart() {
         this.usedMaps.clear(); // reset used map list
@@ -68,6 +90,11 @@ class Game {
 
     // === Display Level Notification on Screen ===
     onNewLevel() {
+        this.healer = null;
+        this.roomForHealer = null;
+        this.healerSpawned = false;
+        this.gunsmith = null;
+        this.gunsmithSpawned = false;
         const notification = document.createElement('div');
         notification.className = 'level-notification';
 
@@ -82,6 +109,8 @@ class Game {
         setTimeout(() => {
             notification.remove(); // remove the notification after 2 seconds
         }, 2000);
+
+        this.healer = null;
     }
 
     // === Update Collision Map Based on Current Map ===
@@ -105,16 +134,19 @@ class Game {
         // spawn 3 goblins in random positions
         for (let i = 0; i < 3; i++) {
             // Math.random() gives a number from 0 to 1
-            // We scale it to the canvas size minus margins
-            // Math.floor rounds it down to a whole number
-            const spawnX = Math.floor(Math.random() * (this.canvasWidth - 2 * margin)) + margin;
-            const spawnY = Math.floor(Math.random() * (this.canvasHeight - 2 * margin)) + margin;
-
+            const { x: spawnX, y: spawnY } = this.getValidSpawnPosition(this.collisionMap, this.canvasWidth, this.canvasHeight);
             const goblin = new Enemy(
                 { x: spawnX, y: spawnY },
                 1.25,
                 this.assets.enemyImagePath
             );
+
+            goblin.healthBar = new Bar(
+                new Vect(goblin.position.x, goblin.position.y - 10), // above the enemy
+                30, // width of health bar
+                5,  // height of health bar
+                "red"
+            );            
 
             goblin.attackMagnitude = 1;
             goblin.attackRange = 36;
@@ -125,33 +157,79 @@ class Game {
 
         // === Spawn Wolf Boss if this is the 4th room ===
         if (this.progress.visited === 3) {
+            const { x: spawnX, y: spawnY } = this.getValidSpawnPosition(this.collisionMap, this.canvasWidth, this.canvasHeight);
+        
             const wolf = new Enemy(
-                { x: this.canvasWidth / 2, y: this.canvasHeight / 2 },
+                { x: spawnX, y: spawnY },
                 1.1,
                 this.assets.wolfImagePath
             );
-
-            // setup unique animations and size for wolf boss
+        
+            wolf.healthBar = new Bar(
+                new Vect(wolf.position.x, wolf.position.y - 10),
+                50,
+                7,
+                "red"
+            );
+        
             wolf.attackRow = { up: 53, left: 54, down: 55, right: 56 };
             wolf.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
-
             wolf.spriteRect.width = 64;
             wolf.spriteRect.height = 65;
-
             wolf.width = 98;
             wolf.height = 98;
-
             wolf.health = 60;
             wolf.maxHealth = 60;
             wolf.attackMagnitude = 5;
             wolf.attackRange = 40;
-
-            // add the boss to the enemies array
+        
             this.enemies.push(wolf);
+        }        
+
+        const healerSpawn = !this.healerSpawned && Math.random() < 0.25;
+        if (healerSpawn) {
+            const { x: spawnX, y: spawnY } = this.getValidSpawnPosition(this.collisionMap, this.canvasWidth, this.canvasHeight);
+            this.healer = new Healer({ x: spawnX, y: spawnY }, this.assets.healerImagePath);
+            this.healerSpawned = true;
+        } else {
+            this.healer = null;
         }
+
+        // === Spawn Gunsmith (one per level) ===
+        const gunsmithSpawn = !this.gunsmithSpawned && Math.random() < 0.25;
+
+        if (gunsmithSpawn) {
+            const { x: spawnX, y: spawnY } = this.getValidSpawnPosition(this.collisionMap, this.canvasWidth, this.canvasHeight);
+            this.gunsmith = new Gunsmith({ x: spawnX, y: spawnY }, this.assets.gunsmithImagePath);
+
+            this.gunsmithSpawned = true;
+        } else {
+            this.gunsmith = null;
+        }        
+
+        // === Spawn Chest ===
+        const chestSpawn = Math.random() < 0.15; // 15% chance
+        if (chestSpawn) {
+            const { x: spawnX, y: spawnY } = this.getValidSpawnPosition(this.collisionMap, this.canvasWidth, this.canvasHeight);
+            this.chest = new Chest(
+                { x: spawnX, y: spawnY },
+                this.assets.chestImagePath
+            );
+
+        } else {
+            this.chest = null;
+        }
+
+        // === NPC and Chest Collisions ===
+        this.staticObjects = [];
+        if (this.healer) this.staticObjects.push(this.healer);
+        if (this.gunsmith) this.staticObjects.push(this.gunsmith);
+        if (this.chest) this.staticObjects.push(this.chest);
 
         this.portal.active = false; // deactivate portal until enemies are cleared
     }
+
+    
 
     
 // === Main Game Loop ===
@@ -176,10 +254,108 @@ loop() {
         this.collisionMap
     );
 
+// === Healer Logic === 
+// === Healer Update & Interaction ===
+    if (this.healer) {
+        const playerInRange = this.healer.checkPlayerInRange(this.player);
+        const interacted = this.healer.interact(this.player, this.inputManager.keysPressed);
+
+        // If healing started, update life bar immediately
+        if (interacted) {
+            life.width = (this.player.health / this.player.maxHealth) * lifeBarwidth;
+            if (life.width > lifeBarwidth) life.width = lifeBarwidth;
+        }
+
+        this.healer.update();
+        this.healer.updateAnimation(this.npcFrame, this.staggerFrames);
+        this.healer.draw(this.ctx);
+        this.healer.drawInteractionPrompt(this.ctx, playerInRange);
+    }
+
+    // === Gunsmith Logic ===
+    if (this.gunsmith) {
+        this.gunsmith.updateAnimation(this.gameFrame, this.staggerFrames);
+        const playerInRange = this.gunsmith.checkPlayerInRange(this.player);
+        const interacted = this.gunsmith.interact(this.player, this.inputManager.keysPressed);
+
+        if (interacted) {
+            console.log("Gunsmith Interaction Success!");
+        }
+
+        this.gunsmith.updateAnimation(this.npcFrame, this.staggerFrames);
+        this.gunsmith.draw(this.ctx);
+        this.gunsmith.drawInteractionPrompt(this.ctx, playerInRange);
+    }
+
+    // === Chest Logic ===
+    if (this.chest) {
+        this.chest.updateAnimation(this.npcFrame, this.staggerFrames);
+        this.chest.draw(this.ctx);
+    
+        const playerInRange = this.chest.checkPlayerInRange(this.player);
+        const interacted = this.chest.interact(this.player, this.inputManager.keysPressed);
+    
+        this.chest.drawInteractionPrompt(this.ctx, playerInRange);
+    }
+    
     // === Player Logic ===
-    this.player.clampToBounds(this.canvasWidth, this.canvasHeight); // prevent leaving canvas
-    this.player.updateAnimation(this.gameFrame, this.staggerFrames); // animate movement
-    this.player.draw(this.ctx); // draw the player
+    this.player.updateAnimation(this.gameFrame, this.staggerFrames);
+
+    // Update and draw arrows
+    this.player.arrows.forEach(arrow => {
+        arrow.update();
+        arrow.draw(this.ctx);
+    });
+
+    this.enemies.forEach((enemy, enemyIndex) => {
+        this.player.projectiles.forEach((projectile, projectileIndex) => {
+            // Check collision box
+            const projBox = {
+                x: projectile.position.x,
+                y: projectile.position.y,
+                width: projectile.width,
+                height: projectile.height
+            };
+    
+            const enemyBox = {
+                x: enemy.position.x,
+                y: enemy.position.y,
+                width: enemy.width,
+                height: enemy.height
+            };
+    
+            const isColliding =
+            projBox.x < enemyBox.x + enemyBox.width &&
+            projBox.x + projBox.width > enemyBox.x &&
+            projBox.y < enemyBox.y + enemyBox.height &&
+            projBox.y + projBox.height > enemyBox.y;
+    
+            if (isColliding) {
+                // Damage based on projectile type
+                if (projectile instanceof Arrow) {
+                    enemy.health -= 10;
+                } 
+                if (projectile instanceof Fireball) {
+                    enemy.health -= 15;
+                }
+    
+                // Remove the projectile on hit
+                this.player.projectiles.splice(projectileIndex, 1);
+            }
+        });
+    });
+    
+
+    // Remove expired arrows
+    this.player.projectiles = this.player.projectiles.filter(a => !a.isExpired());
+
+    // Draw player (including projectiles)
+    this.player.draw(this.ctx);
+
+    // If the player is dying and already finished their death animation:
+    if (this.player.dying && this.player.finishedDying) {
+        return; // Stop the rest of the loop to prevent drawing the map/enemies/portal
+    }
 
     // === Handle Each Enemy ===
     this.enemies.forEach((enemy, i) => {
@@ -246,11 +422,11 @@ loop() {
                             life.width = (this.player.health / this.player.maxHealth) * lifeBarwidth;
                             if (life.width <= 0) life.width = 0;
 
-                            if (this.player.health <= 0) {
-                                setTimeout(() => {
-                                    GameOver();
-                                }, 100); // show death after a brief delay
+                            if (this.player.health <= 0 && !this.player.dying) {
+                                this.player.dying = true;
+                                this.player.deathTimer = 60; // About 1 second of animation
                             }
+                            
 
                             this.flashScreen = true; // flash red
                             setTimeout(() => { this.flashScreen = false; }, 150); // reset flash
@@ -305,6 +481,20 @@ loop() {
         }
 
         enemy.draw(this.ctx); // Draw the enemy
+
+        if (enemy.healthBar) {
+            // Update bar position to follow enemy
+            enemy.healthBar.position.x = enemy.position.x + (enemy.width / 2) - (enemy.healthBar.width / 2) - 23;
+            enemy.healthBar.position.y = enemy.position.y - 50;
+        
+            // Update bar width based on health
+            enemy.healthBar.width = (enemy.health / enemy.maxHealth) * 30;  // or 50 for wolf
+        
+            if (enemy.healthBar.width < 0) enemy.healthBar.width = 0;
+        
+            enemy.healthBar.draw(this.ctx);
+        }
+        
     });
 
     // === Portal Teleportation and Level Transition ===
@@ -319,14 +509,18 @@ loop() {
             this.mapManager.selectRandomMap(this.mapManager.currentMapKey, this.usedMaps);
             this.updateCollisionMap();
             this.spawnEnemiesForRoom();
+
         },
         () => this.onNewLevel()
     );
+
+    this.npcFrame++; // increase NPC animation frame
 
     if (this.player.moving || this.player.attacking) {
         this.gameFrame++; // Only animate if doing something
     }
 
+    
     // === Draw UI Bars ===
     bar.draw(this.ctx);
     curse.draw(this.ctx);
@@ -336,19 +530,15 @@ loop() {
     life.draw(this.ctx);
     this.ctx.drawImage(lifeLogo, 723, 25, 25, 25);
 
-    // === Handle Death by Health ===
-    if (this.player.health <= 0) {
-        GameOver();
-    }
-
     // === Update Curse (Countdown Timer Mechanic) ===
     curse.update(); // shrinks over time
     curse.colorTransition(); // changes color as it gets lower
 
-    if (curse.width === 0) {
-        GameOver(); // curse ran out - game over
+    if (curse.width <= 0 && !this.player.dying) {
+        this.player.dying = true;
+        this.player.deathTimer = 60; // Duration of death animation
     }
-
+    
     // === Final Frame and Loop Call ===
     if (!paused && !gameOver) {
         if (this.flashScreen) {
