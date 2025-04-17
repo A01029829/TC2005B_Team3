@@ -21,14 +21,19 @@
             <div class="login">
 
                 <form id="login">
+                    <div class="close-icon" onclick="closeLogin()">✕</div>
                     <h2>Login</h2>
                     <div class="textBox">
-                        <input type="text" name="userID" placeholder="Type your user id">
-                        <input type="text" name="password" placeholder="Type your password">
+                        <p>Correo:</p>
+                        <input type="text" name="correo" placeholder="Escribe tu correo">
+                        <p>Usuario:</p>
+                        <input type="text" name="nombreUsuario" placeholder="Escribe tu user id">
+                        <p>Contraseña:</p>
+                        <input type="password" name="contrasena" placeholder="Escribe tu contraseña">
                     </div>
                     <div class="loginButtons">
                         <input id="submit" type="submit" value="Login">
-                        <button type="button" id="close_button" onclick="closeLogin()">Close</button>
+                        <!-- <button type="button" id="close_button" onclick="closeLogin()">Close</button> -->
                     </div>
                 </form>
             </div>
@@ -45,14 +50,35 @@
         let login = document.getElementById("login");
 
         function openLogin() {
-            console.log("openLogin");
             login.classList.add("open_login");
-            console.log("change");
         }
         function closeLogin() {
             login.classList.remove("open_login");
         }
+
+        // document.getElementById('login').onsubmit = async (e) => {
+
+        //     e.preventDefault();
+
+        //     // Save the user ID and password
+        //     const correo = document.querySelector('input[name="correo"]').value;
+        //     const userId = document.querySelector('input[name="userID"]').value;
+        //     const password = document.querySelector('input[name="password"]').value;
+
+
+        //     if (!userId || !password || !correo) {
+        //         // If either field is empty, show an alert
+        //         alert("Por favor complete todos los campos");
+        //         return false;
+        //     }
+
+        //     // Go to the next page
+        //     window.location.href = "../html/clases.html";
+        // }
+
     </script>
+    <script src="../js/api.js"></script>
+    <!-- <script src="../js/app.js"></script>  -->
 
 </body>
 
