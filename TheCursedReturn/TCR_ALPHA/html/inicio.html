@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <link rel="stylesheet" href="../css/inicio.css">
     <title>The Cursed Return</title>
 </head>
@@ -29,16 +30,20 @@
                         <p>Usuario:</p>
                         <input type="text" name="nombreUsuario" placeholder="Escribe tu user id">
                         <p>Contraseña:</p>
-                        <input type="password" name="contrasena" placeholder="Escribe tu contraseña">
+                        <div class="contrasenaBox">
+                            <input type="password" name="contrasena" id="contrasena" placeholder="Escribe tu contraseña">
+                            <i class="toggle-password" onclick="togglePassword()"><span id="icon" class="material-symbols-outlined">
+                                    visibility
+                                </span>
+                            </i>
+                        </div>
+                        <p id="password_restriction">La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.</p>
                     </div>
                     <div class="loginButtons">
                         <input id="submit" type="submit" value="Login">
-                        <!-- <button type="button" id="close_button" onclick="closeLogin()">Close</button> -->
                     </div>
                 </form>
             </div>
-            <!-- <button id="button" onclick="location.href='../html/clases.html'">NUEVA PARTIDA</button>
-            <button id="button" onclick="location.href='../html/interfaz.html'">RESUMIR PARTIDA</button> -->
             <button id="button" onclick="location.href='../html/creditos.html'">CREDITOS</button>
         </div>
     </nav>
@@ -56,29 +61,22 @@
             login.classList.remove("open_login");
         }
 
-        // document.getElementById('login').onsubmit = async (e) => {
+        // Allows th user to see the password
+        function togglePassword() {
+            const passwordInput = document.getElementById("contrasena");
+            const toggleIcon = document.getElementById("icon");
 
-        //     e.preventDefault();
-
-        //     // Save the user ID and password
-        //     const correo = document.querySelector('input[name="correo"]').value;
-        //     const userId = document.querySelector('input[name="userID"]').value;
-        //     const password = document.querySelector('input[name="password"]').value;
-
-
-        //     if (!userId || !password || !correo) {
-        //         // If either field is empty, show an alert
-        //         alert("Por favor complete todos los campos");
-        //         return false;
-        //     }
-
-        //     // Go to the next page
-        //     window.location.href = "../html/clases.html";
-        // }
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                icon.innerText = "visibility_off";
+            } else {
+                passwordInput.type = "password";
+                icon.innerText = "visibility";
+            }
+        }
 
     </script>
     <script src="../js/api.js"></script>
-    <!-- <script src="../js/app.js"></script>  -->
 
 </body>
 
