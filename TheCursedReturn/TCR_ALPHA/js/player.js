@@ -1,105 +1,164 @@
 // === Player Class ===
 // Handles movement, attacks, health, and animation for the player character
-
 class Player extends AnimatedObject {
     constructor(position, spritePath, movementFrames, attackRow) {
 
         // === Player Setup ===
-        // uses AnimatedObject (so player has sprites/animation support)
+        // uses AnimatedObject to inherit position, sprite, and animation logic
         super(position, 64, 65, 'rgba(0,0,0,0)', 'player', 12);
 
+        // === Class Selection and Base Damage ===
+        this.classType = localStorage.getItem("selectedClass") || "knight";
+        if (this.classType === "knight") {
+            this.attackMagnitude = 35; // melee
+        } else if (this.classType === "archer") {
+            this.attackMagnitude = 12; // ranged, faster
+        } else if (this.classType === "wizard") {
+            this.attackMagnitude = 20; // magic
+        }
+
+        // === Movement and Animation Setup ===
         this.speed = 3; // movement speed
-        this.movementFrames = movementFrames;
-        this.attackRow = attackRow;
+        this.movementFrames = movementFrames; // object with direction (frameRow)
+        this.attackRow = attackRow; // object with direction (attackRow)
 
-        // player state
-        this.attacking = false;
-        this.attackTimer = null;
-        this.moving = false;
-        this.lastDirection = 'down';
+        // === Player State Flags ===
+        this.attacking = false; // is attacking now
+        this.attackTimer = null; // how long the attack alsts
+        this.attackInProgress = false; // controls single fire
+        this.attackFrameCounter = 0;   // counts animation progress
+        this.moving = false; // whether the player is moving
+        this.lastDirection = 'down'; // initial facing direction
 
-        this.setSprite(spritePath, { x: 0, y: 0, width: 64, height: 65 });
+        // === Sprite Setup ===
+        this.setSprite(spritePath, { x: 0, y: 0, width: 64, height: 65 }); // assign sprite and base frame sizes
 
-        // health setup
-        this.maxHealth = 50;
-        this.health = this.maxHealth;
+        // === Health Setup ===
+        this.maxHealth = 50; // max HP
+        this.health = this.maxHealth; // start at full HP
 
-        this.attackMagnitude = 5;
+        // === Dash Setup ===
+        this.dashing = false; // currently dashing?
+        this.dashCooldown = false; // on cooldown?
+        this.dashTimer = 0; // remaining dash duration
+        this.dashCooldownTimer = 0; // remaining cooldown
 
-        // dash setup
-        this.dashing = false;
-        this.dashCooldown = false;
-        this.dashTimer = 0;
-        this.dashCooldownTimer = 0;
+        this.dashSpeed = 10; // speed while dashing
+        this.dashDuration = 10; // dash lasts for 10 frames
+        this.dashCooldownDuration = 60; // cooldown before another dash
 
-        this.dashSpeed = 10; // dash movement speed
-        this.dashDuration = 10; // frames the dash lasts
-        this.dashCooldownDuration = 60; //frames before the player can dash again
+        // === Projectile ===
+        this.arrows = []; // archer´s arrows
+        this.arrowCooldown = 0; // delay between shot 
 
-        this.arrows = [];
-        this.arrowCooldown = 0;
-
-        this.projectiles = [];
-        this.fireballCooldown = 0;        
+        this.projectiles = []; // all prjectiles (arrows or fireballs)
+        this.fireballCooldown = 0; // delay between fireballs
 
         this.lastDirection = 'down'; // default
 
-        this.dying = false;  // controls if the death animation is playing
-        this.deathTimer = 0; // time to stay in death animation
+        // === Death Handling ===
+        this.dying = false; // currently dying
+        this.deathTimer = 0; // time left in death animation
+
+        // === Secondary Weapon Handling ===
+        this.secondaryWeapon = null; // type of secondary weapon (dagger, spear, etc.)
+        this.secondaryTimer = 0;  // time left for active secondary weapon
+        this.originalSpritePath = spritePath; // store default sprite
+        this.originalAttackRow = attackRow; // store default attack frames
+        this.originalMovementFrames = movementFrames; // store default movement frames
+
+        this.deathDuration = 30; // duration of death animation (frames)
+
+        // === Pending Weapon Before Pickup ===
+        this.pendingWeapon = null; // weapon object from chest
+        this.pendingIcon = null; // icon name for HUD
+
+        this.secondarySpritePath = null; // sprite of secondary weapon if equipped
+
+        this.equipPressedLastFrame = false; // prevent golding 'o' to trigger infinitely
     }
 
     // === Handle Input and Move Player ===
     // handles movement, attacks, and collision detection
     handleInput(keysPressed, keyMap, collisionMap) {
-        if (this.dying) return; // Prevent input if dying
-        this.moving = false;
+        if (this.dying) return; // no input allowed while dying
+        this.moving = false; // reset moving flag
     
-        if (keyMap['k'] && keysPressed['k']) {
-            if (this.classType === 'archer' && this.arrowCooldown <= 0) {
-                setTimeout(() => {
-                    this.shootArrow();
-                }, 500); // sync with bow draw animation
-                this.arrowCooldown = 20; // frames between shots
-            }
-    
-            if (this.classType === 'wizard' && this.fireballCooldown <= 0) {
-                setTimeout(() => {
-                    this.shootFireball();
-                }, 300); // small delay to simulate casting
-                this.fireballCooldown = 30; // frames between shots
-            }
-    
+        // === Start attack only on key press (not while holding it) ===
+        if (keyMap['k'] && keysPressed['k'] && !this.attackInProgress) {
+            this.attackInProgress = true;
             this.attacking = true;
-        } else {
-            this.attacking = false;
-        }        
-
+            this.attackFrameCounter = 0;
+            this.spriteRect.y = this.attackRow[this.lastDirection]; // set correct attack row
+            this.attackTimer = 15; // frames for full attack animation
+        }
+    
+        // === Start dash if not already dashing or on cooldown ===
         if (keysPressed[' '] && !this.dashing && !this.dashCooldown) {
             this.dashing = true;
-            this.dashTimer = this.dashDuration;
-            this.dashCooldown = true;
+            this.dashTimer = this.dashDuration; // dash lasts this many frames
+            this.dashCooldown = true; // activate cooldown
             this.dashCooldownTimer = this.dashCooldownDuration;
-        }        
-
-        // === Start Attack ===
+        }
+        
+        // === Equip secondary weapon if pressing 'o' ===
+        if (keysPressed['o'] && !this.equipPressedLastFrame) {
+            if (this.pendingWeapon) {
+                // equip the pending weapon
+                const { name, spritePath, movementFrames, attackRow } = this.pendingWeapon;
+                this.activateSecondaryWeapon(name, spritePath, movementFrames, attackRow);
+                this.pendingWeapon = null;
+                this.pendingIcon = null;
+            } else if (this.secondaryWeapon) {
+                // if player already has one, reset its duration
+                this.secondaryTimer = 0;
+            }
+        }
+        this.equipPressedLastFrame = keysPressed['o']; // save state of 'o' for next frame
+        
+        // === If attacking normally (holding down 'k') ===
         if (keysPressed['k']) {
             this.attacking = true;
             this.spriteRect.y = this.attackRow[this.lastDirection];
             this.attackTimer = 10; // attack duration (frames)
-            return;
+            return; // skip movement while attacking
         }
 
-        // === Attack Countdown ===
-        if (this.attacking && this.attackTimer !== null) {
-            this.attackTimer--;
-            if (this.attackTimer <= 0) {
-                this.attacking = false;
-                this.attackTimer = null;
+    // === Timed Attack Execution Logic ===
+    if (this.attackInProgress) {
+        this.attackFrameCounter++; // progress the attack animation
+        this.spriteRect.y = this.attackRow[this.lastDirection];
+
+        const totalAttackFrames = 6;
+        this.spriteRect.x = Math.floor(this.attackFrameCounter / 3) % totalAttackFrames;
+
+        // fire projectile at a specific moment during the animation
+        if (this.attackFrameCounter === 10) {
+            if (!this.secondaryWeapon) {
+                if (this.classType === 'archer' && this.arrowCooldown <= 0) {
+                    this.shootArrow();
+                    this.arrowCooldown = 20;
+                }
+
+                if (this.classType === 'wizard' && this.fireballCooldown <= 0) {
+                    this.shootFireball();
+                    this.fireballCooldown = 30;
+                }
             }
-            return;
         }
 
-        // === Move in Direction Based on Pressed Keys ===
+        // End attack after timer runs out
+        this.attackTimer--;
+        if (this.attackTimer <= 0) {
+            this.attacking = false;
+            this.attackInProgress = false;
+            this.attackTimer = null;
+        }
+
+        return; // skip movement while attacking
+    }
+
+        // === Movement Input Handling ===
         for (let key in keysPressed) {
             if (
                 keyMap[key] &&
@@ -111,15 +170,16 @@ class Player extends AnimatedObject {
                         currentSpeed = this.dashSpeed;
                     }
 
+                // calculate next position
                 const nextX = this.position.x + keyMap[key].dx * currentSpeed;
                 const nextY = this.position.y + keyMap[key].dy * currentSpeed;
                 this.lastDirection = keyMap[key].dir;        
-
-                // check for collisions before moving
+            
+                // === Collision Check ===
                 let isBlocked = collisionMap && collisionMap.isBlockedPixel(nextX, nextY);
 
-                // Extra check against staticObjects
-                if (!isBlocked && this.gameRef?.staticObjects) {
+                // extra check against static objects like chests, healer, etc.
+                if (!isBlocked && this.gameRef && this.gameRef.staticObjects) {
                     this.gameRef.staticObjects.forEach(obj => {
                         const nextBox = {
                             x: nextX,
@@ -147,18 +207,22 @@ class Player extends AnimatedObject {
                     });
                 }
 
+                // === Apply Movement ===
                 if (!isBlocked) {
                     this.position.x = nextX;
                     this.position.y = nextY;
                 }
 
-
-                    this.spriteRect.y = keyMap[key].frameY; // set walking animation row
+                // update sprite row to match direction if applicable
+                if (this.movementFrames && this.lastDirection in this.movementFrames) {
+                    this.spriteRect.y = this.movementFrames[this.lastDirection];
+                }                
                     this.lastDirection = this._getDirection(key); // save direction for attacks
                     this.moving = true;
                 }
             }
 
+        // === Dash and Cooldown Logic ===
         if (this.dashing) {
             this.dashTimer--;
             if (this.dashTimer <= 0) {
@@ -173,6 +237,7 @@ class Player extends AnimatedObject {
             }
         }
 
+        // === Cooldowns for Arrows and Fireballs ===
         if (this.arrowCooldown > 0) this.arrowCooldown--;
         if (this.fireballCooldown > 0) this.fireballCooldown--;
         
@@ -180,69 +245,72 @@ class Player extends AnimatedObject {
     }
 
     // === Determine Direction Name from Key ===
-    // just translates key presses into 'up', 'left', etc.
+    // converts a pressed key into a direction string
     _getDirection(key) {
         switch (key) {
             case 'w': return 'up';
             case 'a': return 'left';
             case 's': return 'down';
             case 'd': return 'right';
-            default: return this.lastDirection;
+            default: return this.lastDirection; // fallback to current direction
         }
     }
 
     // === Update Animation Frame ===
-    // controls the frame the sprite is currently showing
+    // handles sprite animation and secondary weapon countdown
     updateAnimation(gameFrame, staggerFrames) {
         if (this.dying) {
-            // Death animation always uses row 20 and frames 2, 3, 4
-            this.spriteRect.y = 20;
-            const totalFrames = 3; // Frames 2, 3, 4
-            this.spriteRect.x = 2 + Math.floor(gameFrame / staggerFrames) % totalFrames;
+            this.spriteRect.y = 20; // set death animation row
+            
+            const currentFrame = Math.floor((this.deathDuration - this.deathTimer) / staggerFrames);
+            this.spriteRect.x = Math.min(2 + currentFrame, 4); // progress frame from 2 to 4
+
     
             this.deathTimer--;
-
             if (this.deathTimer <= 0 && !this.finishedDying) {
-                this.finishedDying = true; // Flag to prevent double GameOver trigger
+                this.finishedDying = true;
                 setTimeout(() => {
-                    GameOver();
-                }, 500); // Small delay after death animation ends
+                    GameOver(); // trigger game over screen
+                }, 500);
             }
-            
         } else {
-            const totalFrames = 6; // Normal movement animation
+            const totalFrames = 6; // walking/attacking frames
             this.spriteRect.x = Math.floor(gameFrame / staggerFrames) % totalFrames;
         }
     
-        this.projectiles.forEach(p => p.update());
-    }    
-    
+        // update projectiles like arrows/fireballs
+        this.projectiles.forEach(p => p.update());      
+
+        // countdown for secondary weapon effect
+        if (this.secondaryWeapon && this.secondaryTimer > 0) {
+            this.secondaryTimer--;
+        
+            if (this.secondaryTimer === 0) {
+                // revert to original weapon
+                this.secondaryWeapon = null;
+                this.setSprite(this.originalSpritePath, { x: 0, y: 0, width: 64, height: 65 });
+        
+                this.movementFrames = this.originalMovementFrames;
+                this.attackRow = this.originalAttackRow;
+        
+                // reset original attack damage
+                if (this.classType === 'knight') this.attackMagnitude = 35;
+                if (this.classType === 'archer') this.attackMagnitude = 12;
+                if (this.classType === 'wizard') this.attackMagnitude = 20;
+            }
+        }              
+        
+    }
 
     // === Keep Player Inside Canvas Bounds ===
     clampToBounds(canvasWidth, canvasHeight) {
-        // offsets are used because sprite graphics may overflow the actual hitbox (16x16)
-        // these values compensate for that to avoid clipping out of bounds
-
-        // spriteOffsetY: difference between sprite height and real height (extra pixels on top)
-        const spriteOffsetY = this.spriteRect.height - 16 || 0;
-
-        // spriteOffsetX: horizontal correction (e.g., half of extra width)
-        const spriteOffsetX = (this.spriteRect.width - 16) / 2 || 0;
-
-        // X: make sure player stays within canvas bounds (but accounts for sprite size)
-        // Math.min: clamps max right edge
-        // Math.max: clamps left edge
-        this.position.x = Math.max(
-            spriteOffsetX,
-            Math.min(this.position.x, canvasWidth - this.width + spriteOffsetX)
-        );
-
-        // Y: same as above but vertical
-        this.position.y = Math.max(
-            spriteOffsetY,
-            Math.min(this.position.y, canvasHeight - this.height + spriteOffsetY)
-        );
+        const feetOffset = 12; // room at the bottom for feet
+        const headOffset = 65; // full sprite height
+    
+        this.position.x = Math.max(0, Math.min(this.position.x, canvasWidth - this.width));
+        this.position.y = Math.max(headOffset, Math.min(this.position.y, canvasHeight - feetOffset));
     }
+     
 
     // === Reset Player to Starting Position ===
     resetPosition() {
@@ -251,43 +319,48 @@ class Player extends AnimatedObject {
     }
 
     // === Arrow mechanics ===
-shootArrow() {
-    let arrowX = this.position.x;
-    let arrowY = this.position.y;
+    // calculates arrow spawn position and adds it to the projectiles list
+    shootArrow() {
+        let arrowX = this.position.x;
+        let arrowY = this.position.y;
+        const direction = this.lastDirection;
+        const speed = 8; // arrow speed
     
-    switch (this.lastDirection) {
-        case 'up':
-            arrowX += this.width / 2 - 64;
-            arrowY -= 20;
-            break;
-        case 'down':
-            arrowX += this.width / 2 - 64;
-            arrowY += this.height - 100;
-            break;
-        case 'left':
-            arrowX -= 22;
-            arrowY += this.height / 2 - 65;
-            break;
-        case 'right':
-            arrowX += this.width - 22;
-            arrowY += this.height / 2 - 65;
-            break;
+        // adjust starting position based on direction
+        switch (direction) {
+            case 'up':
+                arrowX += this.width / 2 - 64;
+                arrowY -= 20;
+                break;
+            case 'down':
+                arrowX += this.width / 2 - 64;
+                arrowY += this.height - 100;
+                break;
+            case 'left':
+                arrowX -= 22;
+                arrowY += this.height / 2 - 65;
+                break;
+            case 'right':
+                arrowX += this.width - 22;
+                arrowY += this.height / 2 - 65;
+                break;
+        }
+    
+        const arrow = new Arrow({ x: arrowX, y: arrowY }, direction, speed, this.attackMagnitude);
+        this.projectiles.push(arrow);
     }
-
-    const arrow = new Arrow(
-        { x: arrowX, y: arrowY },
-        this.lastDirection,
-        this.arrowImage
-    );
-    this.projectiles.push(arrow);
-}
+    
 
    // === Fireball mechanics ===
-shootFireball() {
+   shootFireball() {
     let fbX = this.position.x;
     let fbY = this.position.y;
+    const direction = this.lastDirection;
+    const speed = 5; // fireball speed
+    const image = this.fireballImage;
 
-    switch (this.lastDirection) {
+    // adjust starting position based on direction
+    switch (direction) {
         case 'up':
             fbX += this.width / 2 - 64;
             fbY -= 20;
@@ -306,26 +379,51 @@ shootFireball() {
             break;
     }
 
-    const fireball = new Fireball(
-        { x: fbX, y: fbY }, 
-        this.lastDirection, 
-        5, 
-        this.fireballImage
-    );
+    const fireball = new Fireball({ x: fbX, y: fbY }, direction, speed, image, this.attackMagnitude);
     this.projectiles.push(fireball);
 }
 
-    // ===  Projectile direction based on animation row ===
+
+    // === Get Last Movement Direction ===
     getDirection() {
             return this.lastDirection;
     }
  
+    // === Draw Player and Projectiles ===
     draw(ctx) {
         this.projectiles.forEach(projectile => {
-            projectile.draw(ctx);
+            projectile.draw(ctx); // draw arrows/fireballs
         });
 
-        super.draw(ctx);
+        super.draw(ctx); // draw the player
     }
     
+    // === Activate Secondary Weapon ===
+    // changes sprite, damage, movement/attack frames, and starts timer
+    activateSecondaryWeapon(weaponName, spritePath, movementFrames, attackRow) {
+        this.secondaryWeapon = weaponName;
+        this.secondaryTimer = 3600; // time active (in frames)
+        this.secondarySpritePath = spritePath;
+        this.setSprite(spritePath, { x: 0, y: 0, width: 64, height: 65 });
+    
+        this.movementFrames = movementFrames;
+        this.attackRow = attackRow;
+    
+        // set power for each secondary weapon
+        if (weaponName === 'dagger') this.attackMagnitude = 40;
+        else if (weaponName === 'spear') this.attackMagnitude = 50;
+        else if (weaponName === 'crossbow') this.attackMagnitude = 30;
+        else if (weaponName === 'waraxe') this.attackMagnitude = 60;
+    }
+    
+    // === Start Death Animation ===
+    startDeath() {
+        this.dying = true;
+        this.deathTimer = this.deathDuration;
+        this.finishedDying = false;
+        this.spriteRect.y = 20; // set death animation row
+        this.spriteRect.x = 2; // start from frame 2
+    }
+    
+
 }
