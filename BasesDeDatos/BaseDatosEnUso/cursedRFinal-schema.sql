@@ -238,7 +238,7 @@ END IF;
         ORDER BY fechaLog ASC
         LIMIT 1;
         
-        --Ultimo objeto encontrado
+        -- Ultimo objeto encontrado
         SELECT objetosEncontrados INTO ultimo_objeto_encontrado
         FROM Log_Partida
         WHERE id_partida = NEW.id_partida AND objetosEncontrados IS NOT NULL
