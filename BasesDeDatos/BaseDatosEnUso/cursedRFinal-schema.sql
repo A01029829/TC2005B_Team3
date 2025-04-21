@@ -27,7 +27,7 @@ CREATE TABLE Log_Partida(
     id_log INT AUTO_INCREMENT PRIMARY KEY,
     id_partida INT NOT NULL,
     fechaLog TIMESTAMP NOT NULL,
-    eventoTrigger ENUM('pausa', 'checkpoints', 'inicio', 'muerteMaldicion', 'muerteVida') NOT NULL,
+    eventoTrigger ENUM('pausa', 'checkpoints', 'inicio', 'muerteMaldicion', 'muerteVida', 'salida') NOT NULL,
     claseElegida ENUM('guerrero', 'arquero', 'hechicero') NOT NULL,
     tiempoPartida TIME NOT NULL,
     puntuacion INT DEFAULT 0,
@@ -150,61 +150,102 @@ LEFT JOIN
      ON lp.id_partida = lp2.id_partida AND lp.fechaLog = lp2.max_fecha
     ) objetosMax ON p.id_partida = objetosMax.id_partida;
 
--- Primero eliminamos el trigger existente
-DROP TRIGGER IF EXISTS muerte_detector;
+-- Creacion de indices: Estos se usan automáticamente por la base de datos cuando es necesario
+CREATE INDEX idx_log_partida_fecha ON Log_Partida(id_partida, fechaLog);
+CREATE INDEX idx_log_fechaLog ON Log_Partida(fechaLog);
+CREATE INDEX idx_log_objetosEncontrados ON Log_Partida(objetosEncontrados);
 
--- Creamos el trigger actualizado
+DROP TRIGGER IF EXISTS save_trigger;
 DELIMITER //
 
-CREATE TRIGGER muerte_detector
+CREATE TRIGGER save_trigger
 AFTER INSERT ON Log_Partida
 FOR EACH ROW
 BEGIN
-    -- Variables para detectar si es necesario crear un registro de muerte
-    DECLARE necesita_registro_muerte BOOLEAN DEFAULT FALSE;
+    DECLARE ultimo_nivel TINYINT;
+    DECLARE ultima_sala TINYINT;
     DECLARE tipo_muerte VARCHAR(15);
-    DECLARE ultimo_log TIMESTAMP;
-    DECLARE ultimo_evento VARCHAR(15);
     DECLARE clase_jugador ENUM('guerrero', 'arquero', 'hechicero');
     DECLARE ultimo_objeto_encontrado ENUM('curandero', 'armero', 'cofre');
     
-    -- Obtener la clase elegida para esta partida (del primer registro)
-    SELECT claseElegida INTO clase_jugador
-    FROM Log_Partida
-    WHERE id_partida = NEW.id_partida
-    ORDER BY fechaLog ASC
-    LIMIT 1;
-    
-    -- Obtener el último objeto encontrado
-    SELECT objetosEncontrados INTO ultimo_objeto_encontrado
-    FROM Log_Partida
-    WHERE id_partida = NEW.id_partida AND objetosEncontrados IS NOT NULL
-    ORDER BY fechaLog DESC
-    LIMIT 1;
-    
-    -- Buscar el último registro para esta partida (versión corregida)
-    SELECT fechaLog, eventoTrigger INTO ultimo_log, ultimo_evento
-    FROM Log_Partida
-    WHERE id_partida = NEW.id_partida
-    ORDER BY fechaLog DESC
-    LIMIT 1;
-    
-    -- Verificar si el nuevo registro tiene rankM = 0 (muerte por maldición) 
-    -- o vida = 0 (muerte por vida) pero no es un evento de muerte
-    IF NEW.rankM = 0 AND NEW.eventoTrigger != 'muerteMaldicion' THEN
-        SET necesita_registro_muerte = TRUE;
-        SET tipo_muerte = 'muerteMaldicion';
-    ELSEIF NEW.vida = 0 AND NEW.eventoTrigger != 'muerteVida' THEN
-        SET necesita_registro_muerte = TRUE;
-        SET tipo_muerte = 'muerteVida';
+    -- Evento de inicio: Resetea la fecha fin
+    IF NEW.eventoTrigger = 'inicio' THEN
+        UPDATE Partida 
+        SET fecha_fin = NULL
+        WHERE id_partida = NEW.id_partida;
     END IF;
     
-    -- Si se necesita un registro de muerte y el último registro no es un evento de muerte
-    IF necesita_registro_muerte = TRUE AND 
-       ultimo_evento NOT IN ('muerteMaldicion', 'muerteVida') THEN
+    -- Evento de salida o muerte: Se actualiza fecha_fin
+    IF NEW.eventoTrigger IN ('salida', 'muerteMaldicion', 'muerteVida') THEN
+        UPDATE Partida 
+        SET fecha_fin = CURRENT_TIMESTAMP
+        WHERE id_partida = NEW.id_partida AND fecha_fin IS NULL;
+    END IF;
+    
+    -- Evento de pausa: Guarda los datos actuales
+IF NEW.eventoTrigger = 'pausa' THEN
+    
+    -- Ultimo objeto encontrado
+    IF NEW.objetosEncontrados IS NULL THEN
+        SELECT objetosEncontrados INTO ultimo_objeto_encontrado
+        FROM Log_Partida
+        WHERE id_partida = NEW.id_partida AND objetosEncontrados IS NOT NULL
+        ORDER BY fechaLog DESC
+        LIMIT 1;
+    ELSE
+        SET ultimo_objeto_encontrado = NEW.objetosEncontrados;
+    END IF;
+    
+    -- Insercion en la base de datos
+    INSERT INTO Log_Partida
+    (id_partida, fechaLog, eventoTrigger, claseElegida, tiempoPartida, 
+     puntuacion, nivelActual, salaActual, biomaActual, rankM, vida,
+     enemigosCDerrotados, enemigosFDerrotados, jefesDerrotados,
+     objetosEncontrados)
+    VALUES
+    (NEW.id_partida, 
+     CURRENT_TIMESTAMP,
+     'pausa',  -- Se guarda el evento como pausa
+     clase_jugador,
+     NEW.tiempoPartida, 
+     NEW.puntuacion,
+     NEW.nivelActual,
+     NEW.salaActual,
+     NEW.biomaActual,
+     NEW.rankM,
+     NEW.vida,
+     NEW.enemigosCDerrotados,
+     NEW.enemigosFDerrotados,
+     NEW.jefesDerrotados,
+     ultimo_objeto_encontrado);
+END IF;
+
+    -- Evento de muerte: Se verifica si fue una muerte para guardarlo como un registro y que no se confunda con el otro evento
+    IF (NEW.rankM = 0 OR NEW.vida = 0) AND 
+        NEW.eventoTrigger NOT IN ('muerteMaldicion', 'muerteVida') THEN
         
-        -- Insertar un nuevo registro con el evento de muerte correspondiente
-        -- Ahora incluimos los nuevos campos
+        -- Tipo de muerte: Tipo de evento
+        IF NEW.rankM = 0 THEN
+            SET tipo_muerte = 'muerteMaldicion';
+        ELSE
+            SET tipo_muerte = 'muerteVida';
+        END IF;
+        
+        -- Clase de la partida
+        SELECT claseElegida INTO clase_jugador
+        FROM Log_Partida
+        WHERE id_partida = NEW.id_partida
+        ORDER BY fechaLog ASC
+        LIMIT 1;
+        
+        --Ultimo objeto encontrado
+        SELECT objetosEncontrados INTO ultimo_objeto_encontrado
+        FROM Log_Partida
+        WHERE id_partida = NEW.id_partida AND objetosEncontrados IS NOT NULL
+        ORDER BY fechaLog DESC
+        LIMIT 1;
+        
+        -- Insercion de valores en base de datos
         INSERT INTO Log_Partida
         (id_partida, fechaLog, eventoTrigger, claseElegida, tiempoPartida, 
          puntuacion, nivelActual, salaActual, biomaActual, rankM, vida,
@@ -212,9 +253,9 @@ BEGIN
          objetosEncontrados)
         VALUES
         (NEW.id_partida, 
-         CURRENT_TIMESTAMP, -- Fecha actual
-         tipo_muerte, -- El tipo de muerte detectado
-         clase_jugador, -- Clase del jugador (obtenida del primer registro)
+         CURRENT_TIMESTAMP,
+         tipo_muerte,
+         clase_jugador,
          NEW.tiempoPartida, 
          NEW.puntuacion,
          NEW.nivelActual,
@@ -225,17 +266,48 @@ BEGIN
          NEW.enemigosCDerrotados,
          NEW.enemigosFDerrotados,
          NEW.jefesDerrotados,
-         ultimo_objeto_encontrado); -- Último objeto encontrado
+         ultimo_objeto_encontrado);
          
-        -- También actualizar la fecha_fin en la tabla Partida
+        -- Actualizar fecha fin
         UPDATE Partida 
         SET fecha_fin = CURRENT_TIMESTAMP
         WHERE id_partida = NEW.id_partida AND fecha_fin IS NULL;
     END IF;
+    
+    -- Cambio de sala: Registro de checkpoint
+    -- Comparacionde valores anteriores para ver si de verdad hubo un cambio
+    SELECT nivelActual, salaActual INTO ultimo_nivel, ultima_sala
+    FROM Log_Partida
+    WHERE id_partida = NEW.id_partida 
+        AND id_log < NEW.id_log
+    ORDER BY fechaLog DESC
+    LIMIT 1;
+    
+    IF NEW.eventoTrigger != 'checkpoints' 
+       AND (NEW.nivelActual != ultimo_nivel OR NEW.salaActual != ultima_sala)
+       AND ultimo_nivel IS NOT NULL
+    THEN
+        INSERT INTO Log_Partida
+        (id_partida, fechaLog, eventoTrigger, claseElegida, tiempoPartida, 
+         puntuacion, nivelActual, salaActual, biomaActual, rankM, vida,
+         enemigosCDerrotados, enemigosFDerrotados, jefesDerrotados,
+         objetosEncontrados)
+        VALUES
+        (NEW.id_partida, 
+         CURRENT_TIMESTAMP,
+         'checkpoints',
+         NEW.claseElegida,
+         NEW.tiempoPartida, 
+         NEW.puntuacion,
+         NEW.nivelActual,
+         NEW.salaActual,
+         NEW.biomaActual,
+         NEW.rankM,
+         NEW.vida,
+         NEW.enemigosCDerrotados,
+         NEW.enemigosFDerrotados,
+         NEW.jefesDerrotados,
+         NEW.objetosEncontrados);
+    END IF;
 END 
-//DELIMITER;
-
--- Creacion de indices: Estos se usan automáticamente por la base de datos cuando es necesario
-CREATE INDEX idx_log_partida_fecha ON Log_Partida(id_partida, fechaLog);
-CREATE INDEX idx_log_fechaLog ON Log_Partida(fechaLog);
-CREATE INDEX idx_log_objetosEncontrados ON Log_Partida(objetosEncontrados);
+//DELIMITER ;
