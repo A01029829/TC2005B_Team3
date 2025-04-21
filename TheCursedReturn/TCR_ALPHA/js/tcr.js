@@ -61,7 +61,8 @@ const keyMap = {
     d: { frameY: classes[selectedClass].movementFrames.right, dx: 1, dy: 0, dir: 'right' },
     k: { attacking: true },
     f: { interact : true},
-    ' ': { dash: true }
+    ' ': { dash: true },
+    o: { equip: true }
 };
 
 // === Image Assets ===
@@ -74,6 +75,37 @@ const healerImage = new Image();
 const gunsmithImage = new Image();
 const chestImage = new Image();
 
+window.secondarySprites = {
+    '../sprites/KnightSecondaryWeapons.png': new Image(),
+    '../sprites/ArcherSecondaryWeapons.png': new Image(),
+    '../sprites/WizardSecondaryWeapons.png': new Image()
+  };
+  
+  window.secondarySprites['../sprites/KnightSecondaryWeapons.png'].src = '../sprites/KnightSecondaryWeapons.png';
+  window.secondarySprites['../sprites/ArcherSecondaryWeapons.png'].src = '../sprites/ArcherSecondaryWeapons.png';
+  window.secondarySprites['../sprites/WizardSecondaryWeapons.png'].src = '../sprites/WizardSecondaryWeapons.png';
+  
+
+const weaponIcons = {
+    dagger: new Image(),
+    spear: new Image(),
+    crossbow: new Image(),
+    waraxe: new Image()
+};
+
+const activeWeaponIcons = {
+    dagger: new Image(),
+    spear: new Image(),
+    crossbow: new Image(),
+    waraxe: new Image()
+};
+
+const secondarySprites = {
+    '../sprites/KnightSecondaryWeapons.png': new Image(),
+    '../sprites/ArcherSecondaryWeapons.png': new Image(),
+    '../sprites/WizardSecondaryWeapons.png': new Image()
+};
+
 backgroundImage.src = '../levels/WoodsLVL1.png';
 playerImage.src = classes[selectedClass].sprite;
 enemyImage.src = '../sprites/Goblin01SpriteSheetFINAL.png';
@@ -81,6 +113,16 @@ wolfImage.src = '../sprites/WolfSpriteSheetFINAL.png';
 healerImage.src = '../sprites/HealerSpriteSheetFINAL.png';
 gunsmithImage.src = '../sprites/GunsmithSpriteSheetFINAL.png'
 chestImage.src = '../sprites/chest.png';
+
+weaponIcons.dagger.src = '../images/weapons/dagger.png';
+weaponIcons.spear.src = '../images/weapons/spear.png';
+weaponIcons.crossbow.src = '../images/weapons/crossbow.png';
+weaponIcons.waraxe.src = '../images/weapons/waraxe.png';
+
+secondarySprites['../sprites/KnightSecondaryWeapons.png'].src = '../sprites/KnightSecondaryWeapons.png';
+secondarySprites['../sprites/ArcherSecondaryWeapons.png'].src = '../sprites/ArcherSecondaryWeapons.png';
+secondarySprites['../sprites/WizardSecondaryWeapons.png'].src = '../sprites/WizardSecondaryWeapons.png';
+
 
 // === UI Bars Setup (Curse and Life Bars) ===
 // these bars appear on the top-right of the game screen to show health and time
