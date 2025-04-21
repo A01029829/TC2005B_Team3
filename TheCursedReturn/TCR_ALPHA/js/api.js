@@ -51,7 +51,6 @@ function main()
             // If response is OK, show success message
             if (response.ok) {
                 console.log(result);
-                //alert(result.message || "Login exitoso");
 
                 // Go to html clases
                 console.log("Redirecting to clases.html");
@@ -61,28 +60,23 @@ function main()
             else {
                 switch (response.status) {
                     case 400:
-                        // Bad request - validation errors
-                        // alert(responseData.message || "Datos inválidos. Por favor verifique su información.");
+                        // Invalid data
                         alert ("Datos inválidos. Por favor verifique su información.");
                         break;
                     case 401:
-                        // Unauthorized - wrong password
-                        //alert(responseData.message || "Credenciales incorrectas");
+                        // Wrong password
                         alert ("Credenciales incorrectas");
                         break;
                     case 409:
-                        // Conflict - username already exists
-                        //alert(responseData.message || "El nombre de usuario o correo ya está en uso");
+                        // Username or email already exists
                         alert ("El nombre de usuario o correo ya está en uso");
                         break;
                     case 500:
                         // Server error
-                        //alert(responseData.message || "Error interno del servidor. Intente más tarde.");
                         alert ("Error interno del servidor. Intente más tarde.");
                         break;
                     default:
                         // Generic error
-                        //alert(responseData.message || `Error: ${response.status}`);
                         alert (`Error: ${response.status}`);
                 }
             }
@@ -92,97 +86,89 @@ function main()
             console.error("Error processing response:", error);
             alert(`Error: ${response.statusText || "Error desconocido"}`);
         }
-
-        // if (!response.ok) {
-        //     const errorText = await response.text();
-        //     console.error("Server error:", errorText);
-        // }
-        // if(response.ok)
-        // {
-        //     let results = await response.json()
-
-        //     console.log(results)
-        //     alert(results.message)
-
-
-        // }
-        // else{
-        //     alert("Error en el inicio de sesión")
-        // }
-
-        // window.location.href = "../html/clases.html";
     }
 
-    // document.getElementById('login').onsubmit = async (e) => {
-    //     e.preventDefault();
+    // Function to load the leaderboard when the page loads
+    async function loadLeaderboard() {
+        try {
+            let response = await fetch('http://localhost:5800/api/leaderboard', {
+                method: 'GET'
+            });
+            
+            if (response.ok) {
+                let results = await response.json();
+                
+                if (results.length > 0) {
+                    displayLeaderboard(results);
+                } else {
+                    const container = document.getElementById('getResultsID');
+                    container.innerHTML = '<p class="no-data">No leaderboard data available.</p>';
+                }
+            } else {
+                document.getElementById('getResultsID').innerHTML = `Error: ${response.status}`;
+            }
+        } catch (error) {
+            console.error('Error fetching leaderboard:', error);
+            document.getElementById('getResultsID').innerHTML = `Error fetching leaderboard data: ${error.message}`;
+        }
+    }
+
+    // Function to display the leaderboard data
+    function displayLeaderboard(data) {
+        const container = document.getElementById('getResultsID');
+        container.innerHTML = '';
         
-    //     // Get form values
-    //     const email = document.querySelector('input[name="correo"]').value;
-    //     const username = document.querySelector('input[name="userID"]').value;
-    //     const password = document.querySelector('input[name="password"]').value;
+        // Create table
+        const table = document.createElement('table');
+        table.className = 'leaderboard-table';
+        
+        // Create header row
+        const headerRow = table.insertRow(-1);
+        headerRow.className = 'header-row';
+        
+        // Define headers we want to display
+        const headers = [
+            'Usuario', 
+            'Puntuación'
+        ];
+        
+        // Add header cells
+        headers.forEach(headerText => {
+            const headerCell = document.createElement('th');
+            headerCell.innerHTML = headerText;
+            headerRow.appendChild(headerCell);
+        });
+        
+        // Add data rows
+        data.forEach((player, index) => {
+            const row = table.insertRow(-1);
+            
+            // Add rank cell (position in leaderboard)
+            const rankCell = row.insertCell(-1);
+            rankCell.innerHTML = index + 1;
+            
+            // Add player data cells
+            addCell(row, player.nombreUsuario);
+            addCell(row, player.PuntuacionFinal);
+            
+            // Add class to highlight the first place
+            if (index === 0) {
+                row.className = 'first-place';
+            }
+        });
+        
+        // Add table to the container
+        container.appendChild(table);
+    }
     
-    //     if (!email || !username || !password) {
-    //         alert("Por favor complete todos los campos");
-    //         return false;
-    //     }
-    
-    //     try {
-    //         // Show loading indicator or disable submit button
-    //         const submitButton = document.getElementById('submit');
-    //         const originalButtonText = submitButton.value;
-    //         submitButton.value = "Procesando...";
-    //         submitButton.disabled = true;
-            
-    //         // Create login data object
-    //         const loginData = {
-    //             correo: email,
-    //             nombreUsuario: username,
-    //             contrasena: password
-    //         };
-    
-    //         // Send POST request to login endpoint
-    //         const response = await fetch('http://localhost:5800/api/login', {
-    //             method: 'POST',
-    //             headers: {'Content-Type': 'application/json'},
-    //             body: JSON.stringify(loginData)
-    //         });
-            
-    //         const result = await response.json();
-            
-    //         // Reset button state
-    //         submitButton.value = originalButtonText;
-    //         submitButton.disabled = false;
-            
-    //         if (response.ok) {
-    //             console.log("Login/Registration successful:", result);
-                
-    //             // Store player data in session storage for future use
-    //             sessionStorage.setItem('currentPlayerId', result.id_jugador);
-    //             sessionStorage.setItem('currentPlayerName', result.nombreUsuario);
-    //             sessionStorage.setItem('currentPartidaId', result.id_partida);
-                
-    //             // Show success message
-    //             alert(result.message);
-                
-    //             // Close login form
-    //             document.getElementById('login').classList.remove('open_login');
-                
-    //             // Redirect to classes page
-    //             window.location.href = "../html/clases.html";
-    //         } else {
-    //             console.error("Login/Registration failed:", result);
-    //             alert(result.message || "Error en el inicio de sesión");
-    //         }
-    //     } catch (error) {
-    //         console.error("Error connecting to server:", error);
-    //         alert("Error de conexión. Verifique que el servidor esté funcionando.");
-            
-    //         // Reset button state in case of error
-    //         const submitButton = document.getElementById('submit');
-    //         submitButton.value = "Login";
-    //         submitButton.disabled = false;
-    //     }
-    // }
+    // Helper function to add a cell to a row
+    function addCell(row, content) {
+        const cell = row.insertCell(-1);
+        cell.innerHTML = content;
+    }
+
+    // Load the leaderboard when the page loads
+    loadLeaderboard();
     
     // document.getElementById('formSelectUser').onsubmit = async (e) =>
     // {
@@ -314,5 +300,6 @@ function main()
     //     }
     // }
 }
-
+// Run the main function when the page loads
+//document.addEventListener('DOMContentLoaded', main);
 main()

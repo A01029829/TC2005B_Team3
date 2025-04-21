@@ -6,5 +6,9 @@ function saveAndExit() {
     // TODO: Save game state to database (not implemented yet)
 
     // Redirect to the main menu screen
+
+    const data = {
+        
+    }
     window.location.href = "inicio.html";
 }

@@ -100,6 +100,40 @@ app.get('/api/Jugador/:id_jugador', async (request, response)=>
     }
 })
 
+// Get the top 5 players with highest puntuacion from the Estadisticas view
+app.get('/api/leaderboard', async (request, response) => {
+    let connection = null
+    console.log("Fetching leaderboard data...")
+    
+    try {
+        connection = await connectToDB()
+        
+        // Query to get top 5 players with highest scores
+        const [results, fields] = await connection.execute(`
+            SELECT nombreUsuario, PuntuacionFinal
+            FROM Estadisticas
+            ORDER BY PuntuacionFinal DESC
+            LIMIT 5
+        `)
+
+        console.log(`${results.length} leaderboard rows returned`)
+        console.log(results)
+
+        response.json(results)
+    }
+    catch(error) {
+        response.status(500)
+        response.json(error)
+        console.log(error)
+    }
+    finally {
+        if(connection !== null) {
+            connection.end()
+            console.log("Connection closed successfully!")
+        }
+    }
+})
+
 app.post('/api/login', async (request, response) => {
 
     let connection = null;
