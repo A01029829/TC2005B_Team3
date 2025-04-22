@@ -154,10 +154,11 @@ function boxOverlap(obj1, obj2) {
 }
 
 class Arrow extends GameObject {
-    constructor(position, direction, speed = 8) {
+    constructor(position, direction, speed = 8, damage = 10) {
         super(position, 64, 65, 'rgba(0,0,0,0)', 'arrow');
         this.direction = direction;
         this.speed = speed;
+        this.damage = damage;
 
         this.setSprite('../sprites/arrow.png', {
             x: 0,
@@ -207,10 +208,11 @@ class Arrow extends GameObject {
 }
 
 class Fireball extends GameObject {
-    constructor(position, direction, speed = 8) {
+    constructor(position, direction, speed = 8, damage = 15) {
         super(position, 64, 65, 'rgba(0,0,0,0)', 'fireball');
         this.direction = direction;
         this.speed = speed;
+        this.damage = damage;
 
         this.setSprite('../sprites/fireball.png', {
             x: 0,
