@@ -39,25 +39,6 @@
     font-weight: bold;
 }
 
-.no-data {
-    text-align: center;
-    margin-top: 20px;
-    font-style: italic;
-    color: #777;
-}
-
-.error {
-    color: #e74c3c;
-    text-align: center;
-    font-weight: bold;
-    margin-top: 20px;
-}
-
-.error-details {
-    color: #777;
-    text-align: center;
-    margin-top: 10px;
-}
 
 .retry-btn {
     display: block;
@@ -75,16 +56,16 @@
     background-color: #2980b9;
 }
 
-.resultDisplay {
+.section {
     max-width: 1000px;
-    margin: 0 auto;
+    margin: 20px auto;
     padding: 20px;
     background-color: rgb(154, 60, 60);
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
 
-.resultDisplay h1 {
+.section h1 {
     font-family: Copperplate;
 }
 
@@ -103,6 +84,46 @@ body {
     background-color: rgb(237, 228, 228);
 }
 
-.section {
-    padding: 20px;
+#formSelectUser {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    gap: 10px;
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+#input_user {
+    padding: 8px 12px;
+    border: 2px solid #dddddd;
+    border-radius: 4px;
+    font-size: 16px;
+    width: 250px;
+    transition: border-color 0.3s;
+}
+
+#input_user:focus {
+    outline: none;
+    border-color: #2C3E50;
+    box-shadow: 0 0 5px rgba(44, 62, 80, 0.3);
+}
+
+#button {
+    padding: 8px 15px;
+    background-color: #2C3E50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+#button:hover {
+    background-color: #3a546b;
+}
+
+p {
+    text-align: center;
+    color: #dddddd;
 }
