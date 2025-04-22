@@ -26,6 +26,10 @@ body {
     margin: 25px 0px;
 }
 
+button {
+    margin-bottom: 8px;
+}
+
 #button, #login_button {
     display: flex;
     justify-content: center;
@@ -152,7 +156,7 @@ footer {
 }
 
 #login_button {
-    font-size: 28px;
+    font-size: 26px;
 }
 
 #login #submit:hover, #login button:hover {

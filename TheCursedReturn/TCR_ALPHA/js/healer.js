@@ -1,110 +1,119 @@
 // === Healer Class ===
-// objeto interactivo que cura al jugador cuando interactúa con él
+// interactive object that heals the player when they interact with it
 class Healer extends AnimatedObject {
     constructor(position, spritePath) {
-        // Base setup - ajusta el tamaño según tu sprite
+        // base setup — position, width, height, transparent color, label, frame count
         super(position, 64, 65, 'rgba(0,0,0,0)', 'healer', 8);
         
-        // Configuración específica
-        this.active = true; // Si está disponible para interactuar
-        this.healAmount = 5; // Cantidad de vida que restaura
-        this.interactionRadius = 50; // Radio para detectar al jugador
-        this.interactionKey = 'f'; // Tecla para interactuar
-        this.interactionMessage = "Presiona f para curarte";
+        // === Healer properties ===
+        this.active = true; // can the healer be interacted with right now?
+        this.healAmount = 5; // amount of health to restore per interaction
+        this.interactionRadius = 50; // distance required to trigger interaction
+        this.interactionKey = 'f'; // ket to press for interaction
+        this.interactionMessage = "Presiona f para curarte"; // message displayed to the player
         
-        // Animación
-        this.healing = false;
-        this.healingTimer = 0;
-        this.healingDuration = 30; // Duración de la animación de curación
-        this.cooldown = false;
-        this.cooldownTimer = 0;
-        this.cooldownDuration = 300; // Tiempo antes de poder curar de nuevo
+        // === Healing state ===
+        this.healing = false; // is the healer currently healing the player?
+        this.healingTimer = 0; // timer for the healing animation
+        this.healingDuration = 30; // total duration of the healing state (in frames)
+        this.cooldown = false; // is the healer on cooldown?
+        this.cooldownTimer = 0; // timer for cooldown after healing
+        this.cooldownDuration = 300; // total cooldown duration before healer can heal again
         
-        // Configurar sprite
-        this.setSprite(spritePath, { x: 0, y: 0, width: 64, height: 65 });
+        // === Sprite setup ===
+        this.setSprite(spritePath, { x: 0, y: 0, width: 64, height: 65 }); // set initial frame
         
-        // Filas de animación (ajustar según tu spritesheet)
-        this.idleRow = 2;  // Fila para animación en reposo
-        this.healRow = 2;  // Fila para animación de curación
+        // === Animation rows ===
+        this.idleRow = 2;  // row used when idle
+        this.healRow = 2;  // row used when healing 
     }
     
-    // Verifica si el jugador está dentro del radio de interacción
+    // === Check if player is close enough to interact ===
     checkPlayerInRange(player) {
-        if (!this.active) return false;
+        if (!this.active) return false; // skip check if not active
         
-        const dx = player.position.x - this.position.x;
-        const dy = player.position.y - this.position.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        
-        return distance <= this.interactionRadius;
+        const dx = player.position.x - this.position.x; // horizontal distance
+        const dy = player.position.y - this.position.y; // vertical distance
+        const distance = Math.sqrt(dx * dx + dy * dy); // pythagorean distance
+
+        return distance <= this.interactionRadius; // return true if within radius
     }
     
-    // Procesa la interacción del jugador
+    // === Handle player interaction ===
     interact(player, keysPressed) {
-        if (!this.active || this.cooldown) return false;
+        if (!this.active || this.cooldown) return false; // don't interact if on cooldown or inactive
         
+        // if player presses the correct key and is in range
         if (this.active && keysPressed[this.interactionKey] && this.checkPlayerInRange(player)) {
-            // Iniciar proceso de curación
-            this.healing = true;
-            this.healingTimer = this.healingDuration;
+            this.healing = true;  // start healing animation
+            this.healingTimer = this.healingDuration; // set animation duration
             
-            // Curar al jugador
+            // heal the player, but don't go over max health
             const newHealth = Math.min(player.health + this.healAmount, player.maxHealth);
             player.health = newHealth;
             
-            this.active = false;
-            return true;
+            this.active = false; // prevent further interaction during healing
+            return true; // interaction was successful
         }
         
         return false;
     }
     
-    // Actualiza el estado de la curandera
+    // === Update healing and cooldown timers ===
     update() {
-        // Si está curando, actualizar el temporizador
+        // === Healing logic ===
         if (this.healing) {
-            this.healingTimer--;
+            this.healingTimer--; // count down the healing animation
             
             if (this.healingTimer <= 0) {
-                this.healing = false;
-                this.cooldown = true;
-                this.cooldownTimer = this.cooldownDuration;
+                this.healing = false; // stop healing animation
+                this.cooldown = true; // start cooldown
+                this.cooldownTimer = this.cooldownDuration; // reset cooldown timer
             }
         }
         
-        // Si está en cooldown, actualizar el temporizador
+         // === Cooldown logic ===
         if (this.cooldown) {
-            this.cooldownTimer--;
+            this.cooldownTimer--; // count down cooldown
+
             
             if (this.cooldownTimer <= 0) {
-                this.cooldown = false;
+                this.cooldown = false; // healer can be used again
             }
         }
     }
     
-    // Actualiza la animación
-    updateAnimation(gameFrame, staggerFrames) {
-        // Seleccionar fila de animación según estado
-        this.spriteRect.y = this.healing ? this.healRow : this.idleRow;
+    // === Update healer animation ===
+    updateAnimation(gameFrame, staggerFrames) { // select correct animation row based on state
+        if (this.healing) {
+            this.spriteRect.y = this.healRow;
+        } else {
+            this.spriteRect.y = this.idleRow;
+        }
         
-        // Controlar frames de animación
+        // change frame every few game frames (slows animation)
         const totalFrames = 5;
-        this.spriteRect.y = this.healing ? this.healRow : this.idleRow;
+        if (this.healing) {
+            this.spriteRect.y = this.healRow;
+        } else {
+            this.spriteRect.y = this.idleRow;
+        }        
         this.spriteRect.x = Math.floor(gameFrame / staggerFrames) % totalFrames;        
     }
     
-    // Dibuja mensaje de interacción
+    // === Draw 'Press F' prompt above the healer ===
     drawInteractionPrompt(ctx, playerInRange) {
+        // nly draw the prompt if the healer is active, not on cooldown, and player is nearby
         if (!this.active || this.cooldown || !playerInRange) return;
         
-        // Dibujar mensaje de interacción encima de la curandera
         ctx.font = '12px Arial';
         ctx.fillStyle = 'white';
         ctx.textAlign = 'center';
-        ctx.fillText(
+        
+        ctx.fillText( // display the message slightly above the healer
             this.interactionMessage, 
-            this.position.x + this.width / 2,  // Horizontal center
-            this.position.y - 40               // Vertical height above head
+            this.position.x + this.width / 2,  // center horizontally
+            this.position.y - 40               // raise above the sprite
          );
     }
 }
