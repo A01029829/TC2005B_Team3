@@ -1,8 +1,16 @@
 -- Active: 1743625010510@@127.0.0.1@3306@cursedr
 USE cursedR;
 
--- Vista de estadísticas finales
-SELECT * FROM estadisticas;
+DESCRIBE Log_Partida;
+
+-- Vista de todas las estadísticas finales
+SELECT * FROM estadisticas ORDER BY id_partida DESC;
+
+-- Estadísticas de la última partida
+SELECT * FROM Log_Partida WHERE id_partida = (SELECT MAX(id_partida) FROM Partida) ORDER BY fechaLog DESC;
+
+SELECT * FROM Partida;
+SELECT * FROM Jugador;
 
 -- Clase del jugador y último objeto encontrado
 SELECT 

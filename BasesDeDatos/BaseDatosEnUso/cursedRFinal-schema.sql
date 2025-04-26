@@ -158,16 +158,11 @@ CREATE INDEX idx_log_objetosEncontrados ON Log_Partida(objetosEncontrados);
 DROP TRIGGER IF EXISTS save_trigger;
 DELIMITER //
 
+-- Trigger que al actualizar el log de la partida, actualiza la fecha de inicio/fin de la partida
 CREATE TRIGGER save_trigger
 AFTER INSERT ON Log_Partida
 FOR EACH ROW
 BEGIN
-    DECLARE ultimo_nivel TINYINT;
-    DECLARE ultima_sala TINYINT;
-    DECLARE tipo_muerte VARCHAR(15);
-    DECLARE clase_jugador ENUM('guerrero', 'arquero', 'hechicero');
-    DECLARE ultimo_objeto_encontrado ENUM('curandero', 'armero', 'cofre');
-    
     -- Evento de inicio: Resetea la fecha fin
     IF NEW.eventoTrigger = 'inicio' THEN
         UPDATE Partida 
@@ -180,134 +175,6 @@ BEGIN
         UPDATE Partida 
         SET fecha_fin = CURRENT_TIMESTAMP
         WHERE id_partida = NEW.id_partida AND fecha_fin IS NULL;
-    END IF;
-    
-    -- Evento de pausa: Guarda los datos actuales
-IF NEW.eventoTrigger = 'pausa' THEN
-    
-    -- Ultimo objeto encontrado
-    IF NEW.objetosEncontrados IS NULL THEN
-        SELECT objetosEncontrados INTO ultimo_objeto_encontrado
-        FROM Log_Partida
-        WHERE id_partida = NEW.id_partida AND objetosEncontrados IS NOT NULL
-        ORDER BY fechaLog DESC
-        LIMIT 1;
-    ELSE
-        SET ultimo_objeto_encontrado = NEW.objetosEncontrados;
-    END IF;
-    
-    -- Insercion en la base de datos
-    INSERT INTO Log_Partida
-    (id_partida, fechaLog, eventoTrigger, claseElegida, tiempoPartida, 
-     puntuacion, nivelActual, salaActual, biomaActual, rankM, vida,
-     enemigosCDerrotados, enemigosFDerrotados, jefesDerrotados,
-     objetosEncontrados)
-    VALUES
-    (NEW.id_partida, 
-     CURRENT_TIMESTAMP,
-     'pausa',  -- Se guarda el evento como pausa
-     clase_jugador,
-     NEW.tiempoPartida, 
-     NEW.puntuacion,
-     NEW.nivelActual,
-     NEW.salaActual,
-     NEW.biomaActual,
-     NEW.rankM,
-     NEW.vida,
-     NEW.enemigosCDerrotados,
-     NEW.enemigosFDerrotados,
-     NEW.jefesDerrotados,
-     ultimo_objeto_encontrado);
-END IF;
-
-    -- Evento de muerte: Se verifica si fue una muerte para guardarlo como un registro y que no se confunda con el otro evento
-    IF (NEW.rankM = 0 OR NEW.vida = 0) AND 
-        NEW.eventoTrigger NOT IN ('muerteMaldicion', 'muerteVida') THEN
-        
-        -- Tipo de muerte: Tipo de evento
-        IF NEW.rankM = 0 THEN
-            SET tipo_muerte = 'muerteMaldicion';
-        ELSE
-            SET tipo_muerte = 'muerteVida';
-        END IF;
-        
-        -- Clase de la partida
-        SELECT claseElegida INTO clase_jugador
-        FROM Log_Partida
-        WHERE id_partida = NEW.id_partida
-        ORDER BY fechaLog ASC
-        LIMIT 1;
-        
-        -- Ultimo objeto encontrado
-        SELECT objetosEncontrados INTO ultimo_objeto_encontrado
-        FROM Log_Partida
-        WHERE id_partida = NEW.id_partida AND objetosEncontrados IS NOT NULL
-        ORDER BY fechaLog DESC
-        LIMIT 1;
-        
-        -- Insercion de valores en base de datos
-        INSERT INTO Log_Partida
-        (id_partida, fechaLog, eventoTrigger, claseElegida, tiempoPartida, 
-         puntuacion, nivelActual, salaActual, biomaActual, rankM, vida,
-         enemigosCDerrotados, enemigosFDerrotados, jefesDerrotados,
-         objetosEncontrados)
-        VALUES
-        (NEW.id_partida, 
-         CURRENT_TIMESTAMP,
-         tipo_muerte,
-         clase_jugador,
-         NEW.tiempoPartida, 
-         NEW.puntuacion,
-         NEW.nivelActual,
-         NEW.salaActual,
-         NEW.biomaActual,
-         NEW.rankM,
-         NEW.vida,
-         NEW.enemigosCDerrotados,
-         NEW.enemigosFDerrotados,
-         NEW.jefesDerrotados,
-         ultimo_objeto_encontrado);
-         
-        -- Actualizar fecha fin
-        UPDATE Partida 
-        SET fecha_fin = CURRENT_TIMESTAMP
-        WHERE id_partida = NEW.id_partida AND fecha_fin IS NULL;
-    END IF;
-    
-    -- Cambio de sala: Registro de checkpoint
-    -- Comparacionde valores anteriores para ver si de verdad hubo un cambio
-    SELECT nivelActual, salaActual INTO ultimo_nivel, ultima_sala
-    FROM Log_Partida
-    WHERE id_partida = NEW.id_partida 
-        AND id_log < NEW.id_log
-    ORDER BY fechaLog DESC
-    LIMIT 1;
-    
-    IF NEW.eventoTrigger != 'checkpoints' 
-       AND (NEW.nivelActual != ultimo_nivel OR NEW.salaActual != ultima_sala)
-       AND ultimo_nivel IS NOT NULL
-    THEN
-        INSERT INTO Log_Partida
-        (id_partida, fechaLog, eventoTrigger, claseElegida, tiempoPartida, 
-         puntuacion, nivelActual, salaActual, biomaActual, rankM, vida,
-         enemigosCDerrotados, enemigosFDerrotados, jefesDerrotados,
-         objetosEncontrados)
-        VALUES
-        (NEW.id_partida, 
-         CURRENT_TIMESTAMP,
-         'checkpoints',
-         NEW.claseElegida,
-         NEW.tiempoPartida, 
-         NEW.puntuacion,
-         NEW.nivelActual,
-         NEW.salaActual,
-         NEW.biomaActual,
-         NEW.rankM,
-         NEW.vida,
-         NEW.enemigosCDerrotados,
-         NEW.enemigosFDerrotados,
-         NEW.jefesDerrotados,
-         NEW.objetosEncontrados);
     END IF;
 END 
 //DELIMITER ;
