@@ -2,35 +2,44 @@
 
 .leaderboard-table {
     width: 100%;
-    /* border-collapse: collapse; */
     margin-top: 20px;
     font-family: Arial, sans-serif;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    border-radius: 80px;
+}
+
+.user-stats-table {
+    width: 100%;
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    border-radius: 80px;
 }
 
 .leaderboard-table th,
-.leaderboard-table td {
+.leaderboard-table td, 
+.user-stats-table th,
+.user-stats-table td {
     padding: 12px 15px;
     text-align: left;
     border-bottom: 1px solid #dddddd;
 }
 
-.leaderboard-table th {
+.leaderboard-table th, 
+.user-stats-table th {
     background-color: #2C3E50;
     color: white;
     font-weight: bold;
     text-transform: uppercase;
 }
 
-.leaderboard-table tr:nth-child(even) {
-    background-color: #f2f2f2;
+.leaderboard-table tr, 
+.user-stats-table tr {
+    background-color: #f0eee7;
 }
 
-.leaderboard-table tr:nth-child(odd) {
-    background-color: #f2f2f2;
-}
-
-.leaderboard-table tr:hover {
+.leaderboard-table tr:hover,
+.user-stats-table tr:hover {
     background-color: #deafaf;
 }
 
@@ -38,7 +47,6 @@
     background-color: rgba(217, 214, 198, 0.2) !important;
     font-weight: bold;
 }
-
 
 .retry-btn {
     display: block;
@@ -57,10 +65,10 @@
 }
 
 .section {
-    max-width: 1000px;
+    max-width: 1250px;
     margin: 20px auto;
     padding: 20px;
-    background-color: rgb(154, 60, 60);
+    background-color: #9a3c3c;
     border-radius: 8px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
 }
@@ -76,8 +84,15 @@ h1 {
     margin-bottom: 20px;
 }
 
+h3 {
+    font-family: Copperplate;
+    color: #d5d4cc;
+    text-align: center;
+    font-size: 35px;
+}
+
 body {
-    background-color: #f4f4f4;
+    background-color: #3a1e1e;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 20px;
@@ -100,12 +115,14 @@ body {
     font-size: 16px;
     width: 250px;
     transition: border-color 0.3s;
+    background-color: #f0eee7;
 }
 
 #input_user:focus {
     outline: none;
     border-color: #2C3E50;
     box-shadow: 0 0 5px rgba(44, 62, 80, 0.3);
+    background-color: #f0eee7;
 }
 
 #button {
@@ -126,4 +143,42 @@ body {
 p {
     text-align: center;
     color: #dddddd;
+}
+
+.chartContainer{
+    border: 0;
+    justify-content: space-between;
+    display: flex;
+    width: 98%;
+    flex-direction: row;
+    align-items: flex-start;
+    background-color: #d5d4cc;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.chartContainer canvas{
+    height: 100%;
+    width: 100%;
+    margin: 0;
+}
+
+.chart-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 33%;
+    padding: 0 5px;
+}
+
+.chart-section h2 {
+    color: #2C3E50;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 10px;
+    margin-top: 5px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

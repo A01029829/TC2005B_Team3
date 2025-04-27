@@ -134,6 +134,167 @@ app.get('/api/leaderboard', async (request, response) => {
     }
 })
 
+// Show the game stats for a specific user
+app.get('/api/user-stats/:nombreUsuario', async (request, response) => {
+    let connection = null
+    console.log(`Fetching game stats for user: ${request.params.nombreUsuario}`)
+    
+    try {
+        connection = await connectToDB()
+        
+        // Query to get the user's game stats
+        const [results, fields] = await connection.execute(`
+            SELECT 
+                e.nombreUsuario,
+                e.FechaFin,
+                e.TiempoTotal,
+                e.PuntuacionFinal,
+                e.NivelAlcanzado,
+                e.SalaAlcanzada,
+                e.BiomaAlMorir,
+                e.RankRestante,
+                e.VidaRestante,
+                e.EnemigosComunesDerrotados,
+                e.EnemigosFuertesDerrotados,
+                e.JefesDerrotados,
+                e.TotalEnemigosEliminados,
+                e.TipoFinPartida,
+                e.ClaseJugador,
+                e.UltimoObjetoEncontrado
+            FROM Estadisticas e
+            WHERE e.nombreUsuario = ?
+            ORDER BY e.FechaFin DESC
+        `, [request.params.nombreUsuario])
+
+        console.log(`${results.length} game logs returned for user ${request.params.nombreUsuario}`)
+        
+        // If the user has no game logs, return a 404 error
+        if (results.length === 0) {
+            response.status(404).json({
+                success: false,
+                message: "No se encontraron estadísticas para este usuario"
+            })
+        } else {
+            response.json(results)
+        }
+    }
+    catch(error) {
+        response.status(500)
+        response.json(error)
+        console.log(error)
+    }
+    finally {
+        if(connection !== null) {
+            connection.end()
+            console.log("Connection closed successfully!")
+        }
+    }
+})
+
+app.get("/api/class", async (request, response) => {
+    let connection = null;
+  
+    try {
+      connection = await connectToDB();
+  
+      const [results, fields] = await connection.query(
+        "SELECT claseElegida, COUNT(*) AS Elecciones FROM Log_Partida GROUP BY claseElegida;"
+      );
+  
+      console.log("Sending data correctly.");
+      response.status(200);
+      response.json(results);
+    } catch (error) {
+      response.status(500);
+      response.json(error);
+      console.log(error);
+    } finally {
+      if (connection !== null) {
+        connection.end();
+        console.log("Connection closed succesfully!");
+      }
+    }
+  });
+
+  app.get("/api/playersLevel", async (request, response) => {
+    let connection = null;
+  
+    try {
+      connection = await connectToDB();
+  
+      const [results, fields] = await connection.query(
+        "SELECT  NivelAlcanzado AS Nivel, COUNT(*) AS CantidadJugadores, ROUND((COUNT(*) * 100.0 / (SELECT COUNT(*) FROM Estadisticas)), 2) AS PorcentajeDelTotal FROM Estadisticas GROUP BY NivelAlcanzado ORDER BY Nivel;"
+      );
+  
+      console.log("Sending data correctly.");
+      response.status(200);
+      response.json(results);
+    } catch (error) {
+      response.status(500);
+      response.json(error);
+      console.log(error);
+    } finally {
+      if (connection !== null) {
+        connection.end();
+        console.log("Connection closed succesfully!");
+      }
+    }
+  });
+
+  app.get("/api/deaths", async (request, response) => {
+    let connection = null;
+  
+    try {
+      connection = await connectToDB();
+  
+      const [results, fields] = await connection.query(
+        "SELECT TipoFinPartida AS TipoDeMuerte, COUNT(*) AS CantidadJugadores FROM Estadisticas WHERE TipoFinPartida IN ('muerteVida', 'muerteMaldicion') GROUP BY TipoFinPartida ORDER BY CantidadJugadores DESC;"
+      );
+  
+      console.log("Sending data correctly.");
+      response.status(200);
+      response.json(results);
+    } catch (error) {
+      response.status(500);
+      response.json(error);
+      console.log(error);
+    } finally {
+      if (connection !== null) {
+        connection.end();
+        console.log("Connection closed succesfully!");
+      }
+    }
+  });
+
+app.get('/api/users/:id', async (request, response)=>
+    {
+        let connection = null
+    
+        try
+        {
+            connection = await connectToDB()
+    
+            const [results_user, _] = await connection.query('select * from users where id_users= ?', [request.params.id])
+            
+            console.log(`${results_user.length} rows returned`)
+            response.json(results_user)
+        }
+        catch(error)
+        {
+            response.status(500)
+            response.json(error)
+            console.log(error)
+        }
+        finally
+        {
+            if(connection!==null) 
+            {
+                connection.end()
+                console.log("Connection closed succesfully!")
+            }
+        }
+    })
+
 app.post('/api/login', async (request, response) => {
 
     let connection = null;

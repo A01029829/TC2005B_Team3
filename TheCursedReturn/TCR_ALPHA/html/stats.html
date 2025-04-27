@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.1/chart.umd.js" integrity="sha512-vCUbejtS+HcWYtDHRF2T5B0BKwVG/CLeuew5uT2AiX4SJ2Wff52+kfgONvtdATqkqQMC9Ye5K+Td0OTaz+P7cw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="../css/stats.css" />
     <title>Estadisticas</title>
 </head>
@@ -18,7 +19,7 @@
 
     <div class="section">
         <div class="formInput">
-            <h1>Mostrar Usuario</h1>
+            <h1>Mostrar Estadísticas Usuario</h1>
             <form id="formSelectUser">
                 <input id="input_user" type="text" name="userID" placeholder="Ingresa el nombre de usuario">
 
@@ -27,8 +28,27 @@
         </div>
         <div class="resultDisplay">
             <h1>Resultado</h1>
-            <p>When the request ends, the result will be displayed here.</p>
-            <div id="getResultsID"></div>
+            <div id="userStatsResults">
+                <p>Ingresa un nombre de usuario para ver sus estadísticas</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h1>Gráficas</h1>
+        <div class="chartContainer">
+            <div class="chart-section">
+                <h2>La clase más popular</h2>
+                <canvas id="apiChart1" width="600" height="600"></canvas>
+            </div>
+            <div class="chart-section">
+                <h2>Porcentaje de jugadores que alcanzaron cada nivel</h2>
+                <canvas id="apiChart2" width="600" height="600"></canvas>
+            </div>
+            <div class="chart-section">
+                <h2>Muerte más común en las partidas</h2>
+                <canvas id="apiChart3" width="600" height="600"></canvas>
+            </div>
         </div>
     </div>
 

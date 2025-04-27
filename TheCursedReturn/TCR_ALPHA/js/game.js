@@ -576,6 +576,7 @@ loop() {
 
     // === Handle Player Movement and Input ===
     this.player.handleInput(
+        this.ambienceSound.play(),
         this.inputManager.keysPressed, // keys currently pressed
         this.assets.keyMap, // key bindings
         this.collisionMap, // for collision detection
@@ -933,7 +934,7 @@ loop() {
     this.npcFrame++; // advance frame counter for NPC animations
 
     if (this.player.moving || this.player.attacking) {
-        this.gameFrame++; // advance playaer frames only if moving or attacking
+        this.gameFrame++; // advance player frames only if moving or attacking
     }
 
     // === Second weapon Display (HUD box)===

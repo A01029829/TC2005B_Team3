@@ -147,6 +147,7 @@ sign_level.src = "../images/sign_level.png";
 const itemBox = new Image();
 itemBox.src = "../images/itemBox.png";
 
+
 // === Start Game When Images Are Loaded ===
 // we wait for all 4 images to load before starting the game
 let loadedImages = 0;
@@ -190,3 +191,7 @@ enemyImage.onload = tryStartGame;
 wolfImage.onload = tryStartGame;
 healerImage.onload = tryStartGame;
 gunsmithImage.onload = tryStartGame;
+
+
+// Ambience music
+const ambienceSound = new Sound('ambience', true, 0.5);

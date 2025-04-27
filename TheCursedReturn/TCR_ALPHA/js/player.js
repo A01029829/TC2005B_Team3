@@ -81,6 +81,7 @@ class Player extends AnimatedObject {
     // === Handle Input and Move Player ===
     // handles movement, attacks, and collision detection
     handleInput(keysPressed, keyMap, collisionMap) {
+
         if (this.dying) return; // no input allowed while dying
         this.moving = false; // reset moving flag
     
@@ -91,6 +92,22 @@ class Player extends AnimatedObject {
             this.attackFrameCounter = 0;
             this.spriteRect.y = this.attackRow[this.lastDirection]; // set correct attack row
             this.attackTimer = 15; // frames for full attack animation
+
+            // Play sound effect for attack
+            if (this.classType === 'knight') {
+                const swordSound = new Sound("sword");
+                swordSound.play();
+            }
+
+            if (this.classType === 'archer') {
+                const bowSound = new Sound("bow");
+                bowSound.play();
+            }
+
+            if (this.classType === 'wizard') {
+                const spellSound = new Sound("spell");
+                spellSound.play();
+            }
         }
     
         // === Start dash if not already dashing or on cooldown ===
@@ -99,6 +116,10 @@ class Player extends AnimatedObject {
             this.dashTimer = this.dashDuration; // dash lasts this many frames
             this.dashCooldown = true; // activate cooldown
             this.dashCooldownTimer = this.dashCooldownDuration;
+
+            // Play dash sound effect
+            const dashSound = new Sound("dash");
+            dashSound.play();
         }
         
         // === Equip secondary weapon if pressing 'o' ===
@@ -115,6 +136,8 @@ class Player extends AnimatedObject {
             }
         }
         this.equipPressedLastFrame = keysPressed['o']; // save state of 'o' for next frame
+
+        //ambienceSound.play(); // play background sound
         
         // === If attacking normally (holding down 'k') ===
         if (keysPressed['k']) {
