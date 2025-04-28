@@ -7,6 +7,7 @@ const CANVAS_HEIGHT = canvas.height = 608;
 
 let paused = false;
 let gameOver = false;
+let startRegistered = false;
 
 // === Sprite and Map Config ===
 // maps object contains all level backgrounds grouped by biome
@@ -152,6 +153,8 @@ itemBox.src = "../images/itemBox.png";
 // we wait for all 4 images to load before starting the game
 let loadedImages = 0;
 
+// Ambience music
+const ambienceSound = new Sound('ambience', true, 0.5);
 
 function tryStartGame() {
     loadedImages++;
@@ -177,6 +180,10 @@ function tryStartGame() {
             collisionMap: emptyCollision
         });
 
+        // After creating the game instance
+        const game = new Game(ctx, canvas.width, canvas.height, assets);
+        window.game = game; // Make the game instance globally accessible
+
         // loads the correct collision data for the initial map
         window.game.updateCollisionMap();
     }
@@ -192,6 +199,55 @@ wolfImage.onload = tryStartGame;
 healerImage.onload = tryStartGame;
 gunsmithImage.onload = tryStartGame;
 
+// === Register Game Start ===
+function registerStart() {
+    // Verify if the start has already been registered
+    if (startRegistered) return;
+    
+    const matchID = sessionStorage.getItem('currentPartidaId');
+    const classSelected = sessionStorage.getItem('playerClass');
+    
+    if (!matchID || !classSelected) {
+        //console.error("No se encontró ID de partida o clase en sessionStorage");
+        return;
+    }
+    
+    startRegistered = true; // Marcar como registrado
+    
+    fetch('/api/game-event', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id_partida: matchID,
+            eventoTrigger: 'inicio',
+            claseElegida: classSelected,
+            tiempoPartida: '00:00:00',
+            puntuacion: 0,
+            nivelActual: 1,
+            salaActual: 1,
+            biomaActual: 'bosque',
+            rankM: 100,
+            vida: selectedClass === 'guerrero' ? 120 : (selectedClass === 'mago' ? 80 : 90),
+            enemigosCDerrotados: 0,
+            enemigosFDerrotados: 0,
+            jefesDerrotados: 0,
+            objetosEncontrados: 'cofre'
+        })
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log("✅ Inicio registrado:", result);
+    })
+    .catch(error => {
+        console.error("❌ Error al registrar inicio:", error);
+    });
+}
 
-// Ambience music
-const ambienceSound = new Sound('ambience', true, 0.5);
+// Call this function when the game starts
+window.addEventListener('DOMContentLoaded', function() {
+    
+    // Register game start
+    registerStart();
+});

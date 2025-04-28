@@ -29,75 +29,11 @@ async function connectToDB()
 
 // Routes definition and handling
 app.get('/', (request,response)=>{
-    // fs.readFile('../html/api.html', 'utf8', (err, html)=>{
-    //     if(err) response.status(500).send('There was an error: ' + err)
-    //     console.log('Loading page...')
-    //     response.send(html)
-    // })
     fs.readFile('../html/inicio.html', 'utf8', (err, html)=>{
         if(err) response.status(500).send('There was an error: ' + err)
         console.log('Loading page...')
         response.send(html)
     })
-})
-
-// Get all Jugador from the database and return them as a JSON object
-app.get('/api/Jugador', async (request, response)=>{
-    let connection = null
-
-    try
-    {
-        connection = await connectToDB()
-        const [results, fields] = await connection.execute('select * from Jugador')
-
-        console.log(`${results.length} rows returned`)
-        console.log(results)
-        response.json(results)
-    }
-    catch(error)
-    {
-        response.status(500)
-        response.json(error)
-        console.log(error)
-    }
-    finally
-    {
-        if(connection!==null) 
-        {
-            connection.end()
-            console.log("Connection closed succesfully!")
-        }
-    }
-})
-
-// Get a specific user from the database and return it as a JSON object
-app.get('/api/Jugador/:id_jugador', async (request, response)=>
-{
-    let connection = null
-
-    try
-    {
-        connection = await connectToDB()
-
-        const [results_user, _] = await connection.query('select * from Jugador where id_jugador= ?', [request.params.id_jugador])
-        
-        console.log(`${results_user.length} rows returned`)
-        response.json(results_user)
-    }
-    catch(error)
-    {
-        response.status(500)
-        response.json(error)
-        console.log(error)
-    }
-    finally
-    {
-        if(connection!==null) 
-        {
-            connection.end()
-            console.log("Connection closed succesfully!")
-        }
-    }
 })
 
 // Get the top 5 players with highest puntuacion from the Estadisticas view
@@ -415,95 +351,86 @@ app.post('/api/login', async (request, response) => {
     }
 })
 
-// Insert a new user into the database and return a JSON object with the id of the new user
-app.post('/api/Jugador', async (request, response)=>{
+// Endpoint for registering game events
+app.post('/api/game-event', async (request, response) => {
+    let connection = null;
 
-    let connection = null
+    try {
 
-    try
-    {    
-        connection = await connectToDB()
-
-        const [results, fields] = await connection.query('insert into Jugador set ?', request.body)
+        connection = await connectToDB();
         
-        console.log(`${results.affectedRows} row inserted`)
-        response.status(201).json({'message': "Data inserted correctly.", "id_jugador": results.insertId})
-    }
-    catch(error)
-    {
-        response.status(500)
-        response.json(error)
-        console.log(error)
-    }
-    finally
-    {
-        if(connection!==null) 
-        {
-            connection.end()
-            console.log("Connection closed succesfully!")
+        // Get data from request body
+        const {
+            id_partida,
+            eventoTrigger,
+            claseElegida,
+            tiempoPartida,
+            puntuacion,
+            nivelActual,
+            salaActual,
+            biomaActual,
+            rankM,
+            vida,
+            enemigosCDerrotados,
+            enemigosFDerrotados,
+            jefesDerrotados,
+            objetosEncontrados
+        } = request.body;
+
+        // Basic validation
+        if (!id_partida || !eventoTrigger || !claseElegida) {
+            console.error("API: Faltan datos requeridos:", { id_partida, eventoTrigger, claseElegida });
+            return response.status(400).json({
+                success: false,
+                message: "Faltan datos requeridos para registrar el evento"
+            });
+        }
+
+        console.log(`API: Intentando insertar evento ${eventoTrigger} para partida ${id_partida}`);
+        
+        // Insert the event into the database
+        const [result] = await connection.query(
+            'INSERT INTO Log_Partida (id_partida, fechaLog, eventoTrigger, claseElegida, tiempoPartida, puntuacion, nivelActual, salaActual, biomaActual, rankM, vida, enemigosCDerrotados, enemigosFDerrotados, jefesDerrotados, objetosEncontrados) VALUES (?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [
+                id_partida,
+                eventoTrigger,
+                claseElegida,
+                tiempoPartida || '00:00:00',
+                puntuacion || 0,
+                nivelActual || 1,
+                salaActual || 1,
+                biomaActual || 'bosque',
+                rankM !== undefined ? rankM : 100.00,
+                vida !== undefined ? vida: 100.00,
+                enemigosCDerrotados || 0,
+                enemigosFDerrotados || 0,
+                jefesDerrotados || 0,
+                objetosEncontrados || 'cofre'
+            ]
+        );
+        
+        console.log(`API: ✅ Evento ${eventoTrigger} registrado con éxito, ID: ${result.insertId}`);
+        
+        // Return success response
+        response.status(201).json({
+            success: true,
+            message: "Evento registrado correctamente",
+            id_log: result.insertId
+        });
+    } catch (error) {
+        console.error(`API: ❌ ERROR registrando ${request.body.eventoTrigger}:`, error);
+        response.status(500).json({
+            success: false,
+            message: "Error al registrar evento",
+            error: error.message
+        });
+    } finally {
+        if (connection !== null) {
+            connection.end();
+            console.log("API: 🔒 Conexión cerrada");
         }
     }
-})
-
-// Update a user in the database and return a JSON object with the number of rows updated
-app.put('/api/Jugador', async (request, response)=>{
-
-    let connection = null
-
-    try{
-        connection = await connectToDB()
-
-        const [results, fields] = await connection.query('update Jugador set nombreUsuario = ?, correo = ?, contrasena=? where id_jugador= ?', 
-            [request.body['nombreUsuario'], request.body['correo'], request.body['contrasena'], request.body['id_jugador']])
-        
-        console.log(`${results.affectedRows} rows updated`)
-        response.json({'message': `Data updated correctly: ${results.affectedRows} rows updated.`})
-    }
-    catch(error)
-    {
-        response.status(500)
-        response.json(error)
-        console.log(error)
-    }
-    finally
-    {
-        if(connection!==null) 
-        {
-            connection.end()
-            console.log("Connection closed succesfully!")
-        }
-    }
-})
-
-// Delete a user from the database and return a JSON object with the number of rows deleted
-app.delete('/api/Jugador/:id_jugador', async (request, response)=>{
-
-    let connection = null
-
-    try
-    {
-        connection = await connectToDB()
-
-        const [results, fields] = await connection.query('delete from Jugador where id_jugador= ?', [request.params.id_jugador])
-        
-        console.log(`${results.affectedRows} row deleted`)
-        response.json({'message': `Data deleted correctly: ${results.affectedRows} rows deleted.`})
-    }
-    catch(error)
-    {
-        response.status(500)
-        response.json(error)
-        console.log(error)
-    }
-    finally
-    {
-        if(connection!==null) 
-        {
-            connection.end()
-            console.log("Connection closed succesfully!")
-        }
-    }
-})
+});
 
 app.listen(port, ()=>
 {

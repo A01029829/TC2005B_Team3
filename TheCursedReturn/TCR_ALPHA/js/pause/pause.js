@@ -126,6 +126,9 @@ Promise.all([
     window.addEventListener("keydown", (event) => {
         if (event.key === "Escape" && !paused && !gameOver) {
             paused = true;
+            if (window.game && typeof window.game.registrarPausa === 'function') {
+                window.game.registrarPausa();
+            }
             drawPause();
         }
     });

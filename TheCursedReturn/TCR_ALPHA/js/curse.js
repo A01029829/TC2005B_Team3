@@ -27,10 +27,16 @@ class Bar extends GameObject {
     // gradually reduces bar width unless it's already zero
     update() {
         if (this.width > 0) {
-            this.width -= 0.008; // controls how fast the curse drains (0.014 = ~2 min total)
+            this.width -= 0.017; //0.008 // controls how fast the curse drains (0.014 = ~2 min total)
         }
         else {
             this.width = 0;
+        }
+
+        // Save the curse value to localStorage
+        if (this.tag === "bar" && typeof barwidth !== 'undefined') {
+            const porcentajeMaldicion = Math.round((this.width / barwidth) * 100);
+            localStorage.setItem('curseValue', porcentajeMaldicion);
         }
     }
 
