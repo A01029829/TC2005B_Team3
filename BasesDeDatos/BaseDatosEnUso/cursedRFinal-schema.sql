@@ -32,7 +32,7 @@ CREATE TABLE Log_Partida(
     tiempoPartida TIME NOT NULL,
     puntuacion INT DEFAULT 0,
     nivelActual TINYINT DEFAULT 1 NOT NULL CHECK (nivelActual<=3 AND nivelActual>=1),
-    salaActual TINYINT DEFAULT 1 NOT NULL CHECK (salaActual<=4 AND salaActual>=1),
+    salaActual TINYINT DEFAULT 1 NOT NULL CHECK (salaActual<=13 AND salaActual>=1),
     biomaActual ENUM('bosque','nieve','desierto') NOT NULL,
     rankM DECIMAL(5,2) DEFAULT 100.00 NOT NULL, -- Valor maximo de 999.99
     vida DECIMAL(6,2) NOT NULL, -- Valor maximo de 9999.99, no hay default pq variara por clase
