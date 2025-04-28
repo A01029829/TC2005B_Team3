@@ -34,8 +34,189 @@ const BIOME_BOSS = {
     snow: 'minotaur' // minotaur is the boss of the snow biome
 };
 
+// Actual value of the curse
+function getCurseValue() {
+    try {
+
+        if (typeof gameOver !== 'undefined' && gameOver === true) {
+            return 0;
+        }
+
+        if (typeof curse !== 'undefined' && typeof bar !== 'undefined') {
+            const curseActual= curse.width;
+            const barTotal= bar.width;
+            
+            if (barTotal > 0) {
+                const cursePercentage = Math.round((curseActual / barTotal) * 100);
+                //console.log(`Calculando maldición: ${curseActual} / ${barTotal} = ${porcentaje}%`);
+                return cursePercentage;
+            }
+        }
+        
+        const curseElem = document.getElementById('curse');
+        const barElem = document.getElementById('bar');
+        if (curseElem && barElem) {
+            const curseWidth = parseFloat(window.getComputedStyle(curseElem).width);
+            const barWidth = parseFloat(window.getComputedStyle(barElem).width);
+            if (barWidth > 0) {
+                return Math.round((curseWidth / barWidth) * 100);
+            }
+        }
+
+        const storedCurse = localStorage.getItem('curseValue');
+        if (storedCurse) {
+            return parseInt(storedCurse);
+        }
+    } catch (e) {
+        console.error("Error al calcular maldición:", e);
+    }
+    
+    // Default value if everything fails
+    return 100;
+}
+ // Actual value of the life bar
+function getHealthValue() {
+    try {
+
+        if (typeof gameOver !== 'undefined' && gameOver === true) {
+            return 0;
+        }
+
+        if (typeof window.gameAPI !== 'undefined' && 
+            window.gameAPI.player && 
+            typeof window.gameAPI.player.health !== 'undefined' && 
+            typeof window.gameAPI.player.maxHealth !== 'undefined') {
+            
+            const healthPercentage = Math.round((window.gameAPI.player.health / window.gameAPI.player.maxHealth) * 100);
+            //console.log(`Calculando vida: ${window.gameAPI.player.health} / ${window.gameAPI.player.maxHealth} = ${healthPercentage}%`);
+            return healthPercentage;
+        }
+            
+        if (typeof health !== 'undefined' && typeof maxHealth !== 'undefined') {
+            const healthPercentage = Math.round((health / maxHealth) * 100);
+            //console.log(`Calculando vida: ${health} / ${maxHealth} = ${porcentaje}%`);
+            return healthPercentage;
+        }
+        
+        const healthElem = document.getElementById('health');
+        const healthBarElem = document.getElementById('bar');
+        if (healthElem && healthBarElem) {
+            const healthWidth = parseFloat(window.getComputedStyle(healthElem).width);
+            const healthBarWidth = parseFloat(window.getComputedStyle(healthBarElem).width);
+            if (healthBarWidth > 0) {
+                return Math.round((healthWidth / healthBarWidth) * 100);
+            }
+        }
+
+        const storedHealth = localStorage.getItem('healthValue');
+        if (storedHealth) {
+            return parseInt(storedHealth);
+        }
+    } catch (e) {
+        console.error("Error al calcular vida:", e);
+    }
+    
+    // Default value if everything fails
+    return 100;
+}
+
 // === Game Class Definition ===
 // handles the entire game: player, enemies, maps, UI, collisions, combat, etc.
+
+// Function to send game events to the server
+async function sendEvent(tipo, data) {
+    console.log(`Enviando evento ${tipo}:`, data);
+    
+    // Last values are registered before dying
+    if (tipo === 'muerteMaldicion' || tipo === 'muerteVida') {
+        
+        if (tipo === 'muerteMaldicion') {
+            data.rankM = 0;
+        }
+
+        if (data.rankM === undefined) {
+            //console.warn(`Corrigiendo rankM para evento ${tipo}: ${data.rankM} -> 0`);
+            data.rankM = tipo === 'muerteMaldicion' ? 0 : data.rankM || 0;
+        }
+        
+        if (tipo === 'muerteVida') {
+            data.vida=0;
+        }
+
+        if (data.vida === undefined) {
+            //console.warn(`Corrigiendo vida para evento ${tipo}: ${data.vida} -> 0`);
+            data.vida = tipo === 'muerteVida' ? 0 : data.vida || 0;
+        }
+
+        // Make sure are defined
+        if (data.enemigosCDerrotados === undefined) {
+            //console.warn(`Corrigiendo enemigosCDerrotados para evento ${tipo}`);
+            data.enemigosCDerrotados = 0;
+        }
+        
+        if (data.enemigosFDerrotados === undefined) {
+            //console.warn(`Corrigiendo enemigosFDerrotados para evento ${tipo}`);
+            data.enemigosFDerrotados = 0;
+        }
+        
+        if (data.jefesDerrotados === undefined) {
+            //console.warn(`Corrigiendo jefesDerrotados para evento ${tipo}`);
+            data.jefesDerrotados = 0;
+        }
+    }
+
+    const salaActual = window.game ? window.game.totalRoomsVisited + 1 : (data.salaActual || 1);
+
+    const { EVENT_MAPPINGS, BIOME_MAPPINGS } = window.TCR_CONSTANTS || {};
+
+    // Ensure that eventoTrigger is defined
+    const datosCompletos = {
+        ...data,
+        eventoTrigger: EVENT_MAPPINGS?.[tipo] || tipo,
+        biomaActual: BIOME_MAPPINGS?.[data.bioma] || data.biomaActual || 'bosque',
+        rankM: tipo === 'muerteMaldicion' ? 0 : (data.rankM || getCurseValue()),
+        vida: tipo === 'muerteVida' ? 0 : (data.vida || getHealthValue()),
+        salaActual: salaActual
+    };
+
+    ///Pruebas consola. Se puede quitar
+    // if (!datosCompletos.id_partida) {
+    //     console.error("❌ Error: id_partida no está definido", datosCompletos);
+    //     return; // No enviar si falta id_partida
+    // }
+    
+    // if (!datosCompletos.claseElegida) {
+    //     console.warn("claseElegida no definida, usando default");
+    //     datosCompletos.claseElegida = localStorage.getItem('playerClass') || 'guerrero';
+    // }
+
+    // if (!['bosque', 'nieve', 'desierto'].includes(datosCompletos.biomaActual)) {
+    //     console.warn("Valor de bioma incorrecto, forzando a 'bosque'");
+    //     datosCompletos.biomaActual = 'bosque';
+    // }
+    ///
+
+    // Ensure there are no negative values for enemies defeated (not strictly necessary, but to make sure)
+    if (datosCompletos.enemigosCDerrotados < 0) datosCompletos.enemigosCDerrotados = 0;
+    if (datosCompletos.enemigosFDerrotados < 0) datosCompletos.enemigosFDerrotados = 0;
+    if (datosCompletos.jefesDerrotados < 0) datosCompletos.jefesDerrotados = 0;
+    
+    fetch('/api/game-event', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(datosCompletos)  // Use the values with eventoTrigger
+    })
+    .then(response => response.json())
+    .then(result => {
+        console.log(`✅ Evento ${tipo} registrado:`, result);
+    })
+    .catch(error => {
+        console.error(`❌ Error al registrar ${tipo}:`, error);
+    });
+}
+
 class Game {
 
     // === Game Constructor ===
@@ -48,6 +229,7 @@ class Game {
         this.canvasHeight = canvasHeight; // height of the canvas in pixels
         this.assets = assets; // object containing all loaded assets (images, maps, etc.)
 
+        this.totalRoomsVisited = 0;
         this.usedMaps = new Set(); // keeps track of which maps have already been used (to avoid repeating them)
         this.enemies = []; // array that will store current enemies in the room
         this.enemyFrame = 0; // controls enemy animation frame updates
@@ -82,6 +264,30 @@ class Game {
             bossesDefeated: 0 // number of bosses defeated
         };               
 
+        // Initialize game state variables
+        this.deathRegistered = false;
+        this.score = 0;
+        this.elapsedTime = 0;
+        this.startTime = Date.now();
+        this.lastObjectFound = 'cofre';
+        this.currentBiome = 'woods'; // Initialize biome (default value to prevent errors)
+        
+        if (!this.progress) {
+            this.progress = {
+                level: 1,
+                visited: 1,
+                biome: 'woods'
+            };
+        }
+        
+        // Register game start event
+        this.registerStart();
+
+        // Default value to prevent errors
+        if (!localStorage.getItem('eventoTrigger')) {
+            localStorage.setItem('eventoTrigger', 'checkpoint');
+        }
+
         // === Instantiate Managers and Player ===
         this.mapManager = new MapManager(assets.maps, assets.backgroundImage); // manages room selection and map loading
         this.inputManager = new InputManager(assets.keyMap); // handles keyboard input
@@ -94,7 +300,15 @@ class Game {
             assets.playerAttackRow // row index for attack animation
         );
         this.player.gameRef = this; // give player access to the full game instance (so it can reference enemies, etc.)
+        let playerClass = 'guerrero';
         this.player.classType = selectedClass; // set the class type (knight, archer, wizard)
+
+        // Save class in localStorage for future use
+        if (selectedClass === 'knight') playerClass = 'guerrero';
+        else if (selectedClass === 'archer') playerClass = 'arquero';
+        else if (selectedClass === 'wizard') playerClass = 'hechicero';
+        localStorage.setItem('playerClass', playerClass);
+        //console.log(`🧙‍♂️ Clase elegida: ${playerClass} (original: ${selectedClass})`);
 
         // === Setup Portal (used to change rooms) ===
         this.portal = new Portal(
@@ -460,97 +674,312 @@ class Game {
         if (this.gunsmith) this.staticObjects.push(this.gunsmith); // add gunsmith if present
         if (this.chest) this.staticObjects.push(this.chest); // add chest if present
 
-        // === Portal Activation ===
-        // by default, the portal is inactive. it gets enabled only when all enemies are defeated.
-        this.portal.active = false;
+        this.portal.active = false; // deactivate portal until enemies are cleared
+    }
 
-        // === Fallback Spawn Logic ===
-        // Sometimes, enemy spawning fails (e.g., biome doesn’t support any enemies), 
-        // so we make sure there’s always at least one enemy.
-        if (this.enemies.length === 0) {
-        
-            // Re-run the biome and get available types (default to goblin if biome is missing)
-            const biome = this.mapManager.currentBiome;
-            const availableTypes = BIOME_ENEMIES[biome] || ['goblin'];
-
-            const type = availableTypes[Math.floor(Math.random() * availableTypes.length)]; // pick a random enemy type from the list
-        
-            // === Choose Variant (Fallback Variant Decision) ===
-            let variant;
-            if (type === 'skeleton') {
-                const r = Math.random(); // skeletons can be weak, semi, or strong — randomly assign
-                if (r < 0.33) {
-                    variant = 'weak';
-                } else if (r < 0.66) {
-                    variant = 'semi';
-                } else {
-                    variant = 'strong';
-                }
-            } else {
-                const r = Math.random(); // goblins and others — either weak or strong
-                if (r < 0.5) {
-                    variant = 'weak';
-                } else {
-                    variant = 'strong';
-                }
-            }
-        
-            // === Create Fallback Enemy ===
-            const spawn = this.getValidSpawnPosition(this.collisionMap, this.canvasWidth, this.canvasHeight); // valid spawn location
-            const spritePath = this.getEnemySpritePath(type, variant); // correct sprite path
-            const speed = 1.25; // default enemy speed
-        
-            const enemy = new Enemy(spawn, speed, spritePath, type, variant, biome, this.progress.level); // create enemy instance
-
-            // assign health
-            const hp = getEnemyHP(type, variant, this.progress.level);
-            enemy.health = hp;
-            enemy.maxHealth = hp;
-        
-            // === Configure Animation Frames ===
-            const animKey = `${type}_${variant}`;
-            const config = ENEMY_ANIMATION_CONFIG[animKey];
-            if (config) {
-                enemy.walkFrames = config.walkFrames;
-                enemy.attackFrames = config.attackFrames;
-            }
-        
-            // === Assign Frame Rows Based on Enemy Type and Variant ===
-            // each enemy has unique spritesheet row indexes for walking and attacking animations
-            if (type === 'goblin' && variant === 'weak') {
-                enemy.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
-                enemy.attackRow = { up: 0, left: 1, down: 2, right: 3 };
-            } else if (type === 'goblin' && variant === 'strong') {
-                enemy.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
-                enemy.attackRow = { up: 53, left: 54, down: 55, right: 56 };
-            } else if (type === 'skeleton' && variant === 'weak') {
-                enemy.movementFrames = { up: 53, left: 54, down: 55, right: 56 };
-                enemy.attackRow = { up: 57, left: 58, down: 59, right: 60 };
-            } else if (type === 'skeleton' && variant === 'semi') {
-                enemy.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
-                enemy.attackRow = { up: 53, left: 54, down: 55, right: 56 };
-            } else if (type === 'skeleton' && variant === 'strong') {
-                enemy.movementFrames = { up: 53, left: 54, down: 55, right: 56 };
-                enemy.attackRow = { up: 57, left: 58, down: 59, right: 60 };
-            } else if (type === 'lizard' && variant === 'weak') {
-                enemy.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
-                enemy.attackRow = { up: 12, left: 13, down: 14, right: 15 };
-            } else if (type === 'lizard' && variant === 'strong') {
-                enemy.movementFrames = { up: 53, left: 54, down: 55, right: 56 };
-                enemy.attackRow = { up: 57, left: 58, down: 59, right: 60 };
-            }
-        
-            // health bar for fallback enemy
-            enemy.healthBar = new Bar(
-                new Vect(enemy.position.x, enemy.position.y - 10), // above the enemy
-                30, // width
-                7, // height
-                "red" // color
-            );
-        
-            enemy.gameRef = this; // give fallback enemy a reference to the game
-            this.enemies.push(enemy); // add fallback enemy to the room's enemy list
+    updateGameState() {
+        // Verify game ID
+        const matchID = localStorage.getItem('currentPartidaId');
+        if (!matchID) {
+            //console.error("No se encontró ID de partida en localStorage");
+            return;
         }
+        
+        // Format time
+        const formattedTime = formatTime(this.elapsedTime || 0);
+
+        // Calculate curse value
+        const curseValue = getCurseValue();
+        localStorage.setItem('curseValue', curseValue);
+        //console.log(`Valor actual de maldición: ${maldicionValor}%`);
+        
+        const vidaValor = getHealthValue();
+        localStorage.setItem('vidaValue', vidaValor);
+        //console.log(`Valor actual de vida: ${vidaValor}%`);
+
+        const selectedClass = localStorage.getItem('playerClass') || 'guerrero';
+
+        const { BIOME_MAPPINGS } = window.TCR_CONSTANTS || {};
+
+        const actualBiome = BIOME_MAPPINGS?.[this.currentBiome] || 'bosque';
+
+        // Create data object for all events
+        const dataEvent = {
+            id_partida: matchID,
+            claseElegida: selectedClass,
+            tiempoPartida: formattedTime,
+            puntuacion: this.score || 0,
+            nivelActual: this.progress?.level || 1,
+            salaActual: this.progress?.visited || 1,
+            biomaActual: actualBiome,
+            rankM: curseValue,
+            vida: this.player?.health || 100,
+            enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,  // Cambiado para usar las propiedades correctas
+            enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
+            jefesDerrotados: this.stats?.bossesDefeated || 0,
+            objetosEncontrados: this.lastObjectFound || 'cofre'
+        };
+        
+        // Verify death event by health
+        if (this.player && this.player.health <= 0 && !this.deathRegistered) {
+            this.deathRegistered = true;
+            sendEvent('muerteVida', dataEvent);
+        }
+        
+    }
+
+    // Method to register objects found
+    recordObjectFound(objectType) {
+        this.lastObjectFound = objectType;
+        //console.log(`Objeto encontrado: ${objectType}`);
+    }
+
+    registrarPausa() {
+        const matchID = localStorage.getItem('currentPartidaId');
+        if (!matchID) return;
+        
+        const formattedTime = formatTime(this.elapsedTime || 0);
+        
+        let curseValue = getCurseValue();
+        let healthValue = Math.round((this.player.health / this.player.maxHealth) * 100);
+        
+        const { BIOME_MAPPINGS } = window.TCR_CONSTANTS || {};
+
+        const actualBiome = BIOME_MAPPINGS?.[this.currentBiome] || 'bosque';
+        //console.log(`Bioma para evento pausa: ${biomaActual} (original: ${this.currentBiome})`);
+        
+        const selectedClass = localStorage.getItem('playerClass') || 'guerrero';
+        const currentRoom = this.totalRoomsVisited + 1;
+        
+        sendEvent('pausa', {
+            id_partida: matchID,
+            //eventoTrigger: localStorage.getItem('eventoTrigger') || 'checkpoint',
+            claseElegida: selectedClass,
+            tiempoPartida: formattedTime,
+            puntuacion: this.score || 0,
+            nivelActual: this.progress?.level || 1,
+            salaActual: currentRoom,
+            biomaActual: actualBiome,
+            rankM: curseValue,
+            vida: healthValue,
+            enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,
+            enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
+            jefesDerrotados: this.stats?.bossesDefeated || 0,
+            objetosEncontrados: this.lastObjectFound || 'cofre'
+        });
+    }
+
+    onPortalTriggered() {
+        // Save reference to the game API before changing the map
+        const savedAPI = window.gameAPI;
+        
+        // Ensure the player is leaving the room from the right side
+        const exitingFromRight = this.player.position.x > this.canvasWidth - 100;
+        
+        //console.log("Jugador saliendo por: " + (exitingFromRight ? "derecha" : "izquierda/centro"));
+        
+        // Change map with some improvements
+        try {
+            if (this.mapManager.currentMapKey) {
+                this.usedMaps.add(this.mapManager.currentMapKey);
+            }
+            
+            this.mapManager.selectRandomMap(this.mapManager.currentMapKey, this.usedMaps);
+            
+            // Verificar que la imagen de fondo se ha cargado correctamente
+            if (!this.assets.backgroundImage.complete) {
+                //console.log("Esperando a que la imagen de fondo se cargue completamente...");
+                this.assets.backgroundImage.onload = () => {
+                    //console.log("Imagen de fondo cargada con éxito");
+                    this.continueRoomChange(exitingFromRight, savedAPI);
+                };
+                this.assets.backgroundImage.onerror = (e) => {
+                    //console.error("Error al cargar la imagen de fondo:", e);
+                };
+            } else {
+                this.continueRoomChange(exitingFromRight, savedAPI);
+            }
+        } catch (error) {
+            //console.error("Error durante el cambio de sala:", error);
+        }
+    }
+
+    // Auxiliar method to continue room change after background image is loaded
+    continueRoomChange(exitingFromRight, savedAPI) {
+        this.updateCollisionMap();
+        
+        // Update biome
+        this.currentBiome = this.mapManager.currentBiome;
+        console.log(`Bioma actualizado a: ${this.currentBiome}`);
+        
+        // Clean static objects
+        this.staticObjects = [];
+        this.gunsmith = null;
+        this.gunsmithSpawned = false;
+        this.healer = null;
+        this.healerSpawned = false;
+        this.chest = null;
+        
+        // Generate new enemies
+        this.spawnEnemiesForRoom();
+        
+        // Deactivate the portal until all enemies are cleared
+        this.portal.active = false;
+        
+        // Ensure the player is positioned correctly based on the exit side
+        if (exitingFromRight) {
+            this.player.position.x = 50;
+        } else {
+            this.player.position.x = this.canvasWidth - 100;
+        }
+        
+        // Keep the player within the vertical bounds of the canvas
+        this.player.position.y = Math.min(
+            Math.max(50, this.player.position.y),
+            this.canvasHeight - 50
+        );
+        
+//        //console.log(`Jugador reposicionado en: X=${this.player.position.x}, Y=${this.player.position.y}`);
+        
+        // Restore API after map change
+        if (savedAPI) {
+            window.gameAPI = savedAPI;
+            //console.log("🛠️ API de juego restaurada correctamente");
+        }
+        
+        // Register checkpoint after room change
+        try {
+            this.registerCheckpoint();
+        } catch (e) {
+            console.error("Error al registrar checkpoint:", e);
+        }
+    }
+
+    // Method to register checkpoints
+    registerCheckpoint() {
+        const matchID = localStorage.getItem('currentPartidaId');
+        if (!matchID) {
+            //console.error("No hay ID de partida disponible");
+            return;
+        }
+
+        const currentRoom = this.totalRoomsVisited + 1;
+
+        const formattedTime = formatTime(this.elapsedTime || 0);
+        
+        let curseValue = getCurseValue();
+        let healthValue = Math.round((this.player.health / this.player.maxHealth) * 100);
+        
+        const { BIOME_MAPPINGS } = window.TCR_CONSTANTS || {};
+        const actualBiome = BIOME_MAPPINGS?.[this.currentBiome] || 'bosque';
+        //console.log(`Bioma para evento pausa: ${biomaActual} (original: ${this.currentBiome})`);
+        
+        const selectedClass = localStorage.getItem('playerClass') || 'guerrero';
+        
+        // Data for the checkpoint event
+        const checkpointData = {
+            id_partida: matchID,
+            eventoTrigger: localStorage.getItem('eventoTrigger') || 'checkpoints',
+            claseElegida: selectedClass,
+            tiempoPartida: formattedTime,
+            puntuacion: this.score,
+            nivelActual: this.progress.level,
+            salaActual: currentRoom,
+            biomaActual: actualBiome, //biomaMappings[this.currentBiome] || 'bosque',
+            rankM: curseValue,
+            vida: healthValue,
+            enemigosCDerrotados: this.stats.weakEnemiesDefeated,
+            enemigosFDerrotados: this.stats.strongEnemiesDefeated,
+            jefesDerrotados: this.stats.bossesDefeated,
+            objetosEncontrados: this.lastObjectFound || 'cofre'
+        };
+
+        //console.log("📍 Enviando datos de checkpoint:", checkpointData);
+        sendEvent('checkpoints', checkpointData);
+    }
+
+    // Start event
+    registerStart() {
+        const matchID = localStorage.getItem('currentPartidaId');
+        if (!matchID) {
+            //console.error("No hay ID de partida disponible para registrar inicio");
+            return;
+        }
+        
+        const formatearTiempo = (ms) => {
+            return "00:00:00";
+        };
+        
+        const { BIOME_MAPPINGS } = window.TCR_CONSTANTS || {};
+        
+        const biomaActual = BIOME_MAPPINGS?.[this.currentBiome] || 'bosque';
+        let chosenClass = 'guerrero';
+    
+        if (selectedClass === 'knight') chosenClass = 'guerrero';
+        else if (selectedClass === 'archer') chosenClass = 'arquero';
+        else if (selectedClass === 'wizard') chosenClass = 'hechicero';
+        
+        localStorage.setItem('playerClass', chosenClass);
+    
+        //console.log("Registrando inicio de partida:", matchID);
+        
+        sendEvent('inicio', {
+            id_partida: matchID,
+            claseElegida: chosenClass,
+            tiempoPartida: formatearTiempo(0),
+            puntuacion: 0,
+            nivelActual: 1,
+            salaActual: 1,
+            biomaActual: biomaActual,
+            rankM: 100,
+            vida: 100,
+            enemigosCDerrotados: 0,
+            enemigosFDerrotados: 0,
+            jefesDerrotados: 0,
+            objetosEncontrados: 'cofre'
+        });
+    }
+
+    // Event that registers when a player exits the game
+    registerExit() {
+        const matchID = localStorage.getItem('currentPartidaId');
+        if (!matchID) {
+            //console.error("No hay ID de partida disponible");
+            return;
+        }
+    
+        let curseValue = getCurseValue();
+        const healthValue = Math.round((this.player.health / this.player.maxHealth) * 100);
+
+        const formattedTime = formatTime(this.elapsedTime || 0);
+        
+        const { BIOME_MAPPINGS } = window.TCR_CONSTANTS || {};
+
+        const biomaActual = BIOME_MAPPINGS?.[this.currentBiome] || 'bosque';
+        //console.log(`Bioma para evento salida: ${biomaActual} (original: ${this.currentBiome})`);
+        const selectedClass = localStorage.getItem('playerClass') || 'guerrero';
+        const actualRoom = this.totalRoomsVisited + 1;
+        
+        // Data for the checkpoint event
+        const exitData = {
+            id_partida: matchID,
+            eventoTrigger: 'salida',
+            claseElegida: selectedClass,
+            tiempoPartida: formattedTime,
+            puntuacion: this.score,
+            nivelActual: this.progress.level,
+            salaActual: actualRoom,
+            biomaActual: biomaActual, //biomaMappings[this.currentBiome] || 'bosque',
+            rankM: curseValue,
+            vida: healthValue,
+            enemigosCDerrotados: this.stats.weakEnemiesDefeated,
+            enemigosFDerrotados: this.stats.strongEnemiesDefeated,
+            jefesDerrotados: this.stats.bossesDefeated,
+            objetosEncontrados: this.lastObjectFound || 'cofre'
+        };
+
+        //console.log("Enviando datos de salida:", exitData);
+        sendEvent('salida', exitData);
     }
 
 // === Main Game Loop ===
@@ -582,15 +1011,30 @@ loop() {
         this.player.clampToBounds(this.canvasWidth, this.canvasHeight) // prevent player from going off-screen
     );
 
+    // == Handle curse bar logic ==
+    if (typeof curse !== 'undefined' && typeof bar !== 'undefined') {
+        const curseValue = Math.round((curse.width / barwidth) * 100);
+        localStorage.setItem('curseValue', curseValue.toString());
+        
+        if (curse.width <= 0 && !this.player.dying) {
+            localStorage.setItem('curseValue', '0');
+            
+            if (!this.deathRegistered) {
+                this.updateGameState();
+            }
+        }
+    }
+
     // === Healer Logic === 
     if (this.healer) {
         const playerInRange = this.healer.checkPlayerInRange(this.player); // is the player close enough to heal?
         const interacted = this.healer.interact(this.player, this.inputManager.keysPressed); // did the player press 'f'?
 
-        if (interacted) {
+        if (typeof interacted !== 'undefined' && interacted) {
             // if healing happens, immediately update health bar´s width
             life.width = (this.player.health / this.player.maxHealth) * lifeBarwidth;
             if (life.width > lifeBarwidth) life.width = lifeBarwidth; // clamp max width
+            this.recordObjectFound('curandero');
         }
 
         // Update healer state, animate it, and draw it with prompt if player is nearby
@@ -604,7 +1048,14 @@ loop() {
     if (this.gunsmith) {
         this.gunsmith.updateAnimation(this.gameFrame, this.staggerFrames);
         const playerInRange = this.gunsmith.checkPlayerInRange(this.player);
-        this.gunsmith.interact(this.player, this.inputManager.keysPressed);
+        const interacted = this.gunsmith.interact(this.player, this.inputManager.keysPressed);
+
+        if (interacted) {
+            //console.log("Gunsmith Interaction Success!");
+            this.recordObjectFound('armero');
+        }
+
+        this.gunsmith.updateAnimation(this.npcFrame, this.staggerFrames);
         this.gunsmith.draw(this.ctx);
         this.gunsmith.drawInteractionPrompt(this.ctx, playerInRange);
     }
@@ -614,6 +1065,10 @@ loop() {
     if (this.chest) {
         this.chest.updateAnimation(this.npcFrame, this.staggerFrames);
         const playerInRange = this.chest.checkPlayerInRange(this.player);
+        let interacted = false; // Define interacted before use
+        if (typeof interacted !== 'undefined' && interacted) {
+            this.recordObjectFound('cofre');
+        }
     
         this.chest.interact(this.player, this.inputManager.keysPressed);
         this.chest.draw(this.ctx);
@@ -912,19 +1367,8 @@ loop() {
         this.assets.backgroundImage, // new background image to draw
         
         () => { // === onRoomChange Callback (when portal is used to change rooms) ===    
-            this.mapManager.selectRandomMap(this.mapManager.currentMapKey, this.usedMaps);
-            this.updateCollisionMap(); // update to new map´s collision info
-
-            // reset all NPCs and interactive objects
-            this.staticObjects = [];
-            this.gunsmith = null;
-            this.gunsmithSpawned = false;
-            this.healer = null;
-            this.healerSpawned = false;
-            this.chest = null;
-
-            this.spawnEnemiesForRoom(); // spawn enemies for the new room
-
+            // Calls centralized function to change room
+            this.onPortalTriggered();
         },
         // === onNewLevel Callback (when progressing to next level) ===
         () => this.onNewLevel()
@@ -973,7 +1417,47 @@ loop() {
 
     // if time runs out and player isn't already dying, kill them
     if (curse.width <= 0 && !this.player.dying) {
+        localStorage.setItem('curseValue', '0');
         this.player.startDeath();
+        
+        // Registrar death from curse event
+        if (!this.deathRegistered) {
+            this.deathRegistered = true;
+
+            const formatTime = (ms) => {
+                const horas = Math.floor(ms / 3600000);
+                const minutos = Math.floor((ms % 3600000) / 60000);
+                const segundos = Math.floor((ms % 60000) / 1000);
+                return `${horas.toString().padStart(2, '0')}:${minutos.toString().padStart(2, '0')}:${segundos.toString().padStart(2, '0')}`;
+            };
+        
+            const { BIOME_MAPPINGS } = window.TCR_CONSTANTS || {};
+            
+            const matchID = localStorage.getItem('currentPartidaId');
+            if (matchID) {
+                const actualHealth = this.player?.health || 0;
+
+                const dataEvent = {
+                    id_partida: matchID,
+                    eventoTrigger: 'muerteMaldicion',
+                    claseElegida: localStorage.getItem('playerClass') || 'guerrero',
+                    tiempoPartida: this.elapsedTime ? formatTime(this.elapsedTime) : '00:00:00',
+                    puntuacion: this.score || 0,
+                    nivelActual: this.progress?.level || 1,
+                    salaActual: this.totalRoomsVisited + 1, //this.progress?.visited || 1,
+                    biomaActual: BIOME_MAPPINGS?.[this.currentBiome] || 'bosque',
+                    rankM: 0, // Forzar valor a 0
+                    vida: actualHealth,
+                    enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,
+                    enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
+                    jefesDerrotados: this.stats?.bossesDefeated || 0,
+                    objetosEncontrados: this.lastObjectFound || 'cofre'
+                };
+                
+                sendEvent('muerteMaldicion', dataEvent);
+                //console.log("Muerte por maldición registrada con rankM=0 usando enviarEvento");
+            }
+        }
     }
     
     // === Final Frame and Loop Call ===
@@ -986,6 +1470,16 @@ loop() {
             this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight);
             this.ctx.restore();
         }       
+
+        // Update time
+        this.elapsedTime = Date.now() - this.startTime;
+        
+        try {
+            // Update game state
+            this.updateGameState();
+        } catch (e) {
+            console.error("Error en updateGameState:", e);
+        }
 
 
         // === Keep the Game Running ===
