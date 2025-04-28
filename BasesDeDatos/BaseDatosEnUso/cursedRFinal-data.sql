@@ -1,30 +1,33 @@
 -- Active: 1743625010510@@127.0.0.1@3306@cursedr
+
+-- Nota: Estos inserts fueron solo de referencia, los correctos se harán directamente
+-- desde el front-end, pero se dejan aquí para pruebas y ejemplos.
 USE cursedR;
 
-INSERT INTO Jugador (id_jugador, nombreUsuario, correo, contrasena) VALUES
-(1, 'Juanito23', 'juanito23@gmail.com', 'Juanito123$'),
-(2, 'Carlos_45', 'carlos45@hotmail.com', 'Carlos45&!'),
-(3, 'Maria.gamer', 'maria_gamer@yahoo.com', 'MariaG123!'),
-(4, 'Pro_Player99', 'proplayer@outlook.com', 'ProPlay99$'),
-(5, 'Game_Master42', 'gamemaster42@gmail.com', 'Master42!$'),
-(6, 'Dark_Knight', 'darkknight@hotmail.com', 'Knight123%'),
-(7, 'Dragon.Slayer', 'dragonslayer@gmail.com', 'Dragon99!$'),
-(8, 'Magic_User', 'magicuser@outlook.com', 'MagicU123!'),
-(9, 'Archer_King', 'archerking@yahoo.com', 'Archer44$!'),
-(10, 'Ninja_Shadow', 'ninjashadow@gmail.com', 'Shadow123?@');
+INSERT INTO Jugador (nombreUsuario, correo, contrasena) VALUES
+('Juanito23', 'juanito23@gmail.com', 'Juanito123$'),
+('Carlos_45', 'carlos45@hotmail.com', 'Carlos45&!'),
+('Maria.gamer', 'maria_gamer@yahoo.com', 'MariaG123!'),
+('Pro_Player99', 'proplayer@outlook.com', 'ProPlay99$'),
+('Game_Master42', 'gamemaster42@gmail.com', 'Master42!$'),
+('Dark_Knight', 'darkknight@hotmail.com', 'Knight123%'),
+('Dragon.Slayer', 'dragonslayer@gmail.com', 'Dragon99!$'),
+('Magic_User', 'magicuser@outlook.com', 'MagicU123!'),
+('Archer_King', 'archerking@yahoo.com', 'Archer44$!'),
+('Ninja_Shadow', 'ninjashadow@gmail.com', 'Shadow123?@');
 
 INSERT INTO Partida (id_partida, id_jugador) VALUES
-(1, 1),
-(2, 1),
-(3, 2),
-(4, 3),
-(5, 4),
-(6, 5),
-(7, 6),
-(8, 7),
-(9, 8),
-(10, 10),
-(11, 9);
+(1),
+(2),
+(3),
+(4),
+(5),
+(6),
+(7),
+(8),
+(9),
+(10),
+(11);
 
 INSERT INTO Log_Partida 
 (id_partida, fechaLog, eventoTrigger, claseElegida, tiempoPartida, puntuacion, 

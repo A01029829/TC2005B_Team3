@@ -6,6 +6,7 @@ class MapManager {
         this.maps = maps; // object with map keys (like "woods1") and their image paths
         this.backgroundImage = backgroundImage; // image element to update on screen
         this.currentMapKey = null; // keeps track of the current map being shown
+        this.currentBiome = 'woods';  // Default biome
     }
 
     // === Change the Current Map Image ===
@@ -21,6 +22,15 @@ class MapManager {
         this.currentMapKey = Object.keys(this.maps).find(
             (key) => this.maps[key] === mapImagePath
         );
+
+        // Detect biome based on map key name
+        if (this.currentMapKey.includes('woods')) {
+            this.currentBiome = 'woods';
+        } else if (this.currentMapKey.includes('desert')) {
+            this.currentBiome = 'desert';
+        } else if (this.currentMapKey.includes('snow')) {
+            this.currentBiome = 'snow';
+        }
 
         // hide controls after the first map is changed
         showControls = false;
