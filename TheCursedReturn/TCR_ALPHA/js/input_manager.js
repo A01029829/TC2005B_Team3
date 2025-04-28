@@ -18,7 +18,7 @@ class InputManager {
     setupListeners() {
         window.addEventListener("keydown", (event) => {
             if (this.keyMap[event.key]) {
-                this.keysPressed[event.key] = true;
+                this.keysPressed[event.key] = true
             }
         });
 

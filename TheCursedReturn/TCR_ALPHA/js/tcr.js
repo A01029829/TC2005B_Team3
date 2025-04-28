@@ -148,10 +148,13 @@ sign_level.src = "../images/sign_level.png";
 const itemBox = new Image();
 itemBox.src = "../images/itemBox.png";
 
+
 // === Start Game When Images Are Loaded ===
 // we wait for all 4 images to load before starting the game
 let loadedImages = 0;
 
+// Ambience music
+const ambienceSound = new Sound('ambience', true, 0.5);
 
 function tryStartGame() {
     loadedImages++;
