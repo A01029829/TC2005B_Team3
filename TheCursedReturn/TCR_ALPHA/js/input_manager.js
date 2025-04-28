@@ -44,3 +44,89 @@ class InputManager {
         this.keysPressed = {};
     }
 }
+
+// === Function to improve class Selection ===
+function setupClassSelection() {
+    // Ensure it only runs on the class selection page
+    if (!document.querySelector('.Knight') || !document.querySelector('.Archer') || !document.querySelector('.Wizard')) {
+        return;
+    }
+    
+    //console.log("Configurando selección de clases");
+    
+    // Warrior
+    document.querySelector('.Knight .class-button')?.addEventListener('click', () => {
+        handleClassSelection('guerrero');
+    });
+    
+    // Archer
+    document.querySelector('.Archer .class-button')?.addEventListener('click', () => {
+        handleClassSelection('arquero');
+    });
+    
+    // Wizard
+    document.querySelector('.Wizard .class-button')?.addEventListener('click', () => {
+        handleClassSelection('hechicero');
+    });
+}
+
+// Auxiliar function to handle class selection and start the game
+function handleClassSelection(claseElegida) {
+    // Match ID from sessionStorage (not using localStorage because class selection is only done once per session)
+    const matchID = sessionStorage.getItem('currentPartidaId');
+    
+    if (!matchID) {
+        console.error("No se encontró ID de partida en sessionStorage");
+        alert("Error: No se pudo encontrar la información de la partida. Por favor inicie sesión nuevamente.");
+        window.location.href = "../html/inicio.html";
+        return;
+    }
+    
+    // Save the selected class
+    sessionStorage.setItem('playerClass', claseElegida);
+    
+    //console.log(`Clase seleccionada: ${claseElegida}, iniciando partida ${idPartida}`);
+    
+    // Ensure gameAPI is available before calling the function
+    if (window.gameAPI && typeof window.gameAPI.registrarInicio === 'function') {
+        startMatchWithAPI(matchID, claseElegida);
+    } else {
+        console.log("gameAPI no disponible aún, esperando...");
+        setTimeout(() => {
+            if (window.gameAPI && typeof window.gameAPI.registrarInicio === 'function') {
+                startMatchWithAPI(matchID, claseElegida);
+            } else {
+                console.error("Error: gameAPI no disponible después de espera");
+                alert("Error: No se pudo cargar el sistema de registro. Intente recargar la página.");
+            }
+        }, 500);
+    }
+}
+
+// Function to start the game with gameAPI
+function startMatchWithAPI(idPartida, claseElegida) {
+    window.gameAPI.registrarInicio(idPartida, claseElegida)
+        .then(result => {
+            if (result.success) {
+                window.location.href = "../html/interfaz.html";
+            } else {
+                console.error("Error al iniciar partida:", result.error);
+                alert("Error al iniciar partida. Intente nuevamente.");
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+            alert("Error de conexión. Intente nuevamente.");
+        });
+}
+
+// Execute setupClassSelection when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', setupClassSelection);
+
+// Export the InputManager class for use in other modules
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { InputManager };
+} else {
+    // For browser environments
+    window.InputManager = InputManager;
+}

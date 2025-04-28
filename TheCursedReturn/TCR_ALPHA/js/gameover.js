@@ -66,6 +66,13 @@ window.addEventListener("click", (event) => {
         mouseX >= menuX && mouseX <= menuX + menuWidth &&
         mouseY >= menuY && mouseY <= menuY + menuHeight) {
         console.log("Returning to menu...");
-        window.location.href = "../html/inicio.html";
+        
+        // Register the exit event in the game object if it exists
+        if (window.game && typeof window.game.registerExit === 'function') {
+            window.game.registerExit();
+        }
+        setTimeout(() => {
+            window.location.href = "../html/inicio.html";
+        }, 500);
     }
 });
