@@ -135,7 +135,7 @@ function main() {
                 if (response.ok) {
                     console.log(result);
                     
-                    // Guardar IDs importantes en localStorage para usarlos después
+                    // Save important ID values in localStorage
                     localStorage.setItem('currentPlayerId', result.id_jugador);
                     localStorage.setItem('currentPartidaId', result.id_partida);
                     localStorage.setItem('currentPlayerName', result.nombreUsuario);
