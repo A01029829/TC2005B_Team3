@@ -576,7 +576,7 @@ loop() {
 
     // === Handle Player Movement and Input ===
     this.player.handleInput(
-        this.ambienceSound.play(),
+        //this.ambienceSound.play(),
         this.inputManager.keysPressed, // keys currently pressed
         this.assets.keyMap, // key bindings
         this.collisionMap, // for collision detection
