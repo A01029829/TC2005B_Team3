@@ -52,6 +52,18 @@ class Sound {
         this.audio.loop = loop;
     }
 
+    increaseVolume() {
+        if (this.audio.volume < 1.0) {
+            this.audio.volume += 0.1;
+        }
+    }
+
+    decreaseVolume() {
+        if (this.audio.volume > 0.0) {
+            this.audio.volume -= 0.1;
+        }
+    }
+
     setSound(action) {
         const soundFile = soundMap[action];
         if (soundFile) {

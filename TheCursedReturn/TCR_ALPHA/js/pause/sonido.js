@@ -5,6 +5,14 @@
 const title_audio = new Image();
 title_audio.src = '../images/pause/audio_title.png';
 
+// Create an array with game objects to show different rectangles that simbolize the volume, when the image plus is hit 
+// a rectangle will be added to the array when the image minus is hit a rectangle will be removed from the array
+// Using the class Sound defined in sound.js
+// Array with game objects to show different rectangles that simbolize the volume
+let volumeRectangles = [];
+// If certain region is clicked, a rectangle will be added to the array
+
+
 // === Draw Audio Settings Screen ===
 // Clears the canvas and draws the background, title, and instruction text
 function drawAudio() {
