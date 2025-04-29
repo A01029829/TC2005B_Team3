@@ -93,7 +93,11 @@ Promise.all([
         if (paused && mouseX >= statsX && mouseX <= statsX + statsWidth &&
             mouseY >= statsY && mouseY <= statsY + statsHeight) {
             stats_bool = true;
-            drawStats();
+            if (typeof window.drawStats === 'function') {
+                window.drawStats();
+            } else {
+                console.error("Error: La función drawStats no está definida");
+            }
         }
 
         // === Save and Exit Button ===
