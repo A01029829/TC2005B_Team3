@@ -7,7 +7,7 @@ class Healer extends AnimatedObject {
         
         // === Healer properties ===
         this.active = true; // can the healer be interacted with right now?
-        this.healAmount = 5; // amount of health to restore per interaction
+        this.healAmount = 20; // amount of health to restore per interaction
         this.interactionRadius = 50; // distance required to trigger interaction
         this.interactionKey = 'f'; // ket to press for interaction
         this.interactionMessage = "Presiona f para curarte"; // message displayed to the player

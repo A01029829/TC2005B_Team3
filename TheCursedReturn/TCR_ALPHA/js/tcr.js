@@ -124,6 +124,9 @@ secondarySprites['../sprites/KnightSecondaryWeapons.png'].src = '../sprites/Knig
 secondarySprites['../sprites/ArcherSecondaryWeapons.png'].src = '../sprites/ArcherSecondaryWeapons.png';
 secondarySprites['../sprites/WizardSecondaryWeapons.png'].src = '../sprites/WizardSecondaryWeapons.png';
 
+// === Carga spellballImage globalmente ===
+window.spellballImage = new Image();
+window.spellballImage.src = "../sprites/spellball.png";
 
 // === UI Bars Setup (Curse and Life Bars) ===
 // these bars appear on the top-right of the game screen to show health and time
@@ -176,12 +179,9 @@ function tryStartGame() {
             healerImagePath: healerImage.src,
             gunsmithImagePath: gunsmithImage.src,
             chestImagePath: chestImage.src,
-            collisionMap: emptyCollision
+            collisionMap: emptyCollision,
+            spellballImage
         });
-
-        // After creating the game instance
-        const game = new Game(ctx, canvas.width, canvas.height, assets);
-        window.game = game; // Make the game instance globally accessible
 
         // loads the correct collision data for the initial map
         window.game.updateCollisionMap();

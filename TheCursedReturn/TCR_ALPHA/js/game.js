@@ -252,6 +252,7 @@ class Game {
         this.staticObjects = []; // stores NPCs and interactive objects that should block movement
 
         this.lastBoss = null; // used to prevent repeating the same boss in consecutive boss rooms
+        this.bossesSpawned = []; // lista de bosses ya spawneados en este run
 
         this.score = 0; // player's current score
 
@@ -400,71 +401,75 @@ class Game {
         this.enemies = []; // reset the enemies array to prepare for a new room
         const biome = this.mapManager.currentBiome; // get current biome (woods, snow, desert)
         const availableTypes = BIOME_ENEMIES[biome]; // get all valid enemies types for the biome
-        const isBossRoom = this.progress.visited === 3; // every 4th room (index 3) is a boss room
+        const isBossRoom = this.progress.visited === 3 || (this.progress.level === 3 && this.progress.visited === 4); // every 4th room (index 3) is a boss room
 
         // === Boss Room Logic ===
         if (isBossRoom) {
-            // determine the boss type — if we're on the final level (3), use 'witch' otherwise, use the biome-defined boss
             let bossType;
-            if (this.progress.level === 3) {
+        
+            // Si estamos en la última sala después del nivel 3
+            if (this.progress.level === 3 && this.progress.visited >= 4) {
                 bossType = 'witch';
             } else {
-                bossType = BIOME_BOSS[biome];
+                // De lo contrario, buscar un jefe disponible que no se haya spawneado
+                const biomeBoss = BIOME_BOSS[biome];
+        
+                // Si el boss de este bioma no se ha usado, úsalo
+                if (!this.bossesSpawned.includes(biomeBoss)) {
+                    bossType = biomeBoss;
+                } else {
+                    // Si ya se usó, buscar otro boss disponible
+                    const remainingBosses = Object.values(BIOME_BOSS).filter(boss => !this.bossesSpawned.includes(boss));
+                    bossType = remainingBosses[Math.floor(Math.random() * remainingBosses.length)] || biomeBoss;
+                }
+        
+                this.bossesSpawned.push(bossType);
             }
-
-        // Prevent repeating the same boss
-        if (bossType === this.lastBoss && this.progress.level !== 3) {
-            const allBosses = Object.values(BIOME_BOSS).filter(b => b !== this.lastBoss); // remove the last boss from selection
-            bossType = allBosses[Math.floor(Math.random() * allBosses.length)]; // randomly pick a new boss
+        
+            this.lastBoss = bossType;
+        
+            // === Spawnea el jefe ===
+            const spawn = this.getValidSpawnPosition(this.collisionMap, this.canvasWidth, this.canvasHeight);
+            const spritePath = this.getEnemySpritePath(bossType, 'boss');
+            const boss = new Enemy(spawn, 1, spritePath, bossType, 'boss', biome, this.progress.level);
+            boss.gameRef = this;
+            boss.health = getEnemyHP(bossType, 'boss', this.progress.level);
+            boss.maxHealth = boss.health;
+        
+            // Animaciones
+            const bossKey = `${bossType}_boss`;
+            const bossConfig = ENEMY_ANIMATION_CONFIG[bossKey];
+            if (bossConfig) {
+                boss.walkFrames = bossConfig.walkFrames;
+                boss.attackFrames = bossConfig.attackFrames;
+            }
+        
+            if (bossType === 'wolf') {
+                boss.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
+                boss.attackRow = { up: 53, left: 54, down: 55, right: 56 };
+            } else if (bossType === 'minotaur') {
+                boss.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
+                boss.attackRow = { up: 4, left: 5, down: 6, right: 7 };
+            } else if (bossType === 'skeleton') {
+                boss.movementFrames = { up: 53, left: 54, down: 55, right: 56 };
+                boss.attackRow = { up: 57, left: 58, down: 59, right: 60 };
+            } else if (bossType === 'witch') {
+                boss.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
+                boss.homingAttackRow = { up: 0, left: 1, down: 2, right: 3};
+                boss.homingCooldown = 360;
+                boss.projectiles = [];
+            }
+        
+            boss.healthBar = new Bar(
+                new Vect(boss.position.x, boss.position.y - 10),
+                50,
+                7,
+                "red"
+            );
+        
+            this.enemies.push(boss);
+            return;
         }
-        this.lastBoss = bossType; // store ths boss to prevent repetition next time
-
-        // === Spawn Boss ===
-        const spawn = this.getValidSpawnPosition(this.collisionMap, this.canvasWidth, this.canvasHeight); // pick a valid spawn position
-        const spritePath = this.getEnemySpritePath(bossType, 'boss'); // get the correct sprite for the boss
-        const speed = 1; // default speed for bosses
-
-        // create the boss instance
-        const boss = new Enemy(spawn, speed, spritePath, bossType, 'boss', biome, this.progress.level);
-        boss.gameRef = this; // give the boss access to the game instance
-
-        // set health based on type, level and variant
-        boss.health = getEnemyHP(bossType, 'boss', this.progress.level);
-        boss.maxHealth = boss.health;
-
-        // get animation settings for walking and attacking
-        const bossKey = `${bossType}_boss`;
-        const bossConfig = ENEMY_ANIMATION_CONFIG[bossKey];
-        if (bossConfig) {
-            boss.walkFrames = bossConfig.walkFrames;
-            boss.attackFrames = bossConfig.attackFrames;
-        }
-
-        // === Set Animation Frame Rows for Movement and Attack (Based on Boss Type) ===
-        if (bossType === 'wolf') {
-            boss.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
-            boss.attackRow = { up: 53, left: 54, down: 55, right: 56 };
-        } else if (bossType === 'minotaur') {
-            boss.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
-            boss.attackRow = { up: 4, left: 5, down: 6, right: 7 };
-        }
-        if (bossType === 'skeleton') {
-            boss.movementFrames = { up: 53, left: 54, down: 55, right: 56 };
-            boss.attackRow = { up: 57, left: 58, down: 59, right: 60 };
-        }
-            
-        // === Attach a Health Bar to the Boss ===
-        boss.healthBar = new Bar(
-            new Vect(boss.position.x, boss.position.y - 10), // above the boss
-            50, // width
-            7, // height
-            "red" // color
-        );
-
-        this.enemies.push(boss); // add the boss to the enemies list
-
-        return; // skip the rest of the function — as boss rooms don’t spawn regular enemies
-    }
 
         // === Regular Room Enemy Spawning ===
         for (let i = 0; i < 10; i++) { // try to spawn 10 enemies (or less)
@@ -602,6 +607,84 @@ class Game {
 
             this.enemies.push(enemy); // finally, add the enemy to the room's active enemy list
         }
+
+        // === Fallback: asegurarnos de que haya mínimo 1 enemigo si la sala quedó vacía ===
+        if (this.enemies.length === 0) {
+            const fallbackAmount = 10; // Puedes poner el número de fallback enemies que quieras
+            for (let i = 0; i < fallbackAmount; i++) {
+                const fallbackType = availableTypes ? availableTypes[Math.floor(Math.random() * availableTypes.length)] : 'goblin';
+                let variant;
+        
+                if (fallbackType === 'skeleton') {
+                    // Si es desierto, solo weak o semi
+                    if (biome === 'desert') {
+                        variant = Math.random() < 0.5 ? 'weak' : 'semi';
+                    } else {
+                        // En otros biomas, puede ser weak, semi o strong
+                        const r = Math.random();
+                        if (r < 0.33) {
+                            variant = 'weak';
+                        } else if (r < 0.66) {
+                            variant = 'semi';
+                        } else {
+                            variant = 'strong';
+                        }
+                    }
+                } else if (fallbackType === 'goblin' || fallbackType === 'lizard') {
+                    variant = Math.random() < 0.5 ? 'weak' : 'strong';
+                } else {
+                    // Fallback de seguridad
+                    variant = 'weak';
+                }
+        
+                const spawn = this.getValidSpawnPosition(this.collisionMap, this.canvasWidth, this.canvasHeight);
+                const spritePath = this.getEnemySpritePath(fallbackType, variant);
+                const fallback = new Enemy(spawn, 1.25, spritePath, fallbackType, variant, biome, this.progress.level);
+        
+                fallback.gameRef = this;
+                fallback.health = getEnemyHP(fallbackType, variant, this.progress.level);
+                fallback.maxHealth = fallback.health;
+        
+                // Asignar correctamente el movementFrames y attackRow basado en tipo y variante
+                if (fallbackType === 'goblin') {
+                    if (variant === 'weak') {
+                        fallback.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
+                        fallback.attackRow = { up: 0, left: 1, down: 2, right: 3 };
+                    } else if (variant === 'strong') {
+                        fallback.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
+                        fallback.attackRow = { up: 53, left: 54, down: 55, right: 56 };
+                    }
+                } else if (fallbackType === 'lizard') {
+                    if (variant === 'weak') {
+                        fallback.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
+                        fallback.attackRow = { up: 12, left: 13, down: 14, right: 15 };
+                    } else if (variant === 'strong') {
+                        fallback.movementFrames = { up: 53, left: 54, down: 55, right: 56 };
+                        fallback.attackRow = { up: 57, left: 58, down: 59, right: 60 };
+                    }
+                } else if (fallbackType === 'skeleton') {
+                    if (variant === 'weak') {
+                        fallback.movementFrames = { up: 53, left: 54, down: 55, right: 56 };
+                        fallback.attackRow = { up: 57, left: 58, down: 59, right: 60 };
+                    } else if (variant === 'semi') {
+                        fallback.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
+                        fallback.attackRow = { up: 53, left: 54, down: 55, right: 56 };
+                    } else if (variant === 'strong') {
+                        fallback.movementFrames = { up: 53, left: 54, down: 55, right: 56 };
+                        fallback.attackRow = { up: 57, left: 58, down: 59, right: 60 };
+                    }
+                }
+        
+                fallback.healthBar = new Bar(
+                    new Vect(fallback.position.x, fallback.position.y - 10),
+                    30,
+                    7,
+                    "red"
+                );
+        
+                this.enemies.push(fallback);
+            }
+        }        
 
         // === Spawn Gunsmith ===
         // only spawn if we haven't already spawned a gunsmith this level
@@ -784,6 +867,12 @@ class Game {
                 this.usedMaps.add(this.mapManager.currentMapKey);
             }
             
+            // === Permitir reusar mapas para la Bruja ===
+            if (this.progress.level === 3 && this.progress.visited === 5) {
+                this.usedMaps.clear();
+            }
+
+
             this.mapManager.selectRandomMap(this.mapManager.currentMapKey, this.usedMaps);
             
             // Verificar que la imagen de fondo se ha cargado correctamente
@@ -1144,6 +1233,38 @@ loop() {
         enemy.moveToward(this.player); // enemy AI: move toward the player
         enemy.updateAnimation(this.player, this.enemyFrame, this.staggerFrames); // animate enemy frames
 
+        this.enemies.forEach(enemy => {
+            if (enemy.projectiles) {
+                enemy.projectiles.forEach(projectile => {
+                    projectile.update();
+        
+                    if (projectile instanceof HomingOrb) {
+                        const isOverlapping = (obj1, obj2) => {
+                            return obj1.position.x < obj2.position.x + obj2.width &&
+                                   obj1.position.x + obj1.width > obj2.position.x &&
+                                   obj1.position.y < obj2.position.y + obj2.height &&
+                                   obj1.position.y + obj1.height > obj2.position.y;
+                        };
+                        if (isOverlapping(projectile, this.player)) {
+                            this.player.health -= 15; // Daño
+
+                            // === Flash Screen Red ===
+                            this.flashScreen = true;
+                            setTimeout(() => { this.flashScreen = false; }, 150);
+
+                            if (this.player.health <= 0) {
+                                gameOver = true;
+                            }
+                            projectile.life = 0; // Eliminar proyectil
+                        }
+                    }
+                });
+        
+                enemy.projectiles = enemy.projectiles.filter(p => p.isAlive());
+            }
+        });
+        
+
         // === Define Hitboxes for Collision ===
         const playerBox = {
             x: this.player.position.x,
@@ -1267,20 +1388,20 @@ loop() {
         if (enemy.health <= 0) {
             // === Boss-Specific Death Logic ===
             if (enemy.variant === 'boss') {
-                let currentBonus = parseInt(localStorage.getItem("curseBonus")) || 0; // retrieve current bar extension from storage
-                currentBonus += 20; // add 20 pixels of permanent time bar extension
-                localStorage.setItem("curseBonus", currentBonus); // save it for future runs
-                
-                // IMPORTANT: use localStorage.removeItem("curseBonus"); on the browser console to reset bar :)))
-
-                // visually expand the curse bar and its visual fill
-                bar.width += 20;
-                curse.width += 20;
-        
-                // cap it so the width never exceeds the bar limit visually
-                if (bar.width > 200) bar.width = 200;
-                if (curse.width > bar.width) curse.width = bar.width;
-            }
+                let currentBonus = parseInt(localStorage.getItem("curseBonus")) || 0;
+            
+                // Solo extender si llevamos menos de 3 mejoras
+                if (currentBonus < 60) {
+                    currentBonus += 20;
+                    localStorage.setItem("curseBonus", currentBonus);
+            
+                    bar.width += 20;
+                    curse.width += 20;
+            
+                    if (bar.width > 200) bar.width = 200;
+                    if (curse.width > bar.width) curse.width = bar.width;
+                }
+            }            
 
             // === Score Assignment Based on Variant and Level ===
             let points = 0;
@@ -1350,15 +1471,18 @@ loop() {
             enemy.healthBar.draw(this.ctx);
         }
 
-        // === Draw Secondary Weapon Icon (Bottom Left HUD) ===
-        if (this.player.secondaryWeapon) {
-            ctx.drawImage(itemBox, 40, this.canvasHeight - 110, 70, 70); // draw weapon slot container
-            const icon = weaponIcons[this.player.secondaryWeapon]; // get icon for current secondary weapon
-            if (icon) {
-                ctx.drawImage(icon, 50, this.canvasHeight - 100, 50, 50); // draw the weapon icon inside the box
+        // === Draw Secondary Weapon Box (Bottom Left HUD) ===
+        this.ctx.drawImage(itemBox, 40, this.canvasHeight - 110, 70, 70); // siempre dibujar la caja
+
+        // === Draw Pending Icon if exists ===
+        if (this.player.pendingIcon) {
+            const pendingIcon = weaponIcons[this.player.pendingIcon];
+            if (pendingIcon) {
+                this.ctx.drawImage(pendingIcon, 50, this.canvasHeight - 100, 50, 50); // dibujar icono normal
             }
         }
-    });
+
+});
 
     // === Portal Teleportation and Level Transition ===
     this.portal.checkCollision(
@@ -1511,11 +1635,9 @@ getEnemySpritePath(type, variant) {
         minotaur: {
             boss: '../sprites/MinotaurSpriteSheetFINAL.png'
         },
-        /*
         witch: {
-            boss: '../sprites/WitchSpriteSheet.png'
+            boss: '../sprites/WitchSpriteSheetFINAL.png'
         }
-        */
     };
 
     // Safe fallback just in case
