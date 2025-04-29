@@ -58,7 +58,6 @@ function grantRandomWeapon(player) {
     const weapons = ['dagger', 'spear', 'crossbow', 'waraxe'];
     const weapon = weapons[Math.floor(Math.random() * weapons.length)];
 
-    // Build the sprite path and frame mappings
     let spritePath;
     if (player.classType === 'knight') {
         spritePath = '../sprites/KnightSecondaryWeapons.png';
@@ -68,7 +67,6 @@ function grantRandomWeapon(player) {
         spritePath = '../sprites/WizardSecondaryWeapons.png';
     }
 
-    
     let movementFrames, attackRow;
 
     if (weapon === 'crossbow') {
@@ -85,14 +83,13 @@ function grantRandomWeapon(player) {
         attackRow = { up: 24, left: 25, down: 26, right: 27 };
     }
 
-    // Activate the weapon
     player.pendingWeapon = {
         name: weapon,
         spritePath: spritePath,
         movementFrames: movementFrames,
         attackRow: attackRow
     };
-    player.pendingIcon = weapon;    
-    console.log(`Player received secondary weapon: ${weapon}`);
-}
+    player.pendingIcon = weapon;
 
+    console.log(`Player found a secondary weapon: ${weapon}`);
+}

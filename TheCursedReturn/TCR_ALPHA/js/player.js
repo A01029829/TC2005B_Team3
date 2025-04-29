@@ -10,7 +10,7 @@ class Player extends AnimatedObject {
         // === Class Selection and Base Damage ===
         this.classType = localStorage.getItem("selectedClass") || "knight";
         if (this.classType === "knight") {
-            this.attackMagnitude = 35; // melee
+            this.attackMagnitude = 200; // melee
         } else if (this.classType === "archer") {
             this.attackMagnitude = 12; // ranged, faster
         } else if (this.classType === "wizard") {
@@ -34,7 +34,7 @@ class Player extends AnimatedObject {
         this.setSprite(spritePath, { x: 0, y: 0, width: 64, height: 65 }); // assign sprite and base frame sizes
 
         // === Health Setup ===
-        this.maxHealth = 50; // max HP
+        this.maxHealth = 100; // max HP
         this.health = this.maxHealth; // start at full HP
 
         // === Dash Setup ===
@@ -130,10 +130,7 @@ class Player extends AnimatedObject {
                 this.activateSecondaryWeapon(name, spritePath, movementFrames, attackRow);
                 this.pendingWeapon = null;
                 this.pendingIcon = null;
-            } else if (this.secondaryWeapon) {
-                // if player already has one, reset its duration
-                this.secondaryTimer = 0;
-            }
+            } 
         }
         this.equipPressedLastFrame = keysPressed['o']; // save state of 'o' for next frame
 
@@ -166,6 +163,11 @@ class Player extends AnimatedObject {
                 if (this.classType === 'wizard' && this.fireballCooldown <= 0) {
                     this.shootFireball();
                     this.fireballCooldown = 30;
+                }
+            } else {
+                if (this.secondaryWeapon === 'crossbow' && this.arrowCooldown <= 0) {
+                    this.shootArrow(); // reuse the archer arrow mechanic
+                    this.arrowCooldown = 20; // adjust cooldown for crossbow if needed
                 }
             }
         }
