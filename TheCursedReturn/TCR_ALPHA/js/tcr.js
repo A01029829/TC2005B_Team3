@@ -136,8 +136,7 @@ let life = new Bar(new Vect(750, 25), lifewidth, 20, "#ad1324");
 // === Control Tutorial Screen ===
 // shows control instructions at the start of the game
 const controls = new Image();
-controls.src = "../images/movimiento.png"; // may be replaced by the next line
-controls.src = "../images/controles_2.png"; // this will overwrite the one above
+controls.src = "../images/control_final.png"; // this will overwrite the one above
 let showControls = false; // true = display controls on screen
 
 // Sign to indicate next level
