@@ -923,10 +923,7 @@ class Game {
         }
         
         // Keep the player within the vertical bounds of the canvas
-        this.player.position.y = Math.min(
-            Math.max(50, this.player.position.y),
-            this.canvasHeight - 50
-        );
+        this.player.position.y = this.canvasHeight/2;
         
 //        //console.log(`Jugador reposicionado en: X=${this.player.position.x}, Y=${this.player.position.y}`);
         
