@@ -55,6 +55,11 @@ class Gunsmith extends AnimatedObject {
 }
 
 function grantRandomWeapon(player) {
+    if (player.pendingWeapon) {
+        console.log("Player already has a pending weapon, ignoring new weapon");
+        return; // No sobreescribir si ya hay un arma pendiente
+    }
+
     const weapons = ['dagger', 'spear', 'crossbow', 'waraxe'];
     const weapon = weapons[Math.floor(Math.random() * weapons.length)];
 

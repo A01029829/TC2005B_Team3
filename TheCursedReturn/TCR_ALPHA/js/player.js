@@ -10,7 +10,7 @@ class Player extends AnimatedObject {
         // === Class Selection and Base Damage ===
         this.classType = localStorage.getItem("selectedClass") || "knight";
         if (this.classType === "knight") {
-            this.attackMagnitude = 200; // melee
+            this.attackMagnitude = 35; // melee
         } else if (this.classType === "archer") {
             this.attackMagnitude = 12; // ranged, faster
         } else if (this.classType === "wizard") {

@@ -1,55 +1,75 @@
 const soundMap = {
     bow: "../audio/bow.wav",
     sword: " ../audio/sword.mp3",
-    ambiance: " ../audio/ambiance.wav",
-    ambiancejiji: " ../audio/ambiance_jiji.wav",
-    spell: " ../audio/spell.wav",
-    dash: " ../audio/dash.wav",
-    // hurt2: " ../../assets/soundeffects/protagonist/hurt2.wav",
-    // enemyhurt1: " ../../assets/soundeffects/protagonist/hurt2.wav",
-    // hit: "../assets/sounds/hit.mp3",
-    // walk: "../assets/soundeffects/protagonist/run.mp3",
-    // regularLevelsMusic: "../assets/music/musica_menu_principal.mp3",
-    // menuPrincipalMusic: "../assets/music/musical_cuartos_regulares.mp3",
-    // musica_jefe: "../assets/music/cuerto_jefe_final_musica.mp3",
-
-    // no_weapon: "../assets/soundeffects/weapon_box/no_weapon.mp3",
-    // take_weapon: "../assets/soundeffects/weapon_box/take_weapon.wav",    
+    ambiance: "../audio/ambiance.wav",
+    ambiencejiji: "../audio/ambience_jiji.wav",
+    spell: "../audio/spell.wav",
+    dash: "../audio/dash.wav",   
 };
 
 // Control the different sounds in the game
 class Sound {
-    constructor(action, loop = false, volume = 1.0, ) {
+    constructor(action, loop = false, volume = 1.0) {
         this.action = action;
-        this.audio = new Audio(soundMap[action]);
-        this.audio.loop = loop;
-        this.audio.volume = volume;
+        this.loop = loop;
+        this.volume = volume;
+        this.audio = null;
         this.fadeInterval = null;
     }
 
-    play() {
-        this.audio.play();
- 
+    _ensureAudio() {
+        if (!this.audio) {
+            this.audio = new Audio(soundMap[this.action]);
+            this.audio.loop = this.loop;
+            this.audio.volume = this.volume;
+        }
     }
+
+    play() {
+        this._ensureAudio();
+        const playPromise = this.audio.play();
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    console.log(`${this.action} sound started playing`);
+                })
+                .catch((error) => {
+                    console.warn(`${this.action} sound play was blocked by the browser.`, error);
+                });
+        }
+    }
+
     muted() {
-        this.audio.muted = !this.audio.muted;
+        if (this.audio) {
+            this.audio.muted = !this.audio.muted;
+        }
     }
 
     pause() {
-        this.audio.pause();
+        if (this.audio) {
+            this.audio.pause();
+        }
     }
 
     stop() {
-        this.audio.pause();
-        this.audio.currentTime = 0;
+        if (this.audio) {
+            this.audio.pause();
+            this.audio.currentTime = 0;
+        }
     }
 
     setVolume(volume) {
-        this.audio.volume = volume;
+        this.volume = volume;
+        if (this.audio) {
+            this.audio.volume = volume;
+        }
     }
 
     setLoop(loop) {
-        this.audio.loop = loop;
+        this.loop = loop;
+        if (this.audio) {
+            this.audio.loop = loop;
+        }
     }
 
     increaseVolume() {
@@ -67,8 +87,11 @@ class Sound {
     setSound(action) {
         const soundFile = soundMap[action];
         if (soundFile) {
-            const isPlaying = !this.audio.paused;
-            this.audio.pause();
+            const isPlaying = this.audio && !this.audio.paused;
+            if (this.audio) {
+                this.audio.pause();
+            }
+            this.action = action;
             this.audio = new Audio(soundFile);
             this.audio.loop = true;
             this.audio.volume = 0.5;
@@ -76,7 +99,7 @@ class Sound {
                 this.audio.play();
             } 
         } else {
-            console.log(`No hay sonido asociado a: ${action}`);
+            console.log(`No sound associated to: ${action}`);
         }
     }
 }

@@ -64,6 +64,11 @@ class Chest extends AnimatedObject {
 
 // === Grant a Random Secondary Weapon to the Player ===
 function grantRandomWeapon(player) {
+    if (player.pendingWeapon) {
+        console.log("Player already has a pending weapon, ignoring new weapon");
+        return; // No sobreescribir si ya hay un arma pendiente
+    }
+
     const weapons = ['dagger', 'spear', 'crossbow', 'waraxe'];
     const weapon = weapons[Math.floor(Math.random() * weapons.length)];
 
@@ -91,7 +96,7 @@ function grantRandomWeapon(player) {
         movementFrames = { up: 28, left: 29, down: 30, right: 31 };
         attackRow = { up: 24, left: 25, down: 26, right: 27 };
     }
-    
+
     player.pendingWeapon = {
         name: weapon,
         spritePath: spritePath,
@@ -102,5 +107,3 @@ function grantRandomWeapon(player) {
 
     console.log(`Player found a secondary weapon: ${weapon}`);
 }
-
-

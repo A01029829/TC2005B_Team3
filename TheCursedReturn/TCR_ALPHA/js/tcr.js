@@ -156,7 +156,6 @@ itemBox.src = "../images/itemBox.png";
 let loadedImages = 0;
 
 // Ambience music
-const ambienceSound = new Sound('ambience', true, 0.5);
 
 function tryStartGame() {
     loadedImages++;
@@ -243,6 +242,17 @@ function registerStart() {
         console.error("❌ Error al registrar inicio:", error);
     });
 }
+
+// === Iniciar música al presionar cualquier tecla (solo una vez) ===
+window.addEventListener('keydown', function startMusicOnce() {
+    if (!window.__musicStarted) {
+        window.__musicStarted = true;
+        window.ambienceSound = new Sound('ambiencejiji', true, 0.5);
+        window.ambienceSound.play();
+    }
+    window.removeEventListener('keydown', startMusicOnce); // evitar que se dispare más veces
+});
+
 
 // Call this function when the game starts
 window.addEventListener('DOMContentLoaded', function() {
