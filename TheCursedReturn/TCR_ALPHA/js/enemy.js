@@ -248,16 +248,27 @@ class Enemy extends AnimatedObject {
         // === Attack Animation ===
         if (this.attackTimer > 0) {
              // set correct attack row based on direction
-            if (this.attackRow && this.attackRow[this.lastDirection] !== undefined) {
-                this.spriteRect.y = (this.attackRow && this.attackRow[this.lastDirection] !== undefined)
-                ? this.attackRow[this.lastDirection]
-                : 0;
+             if (this.type === 'witch' && this.variant === 'boss') {
+                if (this.homingAttackRow && this.homingAttackRow[this.lastDirection] !== undefined) {
+                    this.spriteRect.y = this.homingAttackRow[this.lastDirection];
+                } else {
+                    this.spriteRect.y = 0;
+                }
+            } else if (this.attackRow && this.attackRow[this.lastDirection] !== undefined) {
+                this.spriteRect.y = this.attackRow[this.lastDirection];
             } else {
-                this.spriteRect.y = 56; // fallback row if missing
+                this.spriteRect.y = 56; // fallback
             }
+            
             const totalFrames = this.attackFrames || 6;
             this.spriteRect.x = Math.floor(gameFrame / staggerFrames) % totalFrames;
             this.attackTimer--; // countdown
+
+            // === Witch special attack: fire HomingOrb after attack animation ===
+            if (this.type === 'witch' && this.variant === 'boss' && this.attackTimer === 0) {
+                this.launchHomingAttack(player);
+            }
+        
 
         // === Walking Animation ===
         } else if (this.moving) {
@@ -278,4 +289,30 @@ class Enemy extends AnimatedObject {
         this.position.x = centerX + 100; //  offset to avoid overlap
         this.position.y = centerY;
     }
+
+    launchHomingAttack(player) {
+        if (this.type === 'witch' && this.variant === 'boss') {
+            const orb = new HomingOrb(
+                { x: this.position.x, y: this.position.y },
+                player,
+                this.gameRef
+            );
+            if (!this.projectiles) {
+                this.projectiles = [];
+            }
+            this.projectiles.push(orb);
+        }
+    }
+    
+    draw(ctx) {
+        super.draw(ctx); // Dibuja el enemigo normal (sprite)
+    
+        // Si tiene proyectiles (como la Witch), dibujarlos
+        if (this.projectiles) {
+            this.projectiles.forEach(projectile => {
+                projectile.draw(ctx);
+            });
+        }
+    }
+    
 }

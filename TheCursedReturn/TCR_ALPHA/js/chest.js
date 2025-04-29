@@ -64,10 +64,9 @@ class Chest extends AnimatedObject {
 
 // === Grant a Random Secondary Weapon to the Player ===
 function grantRandomWeapon(player) {
-    const weapons = ['dagger', 'spear', 'crossbow', 'waraxe']; // set of available weapons
-    const weapon = weapons[Math.floor(Math.random() * weapons.length)]; // pick one at random
-    
-    // determine correct sprite sheet based on class
+    const weapons = ['dagger', 'spear', 'crossbow', 'waraxe'];
+    const weapon = weapons[Math.floor(Math.random() * weapons.length)];
+
     let spritePath;
     if (player.classType === 'knight') {
         spritePath = '../sprites/KnightSecondaryWeapons.png';
@@ -77,7 +76,6 @@ function grantRandomWeapon(player) {
         spritePath = '../sprites/WizardSecondaryWeapons.png';
     }
 
-    // assign movement and attack frames for the selected weapon
     let movementFrames, attackRow;
 
     if (weapon === 'crossbow') {
@@ -93,16 +91,16 @@ function grantRandomWeapon(player) {
         movementFrames = { up: 28, left: 29, down: 30, right: 31 };
         attackRow = { up: 24, left: 25, down: 26, right: 27 };
     }
-
-    // assign weapon info to player's pending weapon (equipped later with 'o')
+    
     player.pendingWeapon = {
         name: weapon,
         spritePath: spritePath,
         movementFrames: movementFrames,
         attackRow: attackRow
     };
-    player.pendingIcon = weapon; // store icon name for HUD
-    
-    console.log(`Player received secondary weapon: ${weapon}`);
+    player.pendingIcon = weapon;
+
+    console.log(`Player found a secondary weapon: ${weapon}`);
 }
+
 
