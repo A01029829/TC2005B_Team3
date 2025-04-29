@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Story</title>
     <link rel="stylesheet" href="../css/story.css">
 </head>
 
@@ -37,8 +37,8 @@
         <!-- Next and previous buttons -->
         <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
         <a class="next" onclick="plusSlides(1)">&#10095;</a>
+
     </div>
-    <br>
 
     <!-- The dots/circles -->
     <div style="text-align:center">
@@ -49,43 +49,64 @@
         <span class="dot" onclick="currentSlide(5)"></span>
     </div>
 
+    <div class="game_button">
+        <button id="button" onclick="location.href='../html/interfaz.html'">INICIAR</button>
+    </div>
+
     <script>
         let slideIndex = 1;
         showSlides(slideIndex);
 
         // Next/previous controls
         function plusSlides(n) {
-            if (n > 0 && slideIndex === document.getElementsByClassName("mySlides").length) {
-                return; // Prevent advancing past the last slide
+            const totalSlides = document.getElementsByClassName("mySlides").length;
+
+            // Prevent advancing past the last slide or going back before the first slide
+            if ((n > 0 && slideIndex === totalSlides) || (n < 0 && slideIndex === 1)) {
+                return;
             }
+
             showSlides(slideIndex += n);
             toggleNextButton();
+            togglePrevButton();
         }
 
         // Thumbnail image controls
         function currentSlide(n) {
             showSlides(slideIndex = n);
             toggleNextButton();
+            togglePrevButton();
         }
 
         function showSlides(n) {
             let i;
             let slides = document.getElementsByClassName("mySlides");
             let dots = document.getElementsByClassName("dot");
+            const gameButton = document.querySelector(".game_button");
+
             if (n > slides.length) {
                 slideIndex = 1;
             }
             if (n < 1) {
                 slideIndex = slides.length;
             }
+
             for (i = 0; i < slides.length; i++) {
                 slides[i].style.display = "none";
             }
             for (i = 0; i < dots.length; i++) {
                 dots[i].className = dots[i].className.replace(" active", "");
             }
+
             slides[slideIndex - 1].style.display = "block";
             dots[slideIndex - 1].className += " active";
+
+            // Show the game button only on the last slide
+            if (slideIndex === slides.length) {
+                gameButton.style.display = "block";
+            } else {
+                gameButton.style.display = "none";
+            }
         }
 
         function toggleNextButton() {
@@ -97,8 +118,18 @@
             }
         }
 
+        function togglePrevButton() {
+            const prevButton = document.querySelector(".prev");
+            if (slideIndex === 1) {
+                prevButton.style.display = "none"; // Hide the previous button
+            } else {
+                prevButton.style.display = "block"; // Show the previous button
+            }
+        }
+
         // Initialize the button visibility
         toggleNextButton();
+        togglePrevButton();
     </script>
 </body>
 
