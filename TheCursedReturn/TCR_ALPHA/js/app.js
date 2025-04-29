@@ -134,7 +134,7 @@ app.get("/api/class", async (request, response) => {
       connection = await connectToDB();
   
       const [results, fields] = await connection.query(
-        "SELECT claseElegida, COUNT(id_partida) AS Elecciones FROM Log_Partida GROUP BY claseElegida;"
+        "SELECT claseElegida, COUNT(DISTINCT(id_partida)) AS Elecciones FROM Log_Partida GROUP BY claseElegida;"
       );
   
       console.log("Sending data correctly.");

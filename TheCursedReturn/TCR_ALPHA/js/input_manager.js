@@ -76,10 +76,10 @@ function handleClassSelection(claseElegida) {
     const matchID = sessionStorage.getItem('currentPartidaId');
     
     if (!matchID) {
-        console.error("No se encontró ID de partida en sessionStorage");
-        alert("Error: No se pudo encontrar la información de la partida. Por favor inicie sesión nuevamente.");
-        window.location.href = "../html/inicio.html";
-        return;
+        matchID = localStorage.getItem('currentPartidaId');
+        if (matchID) {
+            sessionStorage.setItem('currentPartidaId', matchID);
+        }
     }
     
     // Save the selected class
