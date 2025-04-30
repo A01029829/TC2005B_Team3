@@ -1,7 +1,7 @@
 ![tec](Images/TecLogo.png)
 # **The Cursed Return**
 
-## _Game Design Document_
+## _Game Design Document Versión Final_
 
 ---
 
@@ -66,11 +66,11 @@ La maldición es el elemento distintivo de nuestro juego. La barra se agota con 
 
 ### **Gameplay**
 
-El objetivo del juego es completar diferentes niveles, mientras el jugador intenta romper su maldición y derrotar a enemigos. En el juego, el jugador elige al inicio una de las siguientes clases: mago, arquero y guerrero. Mientras mata a los enemigos, el jugador podrá obtener ventajas como reducir el impacto de la barra de maldición o aumentar esta el tamaño de la barra. Pero, también podrá obtener desventajas como reducción de daño, reducción de vida, etc. El juego recuerda mucho a un Role-Play Game debido a que el jugador asume el papel de un personaje y avanza a través de una historia, combates y exploración. En este caso el combate es en tiempo real y el juego incluirá un sistema de progresión para cada clase.
+El objetivo del juego es completar diferentes niveles, mientras el jugador intenta llegar a jefe final y así romper su maldición mientras derrota a múltiples enemigos. En el juego, el jugador elige al inicio una de las siguientes clases: mago, arquero y guerrero. Mientras el jugador avanza por las salas, encontrará NPC´s que le ayudarán a avanzar más rápido, y obtendrá una aumento en su barra de maldición para que tenga más tiempo para llegar a la sala final. El juego recuerda mucho a un Role-Play Game debido a que el jugador asume el papel de un personaje y avanza a través de una historia, combates y exploración. En este caso el combate es en tiempo real, y el jugador tendrá que pensar estratégicamente en qué momento usar su arma secundaria (en caso de tenerla) y adaptarse a lo que el juego le tenga preparado.
 
 ### **Mindset**
 
-Queremos hacer que el jugador se sienta poderoso de manera progresiva, mientras se mantiene alerta de los riesgos que su personaje corre. Queremos provocar este mindset colocando al jugador en situaciones donde deberán decidir si aumentar su poder (a un costo) o mantenerse con su poder original.
+Queremos hacer que el jugador se sienta como un estratega, mientras se mantiene alerta de los riesgos que su personaje corre. Queremos provocar este mindset colocando al jugador en situaciones donde deberán decidir si utilizar sus ventajas, o guardarlas para otro momento.
 También buscamos que los jugadores se sientan aventureros mientras avanzan por los niveles en búsqueda de una manera de romper la maldición. Los diferentes entornos provocarán un sentido de aventura para el jugador, ya que explorarán zonas que siempre serán completamente diferentes.
 Finalmente, queremos provocar una sensación de precaución, con la que el jugador deberá decidir de manera estratégica las acciones que realizará, para llegar lo más lejos posible antes de que la maldición lo elimine. Además deberán elegir su clase considerando los posibles peligros que se presentarán en cada nivel.
 
@@ -81,7 +81,7 @@ Finalmente, queremos provocar una sensación de precaución, con la que el jugad
 
 ### **Screens**
 
-El juego contará con varias pantallas clave, cada una diseñada con una interfaz clara y funcional para mejorar la experiencia del usuario. Cada pantalla tendrá su propio propósito y navegación bien definida. A continuación se explican las pantallas más importantes, además, se mostrará un concepto muy básico de lo que se espera diseñar.
+El juego contará con varias pantallas clave, cada una diseñada con una interfaz clara y funcional para mejorar la experiencia del usuario. Cada pantalla tendrá su propio propósito y navegación bien definida. A continuación se explican las pantallas más importantes, además, se mostrará el concepto dinal, junto con el conceptual.
 
 1. **Title Screen (Pantalla de Inicio)**
 
