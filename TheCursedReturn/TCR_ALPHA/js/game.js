@@ -1796,7 +1796,7 @@ loop() {
                 // === Attack Cooldown: Prevent Multiple Hits in a Row ===
                 setTimeout(() => {
                     enemy.hasHitPlayer = false;
-                }, 1500);
+                }, 1000);
             }
         
             // === Prevent Overlap (Push Player and Enemy Apart) ===
@@ -1848,7 +1848,7 @@ loop() {
                 // reset attack state after 400ms (cooldown for melee hits)
                 setTimeout(() => {
                     this.player.hasHitEnemy = false;
-                }, 400); // attack cooldown
+                }, 1000); // attack cooldown
             }
         }
 
