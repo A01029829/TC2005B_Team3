@@ -336,14 +336,21 @@ class Game {
     getValidSpawnPosition(collisionMap, canvasWidth, canvasHeight, margin = 48) {
         let x, y;
         do {
-            // pick a random x and y within the screen, leaving a margin on all sides
             x = Math.floor(Math.random() * (canvasWidth - 2 * margin)) + margin;
             y = Math.floor(Math.random() * (canvasHeight - 2 * margin)) + margin;
         } 
-        while (collisionMap.isBlockedPixel(x, y)); // keep retrying if that position is blocked (wall, obstacle, collision)
-
-        return { x, y }; // return the valid position as an object
-    }  
+        while (
+            collisionMap.isBlockedPixel(x, y) ||
+            (this.player &&
+             x < this.player.position.x + this.player.width &&
+             x + 32 > this.player.position.x &&
+             y < this.player.position.y + this.player.height &&
+             y + 32 > this.player.position.y)
+        );
+    
+        return { x, y };
+    }
+      
 
     // === Setup First Map and Start Loop ===
     // called once at the beginning of the game to choose a starting room and begin playing
@@ -923,8 +930,12 @@ class Game {
         }
         
         // Keep the player within the vertical bounds of the canvas
+        this.player.position.y = Math.min(
+            Math.max(50, this.player.position.y),
+            this.canvasHeight - 50
+        );
         this.player.position.y = this.canvasHeight/2;
-        
+
 //        //console.log(`Jugador reposicionado en: X=${this.player.position.x}, Y=${this.player.position.y}`);
         
         // Restore API after map change
@@ -980,7 +991,7 @@ class Game {
             objetosEncontrados: this.lastObjectFound || 'cofre'
         };
 
-        //console.log("📍 Enviando datos de checkpoint:", checkpointData);
+        //console.log("Enviando datos de checkpoint:", checkpointData);
         sendEvent('checkpoints', checkpointData);
     }
 
@@ -1243,7 +1254,7 @@ loop() {
                                    obj1.position.y + obj1.height > obj2.position.y;
                         };
                         if (isOverlapping(projectile, this.player)) {
-                            this.player.health -= 15; // Daño
+                            this.player.health -= 15; // damage done by the homing orb
 
                             // === Flash Screen Red ===
                             this.flashScreen = true;
@@ -1252,7 +1263,7 @@ loop() {
                             if (this.player.health <= 0) {
                                 gameOver = true;
                             }
-                            projectile.life = 0; // Eliminar proyectil
+                            projectile.life = 0; // delete projectile
                         }
                     }
                 });
@@ -1356,13 +1367,27 @@ loop() {
             const nextPlayerX = this.player.position.x - pushX;
             const nextPlayerY = this.player.position.y - pushY;
 
-            if (!this.collisionMap.isBlockedPixel(nextPlayerX, this.player.position.y)) {
+            const willCollideWithStatic = (x, y) => {
+                return this.staticObjects.some(obj => {
+                    return (
+                        x < obj.position.x + obj.width &&
+                        x + this.player.width > obj.position.x &&
+                        y < obj.position.y + obj.height &&
+                        y + this.player.height > obj.position.y
+                    );
+                });
+            };
+            
+            if (!this.collisionMap.isBlockedPixel(nextPlayerX, this.player.position.y) &&
+                !willCollideWithStatic(nextPlayerX, this.player.position.y)) {
                 this.player.position.x = nextPlayerX;
             }
-
-            if (!this.collisionMap.isBlockedPixel(this.player.position.x, nextPlayerY)) {
+            
+            if (!this.collisionMap.isBlockedPixel(this.player.position.x, nextPlayerY) &&
+                !willCollideWithStatic(this.player.position.x, nextPlayerY)) {
                 this.player.position.y = nextPlayerY;
             }
+            
 
                 // Always move the enemy (no block check for them)
                 enemy.position.x += pushX;
@@ -1502,20 +1527,24 @@ loop() {
         this.gameFrame++; // advance player frames only if moving or attacking
     }
 
-    // === Second weapon Display (HUD box)===
-    this.ctx.drawImage(itemBox, 40, this.canvasHeight - 110, 70, 70); // draw the inventory box
+    // === Draw Secondary Weapon Box (Bottom Left HUD) ===
+    this.ctx.drawImage(itemBox, 40, this.canvasHeight - 110, 70, 70); // siempre dibujar la caja
 
-    const weaponToDraw = this.player.pendingIcon || this.player.secondaryWeapon; // choose pending or active weapon
-    let iconSet;
-    if (this.player.secondaryWeapon) {
-        iconSet = activeWeaponIcons;
-    } else {
-        iconSet = weaponIcons;
-    }    
-
-    if (weaponToDraw && iconSet[weaponToDraw]) {
-        this.ctx.drawImage(iconSet[weaponToDraw], 40, this.canvasHeight - 110, 70, 70); // draw weapon icon inside box
+    // Mostrar arma pendiente si existe
+    if (this.player.pendingIcon) {
+        const pendingIcon = weaponIcons[this.player.pendingIcon];
+        if (pendingIcon) {
+            this.ctx.drawImage(pendingIcon, 50, this.canvasHeight - 100, 50, 50); // ícono pendiente (más pequeño)
+        }
+    } 
+    // Si no hay arma pendiente, mostrar la activa
+    else if (this.player.secondaryWeapon) {
+        const activeIcon = activeWeaponIcons[this.player.secondaryWeapon];
+        if (activeIcon) {
+            this.ctx.drawImage(activeIcon, 40, this.canvasHeight - 110, 70, 70); // ícono de arma activa
+        }
     }
+
     
     // === Draw UI Bars ===
     bar.draw(this.ctx); // outer curse bar (total possible time)

@@ -263,10 +263,10 @@ class Fireball extends GameObject {
 
 class HomingOrb extends GameObject {
     constructor(position, target, gameRef) {
-        super(position, 32, 32, 'rgba(0,0,0,0)', 'homingOrb');
-        this.target = target; // <-- referencia al jugador
+        super(position, 20, 20, 'rgba(0,0,0,0)', 'homingOrb');
+        this.target = target;
         this.speed = 3;
-        this.life = 180; // 5 segundos de vida
+        this.life = 180; // 5 seconds of lifetime
         this.gameRef = gameRef;
 
         if (window.spellballImage) {
@@ -279,7 +279,6 @@ class HomingOrb extends GameObject {
     }
 
     update() {
-        // Recalcular dirección cada frame
         const dx = (this.target.position.x + this.target.width/2) - (this.position.x + this.width/2);
         const dy = (this.target.position.y + this.target.height/2) - (this.position.y + this.height/2);
         const distance = Math.sqrt(dx * dx + dy * dy);
@@ -297,6 +296,7 @@ class HomingOrb extends GameObject {
     
 
     draw(ctx) {
+        // draw the orb
         ctx.drawImage(
             this.spriteImage,
             this.spriteRect.x,
@@ -309,6 +309,7 @@ class HomingOrb extends GameObject {
             this.height
         );
     }
+    
 
     isAlive() {
         return this.life > 0;
