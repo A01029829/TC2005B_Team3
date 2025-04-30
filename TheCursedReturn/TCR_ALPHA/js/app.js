@@ -409,7 +409,7 @@ app.post('/api/game-event', async (request, response) => {
             ]
         );
         
-        console.log(`API: ✅ Evento ${eventoTrigger} registrado con éxito, ID: ${result.insertId}`);
+        console.log(`API: Evento ${eventoTrigger} registrado con éxito, ID: ${result.insertId}`);
         
         // Return success response
         response.status(201).json({
@@ -418,7 +418,7 @@ app.post('/api/game-event', async (request, response) => {
             id_log: result.insertId
         });
     } catch (error) {
-        console.error(`API: ❌ ERROR registrando ${request.body.eventoTrigger}:`, error);
+        console.error(`API: ERROR registrando ${request.body.eventoTrigger}:`, error);
         response.status(500).json({
             success: false,
             message: "Error al registrar evento",
@@ -427,10 +427,50 @@ app.post('/api/game-event', async (request, response) => {
     } finally {
         if (connection !== null) {
             connection.end();
-            console.log("API: 🔒 Conexión cerrada");
+            console.log("API: Conexión cerrada");
         }
     }
-});
+})
+
+// Endpoint to create a new game session
+app.post('/api/new-game', async (request, response) => {
+    let connection = null;
+    
+    try {
+      connection = await connectToDB();
+      const { id_jugador } = request.body;
+      
+      if (!id_jugador) {
+        return response.status(400).json({
+          success: false,
+          message: "ID de jugador es requerido"
+        });
+      }
+      
+      const [partidaResult] = await connection.query(
+        'INSERT INTO Partida (id_jugador) VALUES (?)',
+        [id_jugador]
+      );
+      
+      console.log(`API: Nueva partida creada con ID: ${partidaResult.insertId}`);
+      
+      response.status(201).json({
+        success: true,
+        id_partida: partidaResult.insertId
+      });
+    } catch (error) {
+      console.error(`API: Error creando nueva partida:`, error);
+      response.status(500).json({
+        success: false,
+        error: error.message
+      });
+    } finally {
+      if (connection !== null) {
+        connection.end();
+        console.log("API: Conexión cerrada");
+      }
+    }
+  });
 
 app.listen(port, ()=>
 {

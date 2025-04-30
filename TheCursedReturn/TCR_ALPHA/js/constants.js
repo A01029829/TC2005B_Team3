@@ -17,7 +17,9 @@ const EVENT_MAPPINGS = {
     'inicio': 'inicio',
     'pausa': 'pausa',
     'salida': 'salida',
-    'fin': 'fin'
+    'fin': 'fin',
+    'continuation': 'nuevoIntento',
+    'nuevoIntento': 'nuevoIntento'
 };
 
 // Initial class values

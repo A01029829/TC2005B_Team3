@@ -27,18 +27,18 @@ CREATE TABLE Log_Partida(
     id_log INT AUTO_INCREMENT PRIMARY KEY,
     id_partida INT NOT NULL,
     fechaLog TIMESTAMP NOT NULL,
-    eventoTrigger ENUM('pausa', 'checkpoints', 'inicio', 'muerteMaldicion', 'muerteVida', 'salida') NOT NULL,
+    eventoTrigger ENUM('pausa', 'checkpoints', 'inicio', 'muerteMaldicion', 'muerteVida', 'salida', 'nuevoIntento') NOT NULL,
     claseElegida ENUM('guerrero', 'arquero', 'hechicero') NOT NULL,
     tiempoPartida TIME NOT NULL,
     puntuacion INT DEFAULT 0,
-    nivelActual TINYINT DEFAULT 1 NOT NULL CHECK (nivelActual<=3 AND nivelActual>=1),
-    salaActual TINYINT DEFAULT 1 NOT NULL CHECK (salaActual<=13 AND salaActual>=1),
+    nivelActual TINYINT DEFAULT 1 NOT NULL CHECK (nivelActual>=1),
+    salaActual TINYINT DEFAULT 1 NOT NULL CHECK (salaActual>=1),
     biomaActual ENUM('bosque','nieve','desierto') NOT NULL,
     rankM DECIMAL(5,2) DEFAULT 100.00 NOT NULL, -- Valor maximo de 999.99
     vida DECIMAL(6,2) NOT NULL, -- Valor maximo de 9999.99, no hay default pq variara por clase
     enemigosCDerrotados TINYINT DEFAULT 0,
     enemigosFDerrotados TINYINT DEFAULT 0,
-    jefesDerrotados TINYINT DEFAULT 0 CHECK (jefesDerrotados<=3 and jefesDerrotados>=0), -- Se agrega este constraint, pero ya está limitado por el front
+    jefesDerrotados TINYINT DEFAULT 0 CHECK (jefesDerrotados>=0), -- Se agrega este constraint, pero ya está limitado por el front
     objetosEncontrados ENUM('curandero', 'armero', 'cofre') NOT NULL,
     FOREIGN KEY (id_partida) REFERENCES Partida(id_partida)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

@@ -57,8 +57,17 @@ window.addEventListener("click", (event) => {
     if (gameOver &&
         mouseX >= returnX && mouseX <= returnX + returnWidth &&
         mouseY >= returnY && mouseY <= returnY + returnHeight) {
-        console.log("Restarting game...");
-        window.location.reload();
+        console.log("Continuing game with preserved curse bonus...");
+        
+        // Call the proper continuation function that preserves curse progress
+        if (window.game && typeof window.game.continueGame === 'function') {
+            window.gameOver = false;
+            // Then continue the game with preserved curse bar
+            window.game.continueGame();
+        } else {
+            console.error("Game object or continueGame method not available");
+            window.location.reload(); // Fallback
+        }
     }
 
     // === Menu Button Clicked ===
