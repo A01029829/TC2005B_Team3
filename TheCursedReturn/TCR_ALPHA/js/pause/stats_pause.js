@@ -42,29 +42,38 @@ function drawStats() {
             
             // Get curse value from localStorage or API
             nivelMaldicion = getCurseValue ? getCurseValue() : 100;
+
         }
 
+        let nivelActual = "1,1"; // Default value
+            if (typeof game !== 'undefined' && game.progress) {
+                nivelActual = `${game.progress.level},${game.progress.visited + 1}`;
+            }
+
         // === Static Labels (real data could be added later) ===
-        createText('#d5d4cc', '25px Arial', 'left', 'Enemigos derrotados', 100, 200);
-        createText('#d5d4cc', '25px Arial', 'right', enemigosEliminados.toString(), 800, 200);
+        createText('#d5d4cc', '20px Arial', 'left', 'Nivel y sala', 100, 200);
+        createText('#d5d4cc', '20px Arial', 'right', nivelActual, 800, 200);
+        
+        createText('#d5d4cc', '20px Arial', 'left', 'Enemigos derrotados', 100, 250);
+        createText('#d5d4cc', '20px Arial', 'right', enemigosEliminados.toString(), 800, 250);
 
-        createText('#d5d4cc', '25px Arial', 'left', 'Puntuación', 100, 260);
-        createText('#d5d4cc', '25px Arial', 'right', puntuacion.toString(), 800, 260);
+        createText('#d5d4cc', '20px Arial', 'left', 'Puntuación', 100, 300);
+        createText('#d5d4cc', '20px Arial', 'right', puntuacion.toString(), 800, 300);
 
-        createText('#d5d4cc', '25px Arial', 'left', 'Clase elegida', 100, 320);
-        createText('#d5d4cc', '25px Arial', 'right', claseElegida.toString(), 800, 320);
+        createText('#d5d4cc', '20px Arial', 'left', 'Clase elegida', 100, 350);
+        createText('#d5d4cc', '20px Arial', 'right', claseElegida.toString(), 800, 350);
 
-        createText('#d5d4cc', '25px Arial', 'left', 'Jefes eliminados', 100, 380);
-        createText('#d5d4cc', '25px Arial', 'right', jefesEliminados.toString(), 800, 380);
+        createText('#d5d4cc', '20px Arial', 'left', 'Jefes eliminados', 100, 400);
+        createText('#d5d4cc', '20px Arial', 'right', jefesEliminados.toString(), 800, 400);
 
-        createText('#d5d4cc', '25px Arial', 'left', 'Duración', 100, 440);
-        createText('#d5d4cc', '25px Arial', 'right', duracionJuego.toString(), 800, 440);
+        createText('#d5d4cc', '20px Arial', 'left', 'Duración', 100, 450);
+        createText('#d5d4cc', '20px Arial', 'right', duracionJuego.toString(), 800, 450);
 
-        createText('#d5d4cc', '25px Arial', 'left', 'Maldición', 100, 500);
-        createText('#d5d4cc', '25px Arial', 'right', `${nivelMaldicion.toString()}%`, 800, 500);
+        createText('#d5d4cc', '20px Arial', 'left', 'Maldición', 100, 500);
+        createText('#d5d4cc', '20px Arial', 'right', `${nivelMaldicion.toString()}%`, 800, 500);
 
         // Return hint
-        createText('#d5d4cc', '35px serif', 'left', 'Regresa con "Esc"', 335, 575);
+        createText('#d5d4cc', '30px serif', 'left', 'Regresa con "Esc"', 335, 575);
 
         requestAnimationFrame(drawStats);
     }

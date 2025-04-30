@@ -178,7 +178,6 @@ function applyCurseBonus() {
         // Also reset the bonus and clear the reset flag
         localStorage.setItem("curseBonus", "0");
         localStorage.removeItem("rewardedBossSlots");
-        localStorage.removeItem("resetCurseBonus");
         return;
     }
     
