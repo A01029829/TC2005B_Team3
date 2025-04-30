@@ -27,7 +27,7 @@ CREATE TABLE Log_Partida(
     id_log INT AUTO_INCREMENT PRIMARY KEY,
     id_partida INT NOT NULL,
     fechaLog TIMESTAMP NOT NULL,
-    eventoTrigger ENUM('pausa', 'checkpoints', 'inicio', 'muerteMaldicion', 'muerteVida', 'salida', 'nuevoIntento') NOT NULL,
+    eventoTrigger ENUM('pausa', 'checkpoints', 'inicio', 'muerteMaldicion', 'muerteVida', 'salida', 'nuevoIntento', 'victoria') NOT NULL,
     claseElegida ENUM('guerrero', 'arquero', 'hechicero') NOT NULL,
     tiempoPartida TIME NOT NULL,
     puntuacion INT DEFAULT 0,
@@ -39,7 +39,7 @@ CREATE TABLE Log_Partida(
     enemigosCDerrotados TINYINT DEFAULT 0,
     enemigosFDerrotados TINYINT DEFAULT 0,
     jefesDerrotados TINYINT DEFAULT 0 CHECK (jefesDerrotados>=0), -- Se agrega este constraint, pero ya está limitado por el front
-    objetosEncontrados ENUM('curandero', 'armero', 'cofre') NOT NULL,
+    objetosEncontrados ENUM('curandero', 'armero', 'cofre', 'ninguno') NOT NULL,
     FOREIGN KEY (id_partida) REFERENCES Partida(id_partida)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

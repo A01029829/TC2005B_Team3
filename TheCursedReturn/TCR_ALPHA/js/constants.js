@@ -19,7 +19,8 @@ const EVENT_MAPPINGS = {
     'salida': 'salida',
     'fin': 'fin',
     'continuation': 'nuevoIntento',
-    'nuevoIntento': 'nuevoIntento'
+    'nuevoIntento': 'nuevoIntento',
+    'victoria': 'victoria'
 };
 
 // Initial class values

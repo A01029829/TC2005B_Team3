@@ -270,7 +270,7 @@ class Game {
         this.score = 0;
         this.elapsedTime = 0;
         this.startTime = Date.now();
-        this.lastObjectFound = 'cofre';
+        this.lastObjectFound = 'ninguno';
         this.currentBiome = 'woods'; // Initialize biome (default value to prevent errors)
         
         if (!this.progress) {
@@ -807,7 +807,7 @@ class Game {
             enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,  // Cambiado para usar las propiedades correctas
             enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
             jefesDerrotados: this.stats?.bossesDefeated || 0,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         };
         
         // Verify death event by health
@@ -855,7 +855,7 @@ class Game {
             enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,
             enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
             jefesDerrotados: this.stats?.bossesDefeated || 0,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         });
     }
 
@@ -991,7 +991,7 @@ class Game {
             enemigosCDerrotados: this.stats.weakEnemiesDefeated,
             enemigosFDerrotados: this.stats.strongEnemiesDefeated,
             jefesDerrotados: this.stats.bossesDefeated,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         };
 
         //console.log("Enviando datos de checkpoint:", checkpointData);
@@ -1036,11 +1036,40 @@ class Game {
             enemigosCDerrotados: 0,
             enemigosFDerrotados: 0,
             jefesDerrotados: 0,
-            objetosEncontrados: 'cofre'
+            objetosEncontrados: 'ninguno'
         });
     }
 
-    // Add this method to your Game class
+    // Method to register victory
+    registerVictory() {
+        if (this.victoryRegistered) return;
+        
+        this.victoryRegistered = true;
+        gameOver = true; // Detener el bucle del juego
+        
+        // Get match id
+        const matchID = localStorage.getItem('currentPartidaId');
+        if (!matchID) return;
+        
+        // Send victory events
+        const dataEvent = {
+            id_partida: matchID,
+            claseElegida: localStorage.getItem('playerClass') || 'guerrero',
+            tiempoPartida: formatTime(this.elapsedTime || 0),
+            puntuacion: this.score || 0,
+            nivelActual: 3,
+            salaActual: 5, 
+            biomaActual: window.TCR_CONSTANTS?.BIOME_MAPPINGS?.[this.currentBiome] || 'nieve',
+            rankM: getCurseValue(),
+            vida: this.player.health,
+            enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,
+            enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
+            jefesDerrotados: this.stats?.bossesDefeated || 0,
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
+        };
+        
+        sendEvent('victoria', dataEvent);
+    }
 
     // Reset the game with a new match ID
     reset(newMatchId) {
@@ -1062,7 +1091,7 @@ class Game {
         this.score = 0;
         this.elapsedTime = 0;
         this.startTime = Date.now();
-        this.lastObjectFound = 'cofre';
+        this.lastObjectFound = 'ninguno';
         this.bossesSpawned = [];
         
         // Reset stats
@@ -1134,7 +1163,7 @@ continueGame() {
     // Keep the same score
     this.elapsedTime = 0;
     this.startTime = Date.now();
-    this.lastObjectFound = 'cofre';
+    this.lastObjectFound = 'ninguno';
     this.bossesSpawned = [];
     
     // Reset player position and health
@@ -1215,7 +1244,7 @@ continueGame() {
             enemigosCDerrotados: this.stats.weakEnemiesDefeated,
             enemigosFDerrotados: this.stats.strongEnemiesDefeated,
             jefesDerrotados: this.stats.bossesDefeated,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         };
 
         console.log("Registrando continuación de juego:", continuationData);
@@ -1258,7 +1287,7 @@ continueGame() {
             enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,
             enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
             jefesDerrotados: this.stats?.bossesDefeated || 0,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         };
         
         setTimeout(() => {
@@ -1302,7 +1331,7 @@ continueGame() {
             enemigosCDerrotados: this.stats.weakEnemiesDefeated,
             enemigosFDerrotados: this.stats.strongEnemiesDefeated,
             jefesDerrotados: this.stats.bossesDefeated,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         };
 
         //console.log("Enviando datos de salida:", exitData);
@@ -1527,7 +1556,7 @@ loop() {
         const playerInRange = this.chest.checkPlayerInRange(this.player);
         let interacted = false; // Define interacted before use
         if (typeof interacted !== 'undefined' && interacted) {
-            this.recordObjectFound('cofre');
+            this.recordObjectFound('ninguno');
         }
     
         this.chest.interact(this.player, this.inputManager.keysPressed);
@@ -1997,7 +2026,7 @@ loop() {
                     enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,
                     enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
                     jefesDerrotados: this.stats?.bossesDefeated || 0,
-                    objetosEncontrados: this.lastObjectFound || 'cofre'
+                    objetosEncontrados: this.lastObjectFound || 'ninguno'
                 };
                 
                 sendEvent('muerteMaldicion', dataEvent);
