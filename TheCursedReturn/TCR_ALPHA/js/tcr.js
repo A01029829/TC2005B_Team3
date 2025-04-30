@@ -347,7 +347,7 @@ async function handleRestart() {
         const result = await response.json();
         
         if (result.success) {
-            console.log(`✅ Nueva partida creada con ID: ${result.id_partida}`);
+            console.log(`Nueva partida creada con ID: ${result.id_partida}`);
             localStorage.setItem('currentPartidaId', result.id_partida);
             
             if (window.game) {
