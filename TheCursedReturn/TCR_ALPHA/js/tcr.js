@@ -130,11 +130,11 @@ window.spellballImage.src = "../sprites/spellball.png";
 
 // === UI Bars Setup (Curse and Life Bars) ===
 // these bars appear on the top-right of the game screen to show health and time
-const bar = new Bar(new Vect(750, 55), barwidth, 20, "white");
-let curse = new Bar(new Vect(750, 55), cursewidth, 20, "red");
+const bar = new Bar(new Vect(650, 55), barwidth, 20, "white");
+let curse = new Bar(new Vect(650, 55), cursewidth, 20, "red");
 
-const lifeBar = new Bar(new Vect(750, 25), lifeBarwidth, 20, "white");
-let life = new Bar(new Vect(750, 25), lifewidth, 20, "#ad1324");
+const lifeBar = new Bar(new Vect(650, 25), lifeBarwidth, 20, "white");
+let life = new Bar(new Vect(650, 25), lifewidth, 20, "#ad1324");
 
 // === Control Tutorial Screen ===
 // shows control instructions at the start of the game
@@ -150,6 +150,55 @@ sign_level.src = "../images/sign_level.png";
 const itemBox = new Image();
 itemBox.src = "../images/itemBox.png";
 
+// Add this near your other initialization code
+
+// Initialize the curse bonus if it doesn't exist
+if (!localStorage.getItem("curseBonus")) {
+    localStorage.setItem("curseBonus", "0");
+}
+
+// Apply any existing curse bonus at the start of a game
+function applyCurseBonus() {
+    // Only apply bonus if this is a continuation (not a fresh start)
+    // We can detect this by checking if there's an "attempt" counter
+    const attemptCount = parseInt(localStorage.getItem("gameAttempts") || "0");
+    const curseBonus = parseInt(localStorage.getItem("curseBonus") || "0");
+    
+    // For a fresh game (or when explicitly reset), ensure everything is at default values
+    if (attemptCount === 0 || localStorage.getItem("resetCurseBonus") === "true") {
+        // Reset to default sizes for fresh start
+        if (typeof curse !== 'undefined' && typeof bar !== 'undefined') {
+            barwidth= 100;
+            cursewidth= 100;
+            bar.width = 100;  // Default bar width
+            curse.width = 100; // Default starting width
+            console.log("Curse bar reset to default!");
+        }
+        
+        // Also reset the bonus and clear the reset flag
+        localStorage.setItem("curseBonus", "0");
+        localStorage.removeItem("rewardedBossSlots");
+        localStorage.removeItem("resetCurseBonus");
+        return;
+    }
+    
+    // Only apply bonus on continuations and if there is a bonus
+    if (attemptCount > 0 && curseBonus > 0 && typeof curse !== 'undefined' && typeof bar !== 'undefined') {
+        // Add the bonus to current curse width
+        curse.width = 100 + curseBonus;
+        
+        // Increase the bar width to accommodate the bonus if needed
+        if (curse.width > bar.width) {
+            bar.width = curse.width;
+        }
+        
+        // Cap the maximum bar size
+        if (bar.width > 200) bar.width = 200;
+        if (curse.width > bar.width) curse.width = bar.width;
+        
+        console.log(`Applied curse bonus: +${curseBonus} on attempt ${attemptCount}`);
+    }
+}
 
 // === Start Game When Images Are Loaded ===
 // we wait for all 4 images to load before starting the game
@@ -160,6 +209,19 @@ let loadedImages = 0;
 function tryStartGame() {
     loadedImages++;
     if (loadedImages === 5) {
+
+        if (localStorage.getItem("resetCurseBonus") === "true") {
+            localStorage.removeItem("curseBonus");
+            localStorage.removeItem("rewardedBossSlots");
+            localStorage.removeItem("gameAttempts");
+            localStorage.removeItem("resetCurseBonus");
+            
+            if (typeof bar !== 'undefined' && typeof curse !== 'undefined') {
+                bar.width = 100;
+                curse.width = 100;
+                console.log("Curse bar reset on game start!");
+            }
+        }
 
         // === Create an Empty Collision Map to Start With ===
         // creates a blank 57x38 tile grid filled with 0s (no obstacles)
@@ -184,6 +246,13 @@ function tryStartGame() {
 
         // loads the correct collision data for the initial map
         window.game.updateCollisionMap();
+        
+        if (!localStorage.getItem("gameAttempts")) {
+            localStorage.setItem("gameAttempts", "0");
+        }
+
+        // Apply curse bonus after game initialization
+        applyCurseBonus();
     }
 }
 
@@ -253,6 +322,94 @@ window.addEventListener('keydown', function startMusicOnce() {
     window.removeEventListener('keydown', startMusicOnce); // evitar que se dispare más veces
 });
 
+
+// Add this function to your tcr.js file
+
+// Handle game restart
+async function handleRestart() {
+    const playerId = localStorage.getItem('currentPlayerId');
+    
+    if (!playerId) {
+        console.error("No hay ID de jugador disponible para reiniciar");
+        window.location.href = "../html/inicio.html"; // Redirect to login
+        return;
+    }
+    
+    try {
+        localStorage.setItem("gameAttempts", "0");
+        // Create a new game session
+        const response = await fetch('/api/new-game', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_jugador: playerId })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            console.log(`✅ Nueva partida creada con ID: ${result.id_partida}`);
+            localStorage.setItem('currentPartidaId', result.id_partida);
+            
+            if (window.game) {
+                // Make sure the curse is reset when needed
+                if (localStorage.getItem("resetCurseBonus") === "true") {
+                    if (typeof bar !== 'undefined' && typeof curse !== 'undefined') {
+                        bar.width = 100;
+                        curse.width = 100;
+                    }
+                }
+                
+                window.game.reset(result.id_partida);
+            } else {
+                // Otherwise reload the page to start fresh
+                window.location.reload();
+            }
+        } else {
+            console.error("Error al crear nueva partida:", result.error);
+            alert("Error al reiniciar el juego. Por favor, inténtelo de nuevo.");
+        }
+    } catch (error) {
+        console.error("Error en la solicitud:", error);
+        alert("Error de conexión. Por favor, inténtelo de nuevo.");
+    }
+}
+
+// Add this function to your initialization code
+
+// Start a completely new game with reset bonuses
+async function startNewGame() {
+    localStorage.setItem("resetCurseBonus", "true");
+    // Reset the curse bonus
+    localStorage.removeItem("curseBonus");
+    localStorage.removeItem("rewardedBossSlots");
+    localStorage.removeItem("gameAttempts");
+    localStorage.setItem("resetCurseBonus", "100");
+    
+    if (typeof bar !== 'undefined' && typeof curse !== 'undefined') {
+        barwidth=100;
+        cursewidth=100;
+        bar.width = 100;
+        curse.width = 100;
+        console.log("Curse bar reset!");
+    }
+    
+    // Create new match ID using the existing handleRestart function
+    await handleRestart();
+    setTimeout(() => {
+        localStorage.removeItem("resetCurseBonus");
+    }, 500);
+}
+
+// Add this event listener to your initialization code
+
+// Override Ctrl+R to create new game session instead of refreshing
+document.addEventListener('keydown', function(event) {
+    // Check for Ctrl+R
+    if (event.ctrlKey && event.key === 'r') {
+        event.preventDefault(); // Prevent browser refresh
+        handleRestart();
+    }
+});
 
 // Call this function when the game starts
 window.addEventListener('DOMContentLoaded', function() {

@@ -1,7 +1,7 @@
 // === Bar Width Variables ===
 // these control the visual lengths of the curse and life bars
 let barwidth = 100;
-let cursewidth = barwidth;
+let cursewidth = 100;
 let lifeBarwidth = 100;
 let lifewidth = lifeBarwidth;
 
