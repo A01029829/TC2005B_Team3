@@ -696,7 +696,7 @@ class Game {
         // === Spawn Gunsmith ===
         // only spawn if we haven't already spawned a gunsmith this level
         // there's a 15% chance the gunsmith will appear in this room
-        const gunsmithSpawn = !this.gunsmithSpawned && Math.random() < 0.15;
+        const gunsmithSpawn = !this.gunsmithSpawned && Math.random() < 0.6;
 
         if (gunsmithSpawn) {
             // find a valid, non-blocked position on the map
@@ -718,7 +718,7 @@ class Game {
         if (
             !this.healerSpawned && // only if the healer hasn´t been spawned yet
             this.progress.visited === this.roomForHealer && // only in the selected room for healer
-            Math.random() < 0.5 // 50% chance
+            Math.random() < 1 // 100% spawnrate
           ) {
 
             // find a valid position on the map for the healer
@@ -738,7 +738,7 @@ class Game {
                  
 
         // === Spawn Chest ===
-        const chestSpawn = Math.random() < 0.15; // 15% chance of spawning a chest in this room
+        const chestSpawn = Math.random() < 0.7; // chance of spawning a chest in this room
         if (chestSpawn) {
             // find a valid position
             const { x: spawnX, y: spawnY } = this.getValidSpawnPosition(this.collisionMap, this.canvasWidth, this.canvasHeight);
