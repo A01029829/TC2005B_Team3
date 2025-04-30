@@ -1428,7 +1428,7 @@ continueGame() {
             boss.gameRef = this;
             boss.health = 300;  
             boss.maxHealth = 300;
-            boss.attackMagnitude = 30;
+            boss.attackMagnitude = 0;
             boss.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
             boss.homingAttackRow = { up: 0, left: 1, down: 2, right: 3};
             boss.homingCooldown = 360;
@@ -1645,7 +1645,7 @@ loop() {
                                    obj1.position.y + obj1.height > obj2.position.y;
                         };
                         if (isOverlapping(projectile, this.player)) {
-                            this.player.health -= 15; // damage done by the homing orb
+                            this.player.health -= 10; // damage done by the homing orb
 
                             // Update life bar
                             life.width = (this.player.health / this.player.maxHealth) * lifeBarwidth;
