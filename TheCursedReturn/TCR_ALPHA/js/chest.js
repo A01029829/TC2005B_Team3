@@ -29,6 +29,8 @@ class Chest extends AnimatedObject {
         grantRandomWeapon(player); // give player a weapon
         this.opened = true; // mark chest as opened
         this.active = false; // disable further interaction
+        // play the chest opening sound
+        chestSound.play();
         return true;
     }
 

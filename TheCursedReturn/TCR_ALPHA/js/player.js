@@ -95,18 +95,36 @@ class Player extends AnimatedObject {
 
             // Play sound effect for attack
             if (this.classType === 'knight') {
-                const swordSound = new Sound("sword");
-                swordSound.play();
+                // const swordSound = new Sound("sword");
+                // gameSounds.push(swordSound);
+                if (this.secondaryWeapon) {
+                    hitSound.play();
+                }
+                else {
+                    swordSound.play();
+                }   
             }
 
             if (this.classType === 'archer') {
-                const bowSound = new Sound("bow");
-                bowSound.play();
+                // const bowSound = new Sound("bow");
+                // gameSounds.push(bowSound);
+                if (this.secondaryWeapon) {
+                    hitSound.play();
+                }
+                else {
+                    bowSound.play();
+                }
             }
 
             if (this.classType === 'wizard') {
-                const spellSound = new Sound("spell");
-                spellSound.play();
+                // const spellSound = new Sound("spell");
+                // gameSounds.push(spellSound);
+                if (this.secondaryWeapon) {
+                    hitSound.play();
+                }
+                else {
+                    spellSound.play();
+                }
             }
         }
     
@@ -118,7 +136,8 @@ class Player extends AnimatedObject {
             this.dashCooldownTimer = this.dashCooldownDuration;
 
             // Play dash sound effect
-            const dashSound = new Sound("dash");
+            // const dashSound = new Sound("dash");
+            // gameSounds.push(dashSound);
             dashSound.play();
         }
         

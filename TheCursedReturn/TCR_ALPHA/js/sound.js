@@ -1,11 +1,18 @@
 const soundMap = {
     bow: "../audio/bow.wav",
-    sword: " ../audio/sword.mp3",
-    ambiance: "../audio/ambiance.wav",
+    sword: " ../audio/sword.wav",
+    //ambiance: "../audio/ambiance.wav",
     ambiencejiji: "../audio/ambience_jiji.wav",
     spell: "../audio/spell.wav",
-    dash: "../audio/dash.wav",   
+    dash: "../audio/dash.wav",
+    hit: "../audio/hit.wav", 
+    chest: "../audio/chest.wav",  
+    gunsmith: "../audio/gunsmith.wav",
+    healer: "../audio/healer.wav",
 };
+
+// Store all game sounds
+const gameSounds = [];
 
 // Control the different sounds in the game
 class Sound {
@@ -72,18 +79,6 @@ class Sound {
         }
     }
 
-    increaseVolume() {
-        if (this.audio.volume < 1.0) {
-            this.audio.volume += 0.1;
-        }
-    }
-
-    decreaseVolume() {
-        if (this.audio.volume > 0.0) {
-            this.audio.volume -= 0.1;
-        }
-    }
-
     setSound(action) {
         const soundFile = soundMap[action];
         if (soundFile) {
@@ -103,3 +98,21 @@ class Sound {
         }
     }
 }
+
+// Create a new sound object for each action
+const bowSound = new Sound('bow', false, 1.0);
+const swordSound = new Sound('sword', false, 1.0);
+const spellSound = new Sound('spell', false, 1.0);
+const dashSound = new Sound('dash', false, 1.0);
+const hitSound = new Sound('hit', false, 1.0);
+const chestSound = new Sound('chest', false, 1.0);
+const gunsmithSound = new Sound('gunsmith', false, 1.0);
+const healerSound = new Sound('healer', false, 1.0);
+gameSounds.push(bowSound);
+gameSounds.push(swordSound);
+gameSounds.push(spellSound);
+gameSounds.push(dashSound);
+gameSounds.push(hitSound);
+gameSounds.push(chestSound);
+gameSounds.push(gunsmithSound);
+gameSounds.push(healerSound);
