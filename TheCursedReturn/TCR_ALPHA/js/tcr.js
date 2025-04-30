@@ -248,6 +248,7 @@ window.addEventListener('keydown', function startMusicOnce() {
     if (!window.__musicStarted) {
         window.__musicStarted = true;
         window.ambienceSound = new Sound('ambiencejiji', true, 0.5);
+        gameSounds.push(window.ambienceSound);
         window.ambienceSound.play();
     }
     window.removeEventListener('keydown', startMusicOnce); // evitar que se dispare más veces

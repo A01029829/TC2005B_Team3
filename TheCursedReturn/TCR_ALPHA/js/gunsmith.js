@@ -28,6 +28,7 @@ class Gunsmith extends AnimatedObject {
             this.opened = true;
             console.log("Player opened the chest!");
             grantRandomWeapon(player);
+            gunsmithSound.play();
             return true;
         }
     

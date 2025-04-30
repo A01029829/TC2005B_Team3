@@ -53,6 +53,10 @@ class Healer extends AnimatedObject {
             player.health = newHealth;
             
             this.active = false; // prevent further interaction during healing
+
+            // play healing sound
+            healerSound.play();
+
             return true; // interaction was successful
         }
         

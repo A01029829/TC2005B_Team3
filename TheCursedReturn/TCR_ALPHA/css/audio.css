@@ -93,7 +93,7 @@ button {
     border-radius: 12px;
     box-shadow: 3px 3px #ad1324;
     font-family: copperplate;
-    text-shadow: 2px 2px #ad1324;
+    text-shadow: 1px 1px #ad1324;
     height: 35px;
 }
 
@@ -115,6 +115,7 @@ button:active {
 
 a {
     text-decoration: none;
+    padding-bottom: 20px;
 }
 
 footer {
