@@ -4,31 +4,31 @@
 const ENEMY_STATS = {
     woods: {
         goblin: {
-            weak:  { hp: [70, 100, 150], dmg: 10 },
-            strong:{ hp: [200, 350, 500], dmg: 20 }
+            weak:  { hp: [60, 85, 120], dmg: 8 },
+            strong:{ hp: [160, 280, 400], dmg: 15 }
         },
         wolf: {
-            boss: { hp: [1000, 1500, 2000], dmg: 25 }
+            boss: { hp: [850, 1300, 1700], dmg: 15 }
         }
     },
     desert: {
         skeleton: {
-            weak:  { hp: [70, 100, 150], dmg: 12 },
-            semi:  { hp: [100, 150, 250], dmg: 18 },
-            strong:{ hp: [200, 350, 500], dmg: 24 }
+            weak:  { hp: [60, 85, 120], dmg: 10 },
+            semi:  { hp: [85, 120, 200], dmg: 14 },
+            strong:{ hp: [160, 280, 400], dmg: 18 }
         }
     },
     snow: {
         lizard: {
-            weak:  { hp: [70, 100, 150], dmg: 14 },
-            strong:{ hp: [200, 350, 500], dmg: 22 }
+            weak:  { hp: [60, 85, 120], dmg: 11 },
+            strong:{ hp: [160, 280, 400], dmg: 17 }
         },
         minotaur: {
-            boss: { hp: [1000, 1500, 2000], dmg: 28 }
+            boss: { hp: [850, 1300, 1700], dmg: 22 }
         }
     },
     witch: {
-        boss: { hp: [2000, 2500, 3000], dmg: 35 }
+        boss: { hp: [1600, 2200, 2700], dmg: 0 }
     }
 };
 
