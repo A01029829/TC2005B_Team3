@@ -1071,9 +1071,35 @@ class Game {
         sendEvent('victoria', dataEvent);
     }
 
+    resetCurseStorage() {
+        console.log("Clearing all curse-related localStorage data");
+        
+        // Clear all curse-related localStorage
+        localStorage.removeItem("curseBonus");
+        localStorage.removeItem("rewardedBossSlots");
+        localStorage.removeItem("gameAttempts");
+        localStorage.setItem("resetCurseBonus", "true");
+        
+        // Set default curse values
+        localStorage.setItem("curseValue", "100");
+        
+        // Reset UI bars if they exist
+        if (typeof bar !== 'undefined' && typeof curse !== 'undefined') {
+            // Reset base globals
+            barwidth = 100;
+            cursewidth = 100;
+            
+            // Reset actual bars
+            bar.width = 100;
+            curse.width = 100;
+            console.log("Curse bar reset to 100");
+        }
+    }
+
     // Reset the game with a new match ID
     reset(newMatchId) {
         // Reset progress
+        this.resetCurseStorage();
         this.progress = {
             visited: 0,
             level: 1,
@@ -1475,6 +1501,22 @@ continueGame() {
 loop() {
     this.stats.runTime++; // count how many frames have passed since the run started
     
+    if (this.firstLoopIteration === undefined) {
+        this.firstLoopIteration = true;
+        
+        // Check if this is a new game that should have default curse values
+        if (localStorage.getItem("resetCurseBonus") === "true") {
+            console.log("First loop iteration with resetCurseBonus flag - ensuring proper curse values");
+            // Force reset of curse bar
+            if (typeof bar !== 'undefined' && typeof curse !== 'undefined') {
+                barwidth = 100;  // Reset the base variables too
+                cursewidth = 100;
+                bar.width = 100;
+                curse.width = 100;
+            }
+        }
+    }
+
     if (paused) return; // if the game is paused, stop here
     if (gameOver) return; // if the game is over, stop here
 
