@@ -730,83 +730,46 @@ El tono general de la música será tenso y opresivo, ya que la mecánica de la 
 
 A la hora de decidir una generación de biomas aleatoria, se deben evitar choques en la música de los biomas, por ello, se optará utilizar una banda sonora unificada, osea, una misma base musical que se reproduzca en todos los niveles, pero que progresivamente vaya evolucionando conforme el jugador también evoluciona, haciéndose más épica con la incorporación de más instrumentos.
 
-
-
 ### **Sounds Needed**
 
 **Effects**
 
-Los efectos de sonido serán retros y estilizados, en lugar de ser realistas, para que así puedan encajar con la identidad visual del juego, ya que si se agregan efectos realistas, el diseño visual del juego no encajará con el realismo que el audio proporciona. Los efectos tendrán una estética similar a los sonidos clásicos de 16 bits, con un diseño de audio claro y fácil de identificar, de esta manera, la inmersión que se proporcionará será mucho mejor a una donde los efectos y sonidos no encajan con lo que uno ve.
+Los efectos de sonido serán retros y estilizados, para que así puedan encajar con la identidad visual del juego. Los efectos tendrán una estética similar a los sonidos clásicos de 16 bits, con un diseño de audio claro y fácil de identificar, de esta manera, la inmersión que se proporcionará será mucho mejor a una donde los efectos y sonidos no encajan con lo que uno ve.
 
 **Efectos de sonidos por interacción**
 
 *Movimientos*
-- Paso sobre tierra
-- Paso sobre piedra
-- Paso sobre pasto
-- Paso sobre nieve
-- Paso sobre arena
 - Desplazamiento rápido (dash)
 
 *Interacción*
 - Cofre abriéndose
-- Sonido de alguien bebiendo (pócima)
-- Armadura chocando contra el suelo
+- Sonido curación
+- Sonido armero
 
 *Armas*
 - Espada cortando
-- Hacha impactando
-- Lanza perforando
-- Daga apuñalando
-- Cargando tiro de arco
 - Flecha disparada desde un arco
-- Cargando tiro con ballesta
-- Ballesta disparando
-- Báculo canalizando energía
 - Disparo de energía
-
-*Combate*
-- Sonido de impacto al golpear un enemigo
-- Sonido de impacto al recibir daño
-- Sonido de muerte de enemigos
-- Sonido de muerte del jugador
-
+- Impacto general para arma secundaria
 
 **Feedback**
 
-Para reforzar el feedback sin depender de elementos visuales únicamente, implementaremos sonidos como golpes secos para indicar que el jugador fue golpeado. Al morir, se reproducirá un sonido impactante y fuerte, seguido de un breve silencio para recalcar la derrota antes del reinicio del loop. Al derrotar al jefe final, habrá un sonido especial para resaltar el suceso.
+Se contempló la inclusión de elementos sonoros para reforzar el feedback del jugador sin depender únicamente de lo visual. La propuesta consistía en utilizar sonidos secos al recibir daño, un audio fuerte y abrupto seguido de silencio al morir, y un efecto especial al derrotar al jefe final. Sin embargo, por cuestiones de tiempo y alcance del desarrollo, esta implementación no fue realizada en la versión actual del juego.
 
 ### **Music Needed**
 
-Como los niveles serán generados de manera aleatoria, conforme el jugador avanza y cambiarán entre biomas, también aleatorios, la música será unificada, con una sola pista general que va escalando conforme el juego avanza, hasta llegar a un punto máximo donde es una canción con una intensidad muy grande.
-
-1. Estructura musical
-- Inicio (exploración temprana)
-- Sonidos de cuerdas y vientos suaves.
-- Bajo volumen y una sensación de inseguridad.
-
-2. Media partida (mayor dificultad)
-- Se añaden percusiones para aumentar la tensión.
-- La melodía base evoluciona con la inclusión de nuevos instrumentos.
-
-3. Final (Zona de mayor peligro y jefe final)
-- Uso de coros épicos y metales pesados.
-- Ritmo más acelerado para representar la urgencia y tensión del momento final del juego.
+Como los niveles serán generados de manera aleatoria, conforme el jugador avanza y cambiarán entre biomas, también aleatorios, la música será unificada, con una sola pista general que que engloba la escencia medieval del juego, repitiendose en un loop reiterando una vez más la maldición del jugador. Aunque la música no evoluciona ni se adapta a los cambios en el entorno o la dificultad, su atmósfera envolvente acompaña cada etapa del juego con la misma esencia, creando una identidad sonora coherente y persistente.
 
 *Sonidos Ambientales*
-Los sonidos ambientales serán mínimos, con una ligera presencia de sonidos como viento en ciertas áreas para reforzar la atmósfera. No se planea incluir efectos de sonidos adicionales en los escenarios, para evitar una saturación de efectos.
+No se planea incluir efectos de sonidos adicionales en los escenarios, para evitar una saturación de efectos.
 
-Por el momento no sabemos de dónde obtendremos la música y los efectos pero se están tomando en cuenta las referencias y sitios que el Profesor Gilberto nos proporcionó:
+Los efectos y música utilizados son los siguientes:
 
-- http://www.freesound.org/
-- https://www.freesfx.co.uk/
-- http://dig.ccmixter.org/
-- https://www.playonloop.com/
-- https://www.bensound.com/
-- http://www.newgrounds.com/audio
-- https://felgo.com/game-resources/free-music-for-games
-- https://www.dl-sounds.com/
-- https://www.youtube.com/audiolibrary/music?nv=1
+- BATMARIO. (2023, 15 agosto). Sound Effect - Fortnite Chest Opening [Vídeo]. YouTube. https://www.youtube.com/watch?v=-whYIavLM1s
+- Brawl Stars - Sound Effects. (2021, 1 julio). Heal sound effect [Vídeo]. YouTube. https://www.youtube.com/watch?v=uNe6KXJqf48
+- Context luck. (2022, 18 febrero). roblox sword noise [Vídeo]. YouTube. https://www.youtube.com/watch?v=XBtjOSS2byw
+- sndfcx. (2020, 8 agosto). Minecraft Hit - Sound Effect (HD) [Vídeo]. YouTube. https://www.youtube.com/watch?v=19mr-rHALN8
+- TenAthlete Minecraft. (2023, 21 marzo). Minecraft villager sound effect [Vídeo]. YouTube. https://www.youtube.com/watch?v=fiwRZ_j61Dc
 
 
 ## _Schedule_
