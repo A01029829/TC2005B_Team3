@@ -54,7 +54,6 @@ const classes = {
 
 // === Key Bindings ===
 // maps keyboard keys to directions and their animation row
-// 'k' is used for attacking
 const keyMap = {
     w: { frameY: classes[selectedClass].movementFrames.up, dx: 0, dy: -1, dir: 'up'},
     a: { frameY: classes[selectedClass].movementFrames.left, dx: -1, dy: 0, dir: 'left' },
@@ -124,7 +123,7 @@ secondarySprites['../sprites/KnightSecondaryWeapons.png'].src = '../sprites/Knig
 secondarySprites['../sprites/ArcherSecondaryWeapons.png'].src = '../sprites/ArcherSecondaryWeapons.png';
 secondarySprites['../sprites/WizardSecondaryWeapons.png'].src = '../sprites/WizardSecondaryWeapons.png';
 
-// === Carga spellballImage globalmente ===
+// === Load SpellballImage globally ===
 window.spellballImage = new Image();
 window.spellballImage.src = "../sprites/spellball.png";
 
@@ -142,7 +141,7 @@ const controls = new Image();
 controls.src = "../images/control_final.png"; // this will overwrite the one above
 let showControls = false; // true = display controls on screen
 
-// Sign to indicate next level
+// sign to indicate next level
 const sign_level = new Image();
 sign_level.src = "../images/sign_level.png"; 
 
@@ -150,48 +149,46 @@ sign_level.src = "../images/sign_level.png";
 const itemBox = new Image();
 itemBox.src = "../images/itemBox.png";
 
-// Add this near your other initialization code
-
-// Initialize the curse bonus if it doesn't exist
+// initialize the curse bonus if it doesn't exist
 if (!localStorage.getItem("curseBonus")) {
     localStorage.setItem("curseBonus", "0");
 }
 
-// Apply any existing curse bonus at the start of a game
+// apply any existing curse bonus at the start of a game
 function applyCurseBonus() {
-    // Only apply bonus if this is a continuation (not a fresh start)
-    // We can detect this by checking if there's an "attempt" counter
+    // only apply bonus if this is a continuation (not a fresh start)
+    // we can detect this by checking if there's an "attempt" counter
     const attemptCount = parseInt(localStorage.getItem("gameAttempts") || "0");
     const curseBonus = parseInt(localStorage.getItem("curseBonus") || "0");
     
-    // For a fresh game (or when explicitly reset), ensure everything is at default values
+    // for a fresh game (or when explicitly reset), ensure everything is at default values
     if (attemptCount === 0 || localStorage.getItem("resetCurseBonus") === "true") {
-        // Reset to default sizes for fresh start
+        // reset to default sizes for fresh start
         if (typeof curse !== 'undefined' && typeof bar !== 'undefined') {
             barwidth= 100;
             cursewidth= 100;
-            bar.width = 100;  // Default bar width
-            curse.width = 100; // Default starting width
+            bar.width = 100;  // default bar width
+            curse.width = 100; // default starting width
             console.log("Curse bar reset to default!");
         }
         
-        // Also reset the bonus and clear the reset flag
+        // also reset the bonus and clear the reset flag
         localStorage.setItem("curseBonus", "0");
         localStorage.removeItem("rewardedBossSlots");
         return;
     }
     
-    // Only apply bonus on continuations and if there is a bonus
+    // only apply bonus on continuations and if there is a bonus
     if (attemptCount > 0 && curseBonus > 0 && typeof curse !== 'undefined' && typeof bar !== 'undefined') {
-        // Add the bonus to current curse width
+        // add the bonus to current curse width
         curse.width = 100 + curseBonus;
         
-        // Increase the bar width to accommodate the bonus if needed
+        // increase the bar width to accommodate the bonus if needed
         if (curse.width > bar.width) {
             bar.width = curse.width;
         }
         
-        // Cap the maximum bar size
+        // cap the maximum bar size
         if (bar.width > 200) bar.width = 200;
         if (curse.width > bar.width) curse.width = bar.width;
         
@@ -203,8 +200,7 @@ function applyCurseBonus() {
 // we wait for all 4 images to load before starting the game
 let loadedImages = 0;
 
-// Ambience music
-
+// === Ambience music ===
 function tryStartGame() {
     loadedImages++;
     if (loadedImages === 5) {
@@ -250,7 +246,7 @@ function tryStartGame() {
             localStorage.setItem("gameAttempts", "0");
         }
 
-        // Apply curse bonus after game initialization
+        // apply curse bonus after game initialization
         applyCurseBonus();
     }
 }
@@ -267,7 +263,7 @@ gunsmithImage.onload = tryStartGame;
 
 // === Register Game Start ===
 function registerStart() {
-    // Verify if the start has already been registered
+    // verify if the start has already been registered
     if (startRegistered) return;
     
     const matchID = sessionStorage.getItem('currentPartidaId');
@@ -278,7 +274,7 @@ function registerStart() {
         return;
     }
     
-    startRegistered = true; // Marcar como registrado
+    startRegistered = true; // marked as registered
     
     fetch('/api/game-event', {
         method: 'POST',
@@ -304,14 +300,14 @@ function registerStart() {
     })
     .then(response => response.json())
     .then(result => {
-        console.log("✅ Inicio registrado:", result);
+        console.log("Inicio registrado:", result);
     })
     .catch(error => {
-        console.error("❌ Error al registrar inicio:", error);
+        console.error("Error al registrar inicio:", error);
     });
 }
 
-// === Iniciar música al presionar cualquier tecla (solo una vez) ===
+// === Start music upon first key pressed ===
 window.addEventListener('keydown', function startMusicOnce() {
     if (!window.__musicStarted) {
         window.__musicStarted = true;
@@ -319,25 +315,22 @@ window.addEventListener('keydown', function startMusicOnce() {
         gameSounds.push(window.ambienceSound);
         window.ambienceSound.play();
     }
-    window.removeEventListener('keydown', startMusicOnce); // evitar que se dispare más veces
+    window.removeEventListener('keydown', startMusicOnce); // prevent music to play multiple times
 });
 
-
-// Add this function to your tcr.js file
-
-// Handle game restart
+// handle game restart
 async function handleRestart() {
     const playerId = localStorage.getItem('currentPlayerId');
     
     if (!playerId) {
         console.error("No hay ID de jugador disponible para reiniciar");
-        window.location.href = "../html/inicio.html"; // Redirect to login
+        window.location.href = "../html/inicio.html"; // redirect to login
         return;
     }
     
     try {
         localStorage.setItem("gameAttempts", "0");
-        // Create a new game session
+        // create a new game session
         const response = await fetch('/api/new-game', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -351,7 +344,7 @@ async function handleRestart() {
             localStorage.setItem('currentPartidaId', result.id_partida);
             
             if (window.game) {
-                // Make sure the curse is reset when needed
+                // make sure the curse is reset when needed
                 if (localStorage.getItem("resetCurseBonus") === "true") {
                     if (typeof bar !== 'undefined' && typeof curse !== 'undefined') {
                         bar.width = 100;
@@ -361,7 +354,7 @@ async function handleRestart() {
                 
                 window.game.reset(result.id_partida);
             } else {
-                // Otherwise reload the page to start fresh
+                // otherwise reload the page to start fresh
                 window.location.reload();
             }
         } else {
@@ -374,12 +367,12 @@ async function handleRestart() {
     }
 }
 
-// Add this function to your initialization code
+// add this function to your initialization code
 
-// Start a completely new game with reset bonuses
+// start a completely new game with reset bonuses
 async function startNewGame() {
     localStorage.setItem("resetCurseBonus", "true");
-    // Reset the curse bonus
+    // reset the curse bonus
     localStorage.removeItem("curseBonus");
     localStorage.removeItem("rewardedBossSlots");
     localStorage.removeItem("gameAttempts");
@@ -393,27 +386,27 @@ async function startNewGame() {
         console.log("Curse bar reset!");
     }
     
-    // Create new match ID using the existing handleRestart function
+    // create new match ID using the existing handleRestart function
     await handleRestart();
     setTimeout(() => {
         localStorage.removeItem("resetCurseBonus");
     }, 500);
 }
 
-// Add this event listener to your initialization code
+// add this event listener to your initialization code
 
-// Override Ctrl+R to create new game session instead of refreshing
+// override Ctrl+R to create new game session instead of refreshing
 document.addEventListener('keydown', function(event) {
-    // Check for Ctrl+R
+    // check for Ctrl+R
     if (event.ctrlKey && event.key === 'r') {
-        event.preventDefault(); // Prevent browser refresh
+        event.preventDefault(); // prevent browser refresh
         handleRestart();
     }
 });
 
-// Call this function when the game starts
+// call this function when the game starts
 window.addEventListener('DOMContentLoaded', function() {
     
-    // Register game start
+    // register game start
     registerStart();
 });

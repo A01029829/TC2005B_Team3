@@ -1,7 +1,8 @@
+// === Sound Map ===
+// maps sound action names to their audio file paths
 const soundMap = {
     bow: "../audio/bow.wav",
     sword: " ../audio/sword.wav",
-    //ambiance: "../audio/ambiance.wav",
     ambiencejiji: "../audio/ambience_jiji.wav",
     spell: "../audio/spell.wav",
     dash: "../audio/dash.wav",
@@ -11,19 +12,22 @@ const soundMap = {
     healer: "../audio/healer.wav",
 };
 
-// Store all game sounds
+// === Game Sounds Storage ===
+// stores all game sound objects for global control
 const gameSounds = [];
 
-// Control the different sounds in the game
+// === Sound Class ===
+// controls playback, volume, loop, and switching of sounds
 class Sound {
     constructor(action, loop = false, volume = 1.0) {
-        this.action = action;
-        this.loop = loop;
-        this.volume = volume;
-        this.audio = null;
-        this.fadeInterval = null;
+        this.action = action;     // sound identifier (e.g., 'bow', 'sword')
+        this.loop = loop;         // whether the sound should loop
+        this.volume = volume;     // playback volume
+        this.audio = null;        // audio object reference
+        this.fadeInterval = null; // reserved for fade effects
     }
 
+    // === Ensure Audio Object Exists ===
     _ensureAudio() {
         if (!this.audio) {
             this.audio = new Audio(soundMap[this.action]);
@@ -32,6 +36,7 @@ class Sound {
         }
     }
 
+    // === Play the Sound ===
     play() {
         this._ensureAudio();
         const playPromise = this.audio.play();
@@ -46,18 +51,21 @@ class Sound {
         }
     }
 
+    // === Toggle Mute ===
     muted() {
         if (this.audio) {
             this.audio.muted = !this.audio.muted;
         }
     }
 
+    // === Pause the Sound ===
     pause() {
         if (this.audio) {
             this.audio.pause();
         }
     }
 
+    // === Stop the Sound and Reset to Start ===
     stop() {
         if (this.audio) {
             this.audio.pause();
@@ -65,6 +73,7 @@ class Sound {
         }
     }
 
+    // === Set Volume ===
     setVolume(volume) {
         this.volume = volume;
         if (this.audio) {
@@ -72,6 +81,7 @@ class Sound {
         }
     }
 
+    // === Enable or Disable Looping ===
     setLoop(loop) {
         this.loop = loop;
         if (this.audio) {
@@ -79,6 +89,7 @@ class Sound {
         }
     }
 
+    // === Switch to a Different Sound Action ===
     setSound(action) {
         const soundFile = soundMap[action];
         if (soundFile) {
@@ -99,7 +110,7 @@ class Sound {
     }
 }
 
-// Create a new sound object for each action
+// === Create Sound Objects for Each Action ===
 const bowSound = new Sound('bow', false, 1.0);
 const swordSound = new Sound('sword', false, 1.0);
 const spellSound = new Sound('spell', false, 1.0);
@@ -109,7 +120,7 @@ const chestSound = new Sound('chest', false, 1.0);
 const gunsmithSound = new Sound('gunsmith', false, 1.0);
 const healerSound = new Sound('healer', false, 1.0);
 
-// Add sounds to the gameSounds array
+// === Add All Sounds to Global Array ===
 gameSounds.push(bowSound);
 gameSounds.push(swordSound);
 gameSounds.push(spellSound);
