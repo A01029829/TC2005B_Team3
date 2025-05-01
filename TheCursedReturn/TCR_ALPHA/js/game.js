@@ -270,7 +270,7 @@ class Game {
         this.score = 0;
         this.elapsedTime = 0;
         this.startTime = Date.now();
-        this.lastObjectFound = 'cofre';
+        this.lastObjectFound = 'ninguno';
         this.currentBiome = 'woods'; // Initialize biome (default value to prevent errors)
         
         if (!this.progress) {
@@ -696,7 +696,7 @@ class Game {
         // === Spawn Gunsmith ===
         // only spawn if we haven't already spawned a gunsmith this level
         // there's a 15% chance the gunsmith will appear in this room
-        const gunsmithSpawn = !this.gunsmithSpawned && Math.random() < 0.15;
+        const gunsmithSpawn = !this.gunsmithSpawned && Math.random() < 0.6;
 
         if (gunsmithSpawn) {
             // find a valid, non-blocked position on the map
@@ -718,7 +718,7 @@ class Game {
         if (
             !this.healerSpawned && // only if the healer hasn´t been spawned yet
             this.progress.visited === this.roomForHealer && // only in the selected room for healer
-            Math.random() < 0.5 // 50% chance
+            Math.random() < 1 // 100% spawnrate
           ) {
 
             // find a valid position on the map for the healer
@@ -738,7 +738,7 @@ class Game {
                  
 
         // === Spawn Chest ===
-        const chestSpawn = Math.random() < 0.15; // 15% chance of spawning a chest in this room
+        const chestSpawn = Math.random() < 0.7; // chance of spawning a chest in this room
         if (chestSpawn) {
             // find a valid position
             const { x: spawnX, y: spawnY } = this.getValidSpawnPosition(this.collisionMap, this.canvasWidth, this.canvasHeight);
@@ -807,7 +807,7 @@ class Game {
             enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,  // Cambiado para usar las propiedades correctas
             enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
             jefesDerrotados: this.stats?.bossesDefeated || 0,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         };
         
         // Verify death event by health
@@ -855,7 +855,7 @@ class Game {
             enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,
             enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
             jefesDerrotados: this.stats?.bossesDefeated || 0,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         });
     }
 
@@ -991,7 +991,7 @@ class Game {
             enemigosCDerrotados: this.stats.weakEnemiesDefeated,
             enemigosFDerrotados: this.stats.strongEnemiesDefeated,
             jefesDerrotados: this.stats.bossesDefeated,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         };
 
         //console.log("Enviando datos de checkpoint:", checkpointData);
@@ -1036,15 +1036,70 @@ class Game {
             enemigosCDerrotados: 0,
             enemigosFDerrotados: 0,
             jefesDerrotados: 0,
-            objetosEncontrados: 'cofre'
+            objetosEncontrados: 'ninguno'
         });
     }
 
-    // Add this method to your Game class
+    // Method to register victory
+    registerVictory() {
+        if (this.victoryRegistered) return;
+        
+        this.victoryRegistered = true;
+        gameOver = true; // Detener el bucle del juego
+        
+        // Get match id
+        const matchID = localStorage.getItem('currentPartidaId');
+        if (!matchID) return;
+        
+        // Send victory events
+        const dataEvent = {
+            id_partida: matchID,
+            claseElegida: localStorage.getItem('playerClass') || 'guerrero',
+            tiempoPartida: formatTime(this.elapsedTime || 0),
+            puntuacion: this.score || 0,
+            nivelActual: 3,
+            salaActual: 5, 
+            biomaActual: window.TCR_CONSTANTS?.BIOME_MAPPINGS?.[this.currentBiome] || 'nieve',
+            rankM: getCurseValue(),
+            vida: this.player.health,
+            enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,
+            enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
+            jefesDerrotados: this.stats?.bossesDefeated || 0,
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
+        };
+        
+        sendEvent('victoria', dataEvent);
+    }
+
+    resetCurseStorage() {
+        console.log("Clearing all curse-related localStorage data");
+        
+        // Clear all curse-related localStorage
+        localStorage.removeItem("curseBonus");
+        localStorage.removeItem("rewardedBossSlots");
+        localStorage.removeItem("gameAttempts");
+        localStorage.setItem("resetCurseBonus", "true");
+        
+        // Set default curse values
+        localStorage.setItem("curseValue", "100");
+        
+        // Reset UI bars if they exist
+        if (typeof bar !== 'undefined' && typeof curse !== 'undefined') {
+            // Reset base globals
+            barwidth = 100;
+            cursewidth = 100;
+            
+            // Reset actual bars
+            bar.width = 100;
+            curse.width = 100;
+            console.log("Curse bar reset to 100");
+        }
+    }
 
     // Reset the game with a new match ID
     reset(newMatchId) {
         // Reset progress
+        this.resetCurseStorage();
         this.progress = {
             visited: 0,
             level: 1,
@@ -1062,7 +1117,7 @@ class Game {
         this.score = 0;
         this.elapsedTime = 0;
         this.startTime = Date.now();
-        this.lastObjectFound = 'cofre';
+        this.lastObjectFound = 'ninguno';
         this.bossesSpawned = [];
         
         // Reset stats
@@ -1134,7 +1189,7 @@ continueGame() {
     // Keep the same score
     this.elapsedTime = 0;
     this.startTime = Date.now();
-    this.lastObjectFound = 'cofre';
+    this.lastObjectFound = 'ninguno';
     this.bossesSpawned = [];
     
     // Reset player position and health
@@ -1215,7 +1270,7 @@ continueGame() {
             enemigosCDerrotados: this.stats.weakEnemiesDefeated,
             enemigosFDerrotados: this.stats.strongEnemiesDefeated,
             jefesDerrotados: this.stats.bossesDefeated,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         };
 
         console.log("Registrando continuación de juego:", continuationData);
@@ -1258,7 +1313,7 @@ continueGame() {
             enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,
             enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
             jefesDerrotados: this.stats?.bossesDefeated || 0,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         };
         
         setTimeout(() => {
@@ -1302,7 +1357,7 @@ continueGame() {
             enemigosCDerrotados: this.stats.weakEnemiesDefeated,
             enemigosFDerrotados: this.stats.strongEnemiesDefeated,
             jefesDerrotados: this.stats.bossesDefeated,
-            objetosEncontrados: this.lastObjectFound || 'cofre'
+            objetosEncontrados: this.lastObjectFound || 'ninguno'
         };
 
         //console.log("Enviando datos de salida:", exitData);
@@ -1399,7 +1454,7 @@ continueGame() {
             boss.gameRef = this;
             boss.health = 300;  
             boss.maxHealth = 300;
-            boss.attackMagnitude = 30;
+            boss.attackMagnitude = 0;
             boss.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
             boss.homingAttackRow = { up: 0, left: 1, down: 2, right: 3};
             boss.homingCooldown = 360;
@@ -1446,6 +1501,22 @@ continueGame() {
 loop() {
     this.stats.runTime++; // count how many frames have passed since the run started
     
+    if (this.firstLoopIteration === undefined) {
+        this.firstLoopIteration = true;
+        
+        // Check if this is a new game that should have default curse values
+        if (localStorage.getItem("resetCurseBonus") === "true") {
+            console.log("First loop iteration with resetCurseBonus flag - ensuring proper curse values");
+            // Force reset of curse bar
+            if (typeof bar !== 'undefined' && typeof curse !== 'undefined') {
+                barwidth = 100;  // Reset the base variables too
+                cursewidth = 100;
+                bar.width = 100;
+                curse.width = 100;
+            }
+        }
+    }
+
     if (paused) return; // if the game is paused, stop here
     if (gameOver) return; // if the game is over, stop here
 
@@ -1527,7 +1598,7 @@ loop() {
         const playerInRange = this.chest.checkPlayerInRange(this.player);
         let interacted = false; // Define interacted before use
         if (typeof interacted !== 'undefined' && interacted) {
-            this.recordObjectFound('cofre');
+            this.recordObjectFound('ninguno');
         }
     
         this.chest.interact(this.player, this.inputManager.keysPressed);
@@ -1616,7 +1687,7 @@ loop() {
                                    obj1.position.y + obj1.height > obj2.position.y;
                         };
                         if (isOverlapping(projectile, this.player)) {
-                            this.player.health -= 15; // damage done by the homing orb
+                            this.player.health -= 10; // damage done by the homing orb
 
                             // Update life bar
                             life.width = (this.player.health / this.player.maxHealth) * lifeBarwidth;
@@ -1725,7 +1796,7 @@ loop() {
                 // === Attack Cooldown: Prevent Multiple Hits in a Row ===
                 setTimeout(() => {
                     enemy.hasHitPlayer = false;
-                }, 1500);
+                }, 1000);
             }
         
             // === Prevent Overlap (Push Player and Enemy Apart) ===
@@ -1777,7 +1848,7 @@ loop() {
                 // reset attack state after 400ms (cooldown for melee hits)
                 setTimeout(() => {
                     this.player.hasHitEnemy = false;
-                }, 400); // attack cooldown
+                }, 1000); // attack cooldown
             }
         }
 
@@ -1997,7 +2068,7 @@ loop() {
                     enemigosCDerrotados: this.stats?.weakEnemiesDefeated || 0,
                     enemigosFDerrotados: this.stats?.strongEnemiesDefeated || 0,
                     jefesDerrotados: this.stats?.bossesDefeated || 0,
-                    objetosEncontrados: this.lastObjectFound || 'cofre'
+                    objetosEncontrados: this.lastObjectFound || 'ninguno'
                 };
                 
                 sendEvent('muerteMaldicion', dataEvent);

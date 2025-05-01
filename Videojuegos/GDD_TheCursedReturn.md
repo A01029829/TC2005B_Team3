@@ -1,7 +1,7 @@
 ![tec](Images/TecLogo.png)
 # **The Cursed Return**
 
-## _Game Design Document_
+## _Game Design Document Versión Final_
 
 ---
 
@@ -66,11 +66,11 @@ La maldición es el elemento distintivo de nuestro juego. La barra se agota con 
 
 ### **Gameplay**
 
-El objetivo del juego es completar diferentes niveles, mientras el jugador intenta romper su maldición y derrotar a enemigos. En el juego, el jugador elige al inicio una de las siguientes clases: mago, arquero y guerrero. Mientras mata a los enemigos, el jugador podrá obtener ventajas como reducir el impacto de la barra de maldición o aumentar esta el tamaño de la barra. Pero, también podrá obtener desventajas como reducción de daño, reducción de vida, etc. El juego recuerda mucho a un Role-Play Game debido a que el jugador asume el papel de un personaje y avanza a través de una historia, combates y exploración. En este caso el combate es en tiempo real y el juego incluirá un sistema de progresión para cada clase.
+El objetivo del juego es completar diferentes niveles, mientras el jugador intenta llegar a jefe final y así romper su maldición mientras derrota a múltiples enemigos. En el juego, el jugador elige al inicio una de las siguientes clases: mago, arquero y guerrero. Mientras el jugador avanza por las salas, encontrará NPC´s que le ayudarán a avanzar más rápido, y obtendrá una aumento en su barra de maldición para que tenga más tiempo para llegar a la sala final. El juego recuerda mucho a un Role-Play Game debido a que el jugador asume el papel de un personaje y avanza a través de una historia, combates y exploración. En este caso el combate es en tiempo real, y el jugador tendrá que pensar estratégicamente en qué momento usar su arma secundaria (en caso de tenerla) y adaptarse a lo que el juego le tenga preparado.
 
 ### **Mindset**
 
-Queremos hacer que el jugador se sienta poderoso de manera progresiva, mientras se mantiene alerta de los riesgos que su personaje corre. Queremos provocar este mindset colocando al jugador en situaciones donde deberán decidir si aumentar su poder (a un costo) o mantenerse con su poder original.
+Queremos hacer que el jugador se sienta como un estratega, mientras se mantiene alerta de los riesgos que su personaje corre. Queremos provocar este mindset colocando al jugador en situaciones donde deberán decidir si utilizar sus ventajas, o guardarlas para otro momento.
 También buscamos que los jugadores se sientan aventureros mientras avanzan por los niveles en búsqueda de una manera de romper la maldición. Los diferentes entornos provocarán un sentido de aventura para el jugador, ya que explorarán zonas que siempre serán completamente diferentes.
 Finalmente, queremos provocar una sensación de precaución, con la que el jugador deberá decidir de manera estratégica las acciones que realizará, para llegar lo más lejos posible antes de que la maldición lo elimine. Además deberán elegir su clase considerando los posibles peligros que se presentarán en cada nivel.
 
@@ -81,7 +81,7 @@ Finalmente, queremos provocar una sensación de precaución, con la que el jugad
 
 ### **Screens**
 
-El juego contará con varias pantallas clave, cada una diseñada con una interfaz clara y funcional para mejorar la experiencia del usuario. Cada pantalla tendrá su propio propósito y navegación bien definida. A continuación se explican las pantallas más importantes, además, se mostrará un concepto muy básico de lo que se espera diseñar.
+El juego contará con varias pantallas clave, cada una diseñada con una interfaz clara y funcional para mejorar la experiencia del usuario. Cada pantalla tendrá su propio propósito y navegación bien definida. A continuación se explican las pantallas más importantes, además, se mostrará el concepto dinal, junto con el conceptual.
 
 1. **Title Screen (Pantalla de Inicio)**
 
@@ -720,93 +720,50 @@ Además de estos elementos en los tilesets, planeamos agregar decoraciones que n
 
 ### **Style Attributes**
 
-La banda sonora de “The Cursed Return” se basará en un estilo orquestal ambiental que evoque una sensación de estar en una aventura legendaria, pero sin encasillarse en una interpretación medieval o similar al género de nuestros personajes e historia. Deseamos utilizar instrumentos orquestales como cuerdas, metales, percusión, y coros para reforzar la sensación de grandeza y peligro, por lo que también es prudente utilizar un tempo que sea rápido, uno ideal sería 165 BPM, que puede dar pauta a coros sombríos o armonías épicas.
+La banda sonora de The Cursed Return se compone de una única pieza orquestal ambiental que se reproduce en bucle a lo largo de todo el juego. Aunque inicialmente se contempló un enfoque progresivo, donde la música evolucionara conforme avanzaba el jugador, finalmente se optó por una pista constante que mantiene siempre la misma atmósfera. Esta decisión busca reforzar la identidad del juego a través de una ambientación sonora sólida y uniforme. La pieza elegida tiene una vibra medieval, para lograr una armonía con el juego.
 
-El tono general de la música será tenso y opresivo, ya que la mecánica de la maldición genera una presión constante sobre el jugador, esto se puede reflejar con composiciones que tengan:
-- Ritmos y progresiones armónicas que transmiten urgencia y peligro
-- Crescendos dinámicos en combate para aumentar la tensión
-- Uso de cuerdas en secciones más tranquilas para dar un respiro y una sensación de “calma” antes de regresar a los combates.
-- Capas musicales progresivas, que vayan añadiendo más instrumentos conforme el jugador va llegando más lejos.
-
-A la hora de decidir una generación de biomas aleatoria, se deben evitar choques en la música de los biomas, por ello, se optará utilizar una banda sonora unificada, osea, una misma base musical que se reproduzca en todos los niveles, pero que progresivamente vaya evolucionando conforme el jugador también evoluciona, haciéndose más épica con la incorporación de más instrumentos.
-
-
+A pesar de que la música no varía según los biomas ni evoluciona con el progreso del jugador, su carácter envolvente y repetitivo fortalece la sensación de estar atrapado en un ciclo sin fin, confirmando el núcleo temático del juego.
 
 ### **Sounds Needed**
 
 **Effects**
 
-Los efectos de sonido serán retros y estilizados, en lugar de ser realistas, para que así puedan encajar con la identidad visual del juego, ya que si se agregan efectos realistas, el diseño visual del juego no encajará con el realismo que el audio proporciona. Los efectos tendrán una estética similar a los sonidos clásicos de 16 bits, con un diseño de audio claro y fácil de identificar, de esta manera, la inmersión que se proporcionará será mucho mejor a una donde los efectos y sonidos no encajan con lo que uno ve.
+Los efectos de sonido serán retros y estilizados, para que así puedan encajar con la identidad visual del juego. Los efectos tendrán una estética similar a los sonidos clásicos de 16 bits, con un diseño de audio claro y fácil de identificar, de esta manera, la inmersión que se proporcionará será mucho mejor a una donde los efectos y sonidos no encajan con lo que uno ve.
 
 **Efectos de sonidos por interacción**
 
 *Movimientos*
-- Paso sobre tierra
-- Paso sobre piedra
-- Paso sobre pasto
-- Paso sobre nieve
-- Paso sobre arena
 - Desplazamiento rápido (dash)
 
 *Interacción*
 - Cofre abriéndose
-- Sonido de alguien bebiendo (pócima)
-- Armadura chocando contra el suelo
+- Sonido curación
+- Sonido armero
 
 *Armas*
 - Espada cortando
-- Hacha impactando
-- Lanza perforando
-- Daga apuñalando
-- Cargando tiro de arco
 - Flecha disparada desde un arco
-- Cargando tiro con ballesta
-- Ballesta disparando
-- Báculo canalizando energía
 - Disparo de energía
-
-*Combate*
-- Sonido de impacto al golpear un enemigo
-- Sonido de impacto al recibir daño
-- Sonido de muerte de enemigos
-- Sonido de muerte del jugador
-
+- Impacto general para arma secundaria
 
 **Feedback**
 
-Para reforzar el feedback sin depender de elementos visuales únicamente, implementaremos sonidos como golpes secos para indicar que el jugador fue golpeado. Al morir, se reproducirá un sonido impactante y fuerte, seguido de un breve silencio para recalcar la derrota antes del reinicio del loop. Al derrotar al jefe final, habrá un sonido especial para resaltar el suceso.
+Se contempló la inclusión de elementos sonoros para reforzar el feedback del jugador sin depender únicamente de lo visual. La propuesta consistía en utilizar sonidos secos al recibir daño, un audio fuerte y abrupto seguido de silencio al morir, y un efecto especial al derrotar al jefe final. Sin embargo, por cuestiones de tiempo y alcance del desarrollo, esta implementación no fue realizada en la versión actual del juego.
 
 ### **Music Needed**
 
-Como los niveles serán generados de manera aleatoria, conforme el jugador avanza y cambiarán entre biomas, también aleatorios, la música será unificada, con una sola pista general que va escalando conforme el juego avanza, hasta llegar a un punto máximo donde es una canción con una intensidad muy grande.
-
-1. Estructura musical
-- Inicio (exploración temprana)
-- Sonidos de cuerdas y vientos suaves.
-- Bajo volumen y una sensación de inseguridad.
-
-2. Media partida (mayor dificultad)
-- Se añaden percusiones para aumentar la tensión.
-- La melodía base evoluciona con la inclusión de nuevos instrumentos.
-
-3. Final (Zona de mayor peligro y jefe final)
-- Uso de coros épicos y metales pesados.
-- Ritmo más acelerado para representar la urgencia y tensión del momento final del juego.
+Como los niveles serán generados de manera aleatoria, conforme el jugador avanza y cambiarán entre biomas, también aleatorios, la música será unificada, con una sola pista general que que engloba la escencia medieval del juego, repitiendose en un loop reiterando una vez más la maldición del jugador. Aunque la música no evoluciona ni se adapta a los cambios en el entorno o la dificultad, su atmósfera envolvente acompaña cada etapa del juego con la misma esencia, creando una identidad sonora coherente y persistente.
 
 *Sonidos Ambientales*
-Los sonidos ambientales serán mínimos, con una ligera presencia de sonidos como viento en ciertas áreas para reforzar la atmósfera. No se planea incluir efectos de sonidos adicionales en los escenarios, para evitar una saturación de efectos.
+No se planea incluir efectos de sonidos adicionales en los escenarios, para evitar una saturación de efectos.
 
-Por el momento no sabemos de dónde obtendremos la música y los efectos pero se están tomando en cuenta las referencias y sitios que el Profesor Gilberto nos proporcionó:
+Los efectos y música utilizados son los siguientes:
 
-- http://www.freesound.org/
-- https://www.freesfx.co.uk/
-- http://dig.ccmixter.org/
-- https://www.playonloop.com/
-- https://www.bensound.com/
-- http://www.newgrounds.com/audio
-- https://felgo.com/game-resources/free-music-for-games
-- https://www.dl-sounds.com/
-- https://www.youtube.com/audiolibrary/music?nv=1
+- BATMARIO. (2023, 15 agosto). Sound Effect - Fortnite Chest Opening [Vídeo]. YouTube. https://www.youtube.com/watch?v=-whYIavLM1s
+- Brawl Stars - Sound Effects. (2021, 1 julio). Heal sound effect [Vídeo]. YouTube. https://www.youtube.com/watch?v=uNe6KXJqf48
+- Context luck. (2022, 18 febrero). roblox sword noise [Vídeo]. YouTube. https://www.youtube.com/watch?v=XBtjOSS2byw
+- sndfcx. (2020, 8 agosto). Minecraft Hit - Sound Effect (HD) [Vídeo]. YouTube. https://www.youtube.com/watch?v=19mr-rHALN8
+- TenAthlete Minecraft. (2023, 21 marzo). Minecraft villager sound effect [Vídeo]. YouTube. https://www.youtube.com/watch?v=fiwRZ_j61Dc
 
 
 ## _Schedule_

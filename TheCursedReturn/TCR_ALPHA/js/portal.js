@@ -31,8 +31,16 @@ class Portal extends GameObject {
                 if (progress.visited === 5) {
                     // Matar a la bruja → victoria
                     gameOver = true;
-                    const victoryScreen = document.getElementById("victory-screen");
-                    if (victoryScreen) victoryScreen.style.display = "flex";
+                    // const victoryScreen = document.getElementById("victory-screen");
+                    // if (victoryScreen) victoryScreen.style.display = "flex";
+                    if (window.game && typeof window.game.registerVictory === 'function') {
+                        window.game.registerVictory();
+                    }
+                    
+                    // Redirect to victory screen
+                    setTimeout(() => {
+                        window.location.href = '../html/victory.html';
+                    }, 1500);
                     return;
                 }
 

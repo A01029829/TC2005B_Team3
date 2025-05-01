@@ -46,8 +46,9 @@ app.get('/api/leaderboard', async (request, response) => {
         
         // Query to get top 5 players with highest scores
         const [results, fields] = await connection.execute(`
-            SELECT nombreUsuario, PuntuacionFinal
+            SELECT nombreUsuario, MAX(PuntuacionFinal) AS PuntuacionFinal
             FROM Estadisticas
+            GROUP BY nombreUsuario
             ORDER BY PuntuacionFinal DESC
             LIMIT 5
         `)
@@ -98,8 +99,9 @@ app.get('/api/user-stats/:nombreUsuario', async (request, response) => {
                 e.ClaseJugador,
                 e.UltimoObjetoEncontrado
             FROM Estadisticas e
-            WHERE e.nombreUsuario = ?
-            ORDER BY e.FechaFin DESC
+            WHERE e.nombreUsuario = ? 
+            AND e.TipoFinPartida IN ('fin', 'victoria', 'muerteVida', 'muerteMaldicion', 'salida')
+            ORDER BY e.FechaFin DESC LIMIT 10
         `, [request.params.nombreUsuario])
 
         console.log(`${results.length} game logs returned for user ${request.params.nombreUsuario}`)

@@ -10,11 +10,11 @@ class Player extends AnimatedObject {
         // === Class Selection and Base Damage ===
         this.classType = localStorage.getItem("selectedClass") || "knight";
         if (this.classType === "knight") {
-            this.attackMagnitude = 35; // melee
+            this.attackMagnitude = 45; // melee
         } else if (this.classType === "archer") {
-            this.attackMagnitude = 12; // ranged, faster
+            this.attackMagnitude = 26; // ranged, faster
         } else if (this.classType === "wizard") {
-            this.attackMagnitude = 20; // magic
+            this.attackMagnitude = 35; // magic
         }
 
         // === Movement and Animation Setup ===
@@ -338,9 +338,9 @@ class Player extends AnimatedObject {
                 this.attackRow = this.originalAttackRow;
         
                 // reset original attack damage
-                if (this.classType === 'knight') this.attackMagnitude = 35;
-                if (this.classType === 'archer') this.attackMagnitude = 12;
-                if (this.classType === 'wizard') this.attackMagnitude = 20;
+                if (this.classType === 'knight') this.attackMagnitude = 45;
+                if (this.classType === 'archer') this.attackMagnitude = 26;
+                if (this.classType === 'wizard') this.attackMagnitude = 35;
             }
         }              
         
