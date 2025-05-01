@@ -99,7 +99,7 @@ A continuación se muestra un boceto de cómo se vería:
 ![Menu](Images/MenuTheCursedReturn.jpg)
 
 A continuación se muestra una imagen de cómo quedó la version final:
-- agregar imagen
+![MenuFinal](Images/TCR_Title.png)
 
 2. **Menú de Opciones**
 
@@ -110,7 +110,7 @@ A continuación se muestra una imagen de cómo quedó la version final:
 - *Botón de "Regresar"*: Para volver al menú principal.
 
 A continuación se muestra una imagen de cómo quedó la version final:
-- agregar imagen
+![Settings](Images/TCR_Settings.png)
 
 3. **Juego Principal**
 
@@ -121,9 +121,6 @@ A continuación se muestra una imagen de cómo quedó la version final:
 - *Barra de maldición*: Representa el tiempo disponible antes de que la maldición afecte al jugador.
 - *Iconos de estado*: Notificaciones visuales que informan sobre mejoras temporales o penalizaciones activas.
 - *Menú de pausa*: Permite acceder a configuraciones, controles y otras opciones sin salir del juego.
-
-A continuación se muestra una imagen de cómo quedó la version final:
-- agregar imagen
 
 A continuación se muestra una secuencia de los sprites finales para nuestros personajes:
 ![Classes](Images/ClassesTheCursedReturn.jpg)
@@ -139,8 +136,7 @@ Al inicio se tenían en cuenta otros sprites, pero esos sprites limitaban el mov
 
 *Imagen de cómo se ven los personajes respecto a un pedazo del mapa*
 
-![HUD](Images/HUDTheCursedReturn.jpg)
-- actualizar imagen
+![HUD](Images/TCR_HUD.png)
 
 *Imagen de como se ve un personaje en relación a un nivel, con su heads-up display que muestra la barra de maldición (ícono del cráneo), la barra de vida (ícono del corazón) y una item box para las armas secundarias.*
 
@@ -154,7 +150,7 @@ Al inicio se tenían en cuenta otros sprites, pero esos sprites limitaban el mov
 - Acreditaciones de elementos externos.
 
 A continuación se muestra una imagen de cómo quedó la version final:
-- agregar imagen
+![Credits](Images/TCR_Credits.png)
 
 
 ### **Controls**
