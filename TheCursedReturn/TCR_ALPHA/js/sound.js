@@ -108,6 +108,8 @@ const hitSound = new Sound('hit', false, 1.0);
 const chestSound = new Sound('chest', false, 1.0);
 const gunsmithSound = new Sound('gunsmith', false, 1.0);
 const healerSound = new Sound('healer', false, 1.0);
+
+// Add sounds to the gameSounds array
 gameSounds.push(bowSound);
 gameSounds.push(swordSound);
 gameSounds.push(spellSound);
