@@ -39,8 +39,7 @@ Queda estrictamente prohibida la reproducción, distribución, modificación o u
     1. [Themes](#themes)
     2. [Game Flow](#game-flow)
 5. [Development](#development)
-    1. [Abstract Classes](#abstract-classes--components)
-    2. [Derived Classes](#derived-classes--component-compositions)
+    1. [Classes](#abstract-classes--components)
 6. [Graphics](#graphics)
     1. [Style Attributes](#style-attributes)
     2. [Graphics Needed](#graphics-needed)
@@ -70,8 +69,8 @@ El objetivo del juego es completar diferentes niveles, mientras el jugador inten
 
 ### **Mindset**
 
-Queremos hacer que el jugador se sienta como un estratega, mientras se mantiene alerta de los riesgos que su personaje corre. Queremos provocar este mindset colocando al jugador en situaciones donde deberán decidir si utilizar sus ventajas, o guardarlas para otro momento.
-También buscamos que los jugadores se sientan aventureros mientras avanzan por los niveles en búsqueda de una manera de romper la maldición. Los diferentes entornos provocarán un sentido de aventura para el jugador, ya que explorarán zonas que siempre serán completamente diferentes.
+Queremos hacer que el jugador se sienta como un héroe que siempre piensa qué hacer y las consecuencias de sus acciones, mientras se mantiene alerta de los riesgos que su personaje corre. Queremos provocar este mindset colocando al jugador en situaciones donde deberán decidir si utilizar sus ventajas, o guardarlas para otro momento.
+También buscamos que los jugadores se sientan como aventureros mientras avanzan por los niveles en búsqueda de una manera de romper la maldición. Los diferentes entornos provocarán un sentido de aventura para el jugador, ya que explorarán zonas que siempre serán completamente diferentes.
 Finalmente, queremos provocar una sensación de precaución, con la que el jugador deberá decidir de manera estratégica las acciones que realizará, para llegar lo más lejos posible antes de que la maldición lo elimine. Además deberán elegir su clase considerando los posibles peligros que se presentarán en cada nivel.
 
 
@@ -81,7 +80,7 @@ Finalmente, queremos provocar una sensación de precaución, con la que el jugad
 
 ### **Screens**
 
-El juego contará con varias pantallas clave, cada una diseñada con una interfaz clara y funcional para mejorar la experiencia del usuario. Cada pantalla tendrá su propio propósito y navegación bien definida. A continuación se explican las pantallas más importantes, además, se mostrará el concepto dinal, junto con el conceptual.
+El juego contará con varias pantallas clave, cada una diseñada con una interfaz clara y funcional para mejorar la experiencia del usuario. Cada pantalla tendrá su propio propósito y navegación bien definida. A continuación se explican las pantallas más importantes, además, se mostrará el concepto inicial, junto con el final.
 
 1. **Title Screen (Pantalla de Inicio)**
 
@@ -99,6 +98,8 @@ El juego contará con varias pantallas clave, cada una diseñada con una interfa
 A continuación se muestra un boceto de cómo se vería:
 ![Menu](Images/MenuTheCursedReturn.jpg)
 
+A continuación se muestra una imagen de cómo quedó la version final:
+- agregar imagen
 
 2. **Menú de Opciones**
 
@@ -107,6 +108,9 @@ A continuación se muestra un boceto de cómo se vería:
 - *Volumen de Efectos*: Ajuste específico para los sonidos del combate y ambiente.
 - *Volumen de música*: Permite ajustar el nivel de volumen de la banda sonora.
 - *Botón de "Regresar"*: Para volver al menú principal.
+
+A continuación se muestra una imagen de cómo quedó la version final:
+- agregar imagen
 
 3. **Juego Principal**
 
@@ -118,7 +122,10 @@ A continuación se muestra un boceto de cómo se vería:
 - *Iconos de estado*: Notificaciones visuales que informan sobre mejoras temporales o penalizaciones activas.
 - *Menú de pausa*: Permite acceder a configuraciones, controles y otras opciones sin salir del juego.
 
-A continuación se muestra una secuencia de bocetos:
+A continuación se muestra una imagen de cómo quedó la version final:
+- agregar imagen
+
+A continuación se muestra una secuencia de los sprites finales para nuestros personajes:
 ![Classes](Images/ClassesTheCursedReturn.jpg)
 
 *Las tres clases para nuestro juego, Mago, Arquero y Soldado. En ese orden*
@@ -130,11 +137,12 @@ Al inicio se tenían en cuenta otros sprites, pero esos sprites limitaban el mov
 
 ![Perspective](Images/PerspectiveDraftTheCursedReturn.jpg)
 
-*Boceto de cómo se verían los personajes respecto a un pedazo del mapa*
+*Imagen de cómo se ven los personajes respecto a un pedazo del mapa*
 
 ![HUD](Images/HUDTheCursedReturn.jpg)
+- actualizar imagen
 
-*Boceto de cómo se vería un personaje en relación a un nivel, con su heads-up display que muestra la barra de maldición (corazón morado), la barra de vida (corazón rojo) y dos apartados, uno muestra los enemigos derrotados y otro muestra el nivel de dificultad.*
+*Imagen de como se ve un personaje en relación a un nivel, con su heads-up display que muestra la barra de maldición (ícono del cráneo), la barra de vida (ícono del corazón) y una item box para las armas secundarias.*
 
 4. **Créditos del juego**  
 
@@ -145,42 +153,42 @@ Al inicio se tenían en cuenta otros sprites, pero esos sprites limitaban el mov
 - Opción para regresar al menú principal.
 - Acreditaciones de elementos externos.
 
+A continuación se muestra una imagen de cómo quedó la version final:
+- agregar imagen
+
 
 ### **Controls**
 El sistema de controles define cómo el jugador va a interactuar con el juego, permitiendo movimientos, ataques y acciones esenciales para la jugabilidad. A continuación se enlistan los controles para “The Cursed Return”.
 
 1. **Movimiento del jugador**  
 
-Teclas de dirección (WASD)
 - W → Moverse hacia arriba.
 - S → Moverse hacia abajo.
 - A → Moverse hacia la izquierda.
 - D → Moverse hacia la derecha.
-- L o click derecho → Dash
+- Barra de Espacio → Dash
  
 2. **Ataques y Combate**  
-- Ataque principal: K o click izquierdo → Ataque con el arma equipada.
+- Ataque principal: K → Ataque con el arma equipada.
 - Diferentes armas tienen diferentes animaciones y efectos.
-- Si se deja presionada la tecla/click, se hará un ataque cargado, que hará más daño.
+- Si se deja presionada la tecla/click, se quedara el ataque en loop, en caso de utilizar las clases de arquero o mago, la animación quedará en un loop **sin disparar proyectiles**.
 
 3. **Interacciones**  
 - *Interacción*: Se utiliza la misma tecla porque tiene una función de interacción en circunstancias específicas.
 - *Interacción con Curandero, Armero y con Cofres*: Tecla F → Permitirá interactuar con los personajes que le proporcionarán ayuda al jugador, al igual que podrán abrir cofres que encuentren a lo largo de su run.
-- *Recoger objetos (armas o pociones)*: Tecla F → Recoger los objetos del escenario.
-  
 
 4. **Navegación por el menú**  
-    i. El jugador puede acceder a los menús (por ejemplo, inventario, selección de clase) usando una tecla dedicada (por ejemplo, "Tab").  
-    ii. Se navegará por los menús utilizando el mouse o entradas direccionales.
+    i. El jugador puede acceder al menú (sonido, estadísticas, guardar y salir, regresar) usando una tecla dedicada (esc).  
+    ii. Se navegará por los menús utilizando el mouse.
 
 ### **Mechanics**  
 Nuestro juego introduce una mecánica en específico que consideramos muy innovadora, que refuerza la temática de la maldición y el loop temporal. Pero algunas de las principales mecánicas son:  
 
 1. **Barra de maldición**  
 - La barra de maldición representa el tiempo que el jugador tiene para pasar las salas antes de ser víctima de la maldición y reiniciar su partida.
-- Esta barra se agota de forma constante a lo largo del tiempo, pero puede regenerarse al derrotar enemigos.
-- La barra de maldición comienza llena y se vacía completamente en 10 minutos si no se regenera.
-- Derrotar enemigos permite regenerar un porcentaje de la barra, dependiendo del nivel y tipo de enemigo.
+- Esta barra se agota de forma constante a lo largo del tiempo, y no puede regenerarse.
+- La barra de maldición comienza llena y se vacía completamente en cierto tiempo si no se regenera.
+- Derrotar jefes al final de cada nivel te otorga un aumento a la barra de maldición que permanece para el resto de runs de ese jugador.
 - Su implementación está basada en un temporizador en segundo plano.
 
     **Ejemplo en el Gameplay**
@@ -193,27 +201,10 @@ Nuestro juego introduce una mecánica en específico que consideramos muy innova
     |---------|----------|--------------|
     | 10      | 600      | 10:00        |
 
-    Los siguientes bocetos ilustran el progreso de cómo es que la barra de maldición va bajando con el tiempo. En el boceto, diferenciamos la barra de vida de la barra de maldición por el color del corazón al inicio de la barra, la barra de maldición tiene un corazón morado, mientras que la barra de vida tiene un corazón rojo. 
+    Las siguientes imágenes ilustran el progreso de cómo es que la barra de maldición va bajando con el tiempo. En la imagen, diferenciamos la barra de vida de la barra de maldición por el ícono de cada barra, la barra de maldición tiene un ícono de un cráneo, y la barra de vida tiene un ícono de corazón. 
 
-![CBF](Images/CurseBarFull.png)
-
-*Boceto de la barra de maldición al 100%*
-
-![CBY](Images/CurseBarYellow.png)
-
-*Boceto de la barra de maldición entre el 50% y 75%*
-
-![CBO](Images/CurseBarOrange.png)
-
-*Boceto de la barra de maldición entre el 25% y 50%*
-
-![CBR](Images/CurseBarRed.png)
-
-*Boceto de la barra de maldición entre el 0% y 25%*
-
-![HBF](Images/HealthBarFull.png)
-
-*Boceto de la barra de vida entre al 100%*
+A continuación se muestra una imagen de cómo quedó la version final:
+- agregar imagen
 
 2. **Generación aleatoria de niveles**
 
@@ -223,28 +214,27 @@ Nuestro juego introduce una mecánica en específico que consideramos muy innova
 - Existen 12 salas en total, divididas en 4 por ecosistema.
 - Cada partida selecciona aleatoriamente salas de cualquier ecosistema para construir el nivel.
 - Las salas se bloquean hasta que el jugador elimine a todos los enemigos dentro.
-- El jefe del nivel siempre estará al final y será el último desafío antes de avanzar.
-- Cofres y recompensas aparecen en una sala específica sin enemigos, elegida aleatoriamente dentro del nivel.
-- Al iniciar la partida, el jugador tiene tres formas de salir de la sala: ganar derrotando a todos los enemigos, perder si su barra de vida llega a cero, ser eliminado por la maldición si su barra llega a cero.
+- El jefe del nivel siempre estará al final y será el último desafío antes de avanzar al siguiente nivel.
+- Cofres y recompensas aparecen en una sala aleatoria con enemigos.
+- Al iniciar la partida, el jugador tiene tres formas de seguir: ganar derrotando a todos los enemigos, perder si su barra de vida llega a cero, ser eliminado por la maldición si su barra llega a cero.
+- Cabe resaltar que al final de las doce salas, existe un jefe final, que tiene permitido a nivel de backend utilizar una sala repetida.
 
     **Ejemplo en el Gameplay**
     
-    El jugador entra a la sala de un nivel, observa que hay enemigos de corto y largo alcance. Decide primero atacar a los enemigos de largo alcance para evitar recibir daño constante de lejos, derrota a todos los enemigos y desbloquea la siguiente sala. El jugador continúa así hasta llegar a la sala del jefe.
+    El jugador entra a la sala de un nivel, observa que hay enemigos de diferentes apariencias. Decide primero atacar a los enemigos de que poseen menos armadura, derrota a todos los enemigos y desbloquea la siguiente sala. El jugador continúa así hasta llegar a la sala del jefe.
  
 
-3. **Progresión de las clases con mejoras y desventajas**
+3. **Progresión de las clases con ayuda de los NPC´s y la mejora de la maldición**
 
-- El jugador podrá obtener diferentes mejoras y desventajas que afectarán su desempeño durante la partida.
-- Pueden ser temporales o permanentes, y afectan tanto el combate como la barra de maldición.
+- El jugador podrá encontrarse con diferentes NPC´s que le permitirán mejorar su desempeño durante la partida.
 - Existe un arma secundaria temporal, que se obtiene durante la partida y tiene una duración de 1 minuto.
-- Existen mejoras temporales, que se obtienen durante la partida y sólo duran esa partida.
 - Existe un aumento del tamaño de la barra de maldición, que se obtiene al derrotar a un jefe y se mantiene por el resto de partidas.
  
 4. **Combate rápido y estratégico**
--   El combate es en tiempo real, con una mecánica de “dash” que permite a los jugadores esquivar ataques y adaptarse a diferentes tipos de enemigos.
--   El jugador puede realizar una evasión rápida en cualquier dirección para  evitar ataques enemigos. Se implementará con una animación de desplazamiento.
--   Cada clase comienza con un ataque básico.
--   Al obtener un arma secundaria, el ataque básico se mantiene, pero se vuelve más fuerte.
+-   El combate es en tiempo real, con una mecánica de “dash” que permite a los jugadores esquivar ataques y adaptarse a diferentes tipos y grupos de enemigos.
+-   El jugador puede realizar una evasión rápida en cualquier dirección para  evitar ataques enemigos.
+-   Cada clase comienza con un ataque básico predefinido.
+-   Al obtener un arma secundaria, el ataque utiliza el arma secundaria, que también es más fuerte.
 -   No existen efectos de estado como quemaduras o veneno, centrándose en el combate directo.
 
 Cada clase tiene un estilo de combate único:
@@ -265,7 +255,6 @@ Se utilizará un sistema de detección de colisiones y físicas para hacer que l
 
 - Los esqueletos solo aparecerán en el desierto.
 - Los duendes y lagartos sólo aparecerán en el bosque.
-- Los minotauros y lobos sólo aparecerán en la nieve.
 
 A continuación se muestra una tabla con las vidas de los enemigos.
 
@@ -276,45 +265,59 @@ A continuación se muestra una tabla con las vidas de los enemigos.
 | **Nivel 3** | 150           | 500            | 2000  |
 
 Aquí se asumirá que:
-- Los esqueletos sin armadura serán comunes.
-- Los esqueletos con armadura serán fuertes.
-- Los duendes sin armas y poca armadura serán comunes.
-- Los duendes con armas y armadura serán fuertes.
-- Los lobos serán fuertes por defecto.
-- Los minotauros serán fuertes por defecto.
+- Los esqueletos con poca armadura serán comunes.
+- Los esqueletos con mayor armadura serán fuertes.
+- Los duendes con poca armadura serán comunes.
+- Los duendes con mayor armadura serán fuertes.
+- Los lagartos con poca armadura serán comunes.
+- Los lagartos con mayor armadura serán fuertes.
 
 *Nota: se hablará de los personajes más a fondo en las siguientes secciones.
 
 5. **Curandero, Armero y Cofres**
 
 A lo largo del run del jugador, este podrá encontrarse con salas que contengan uno de los siguientes:
-- Armero: le dará un arma secundaria aleatoria al jugador.
-- Curandero: le dará una pócima al jugador que le curará 25% de la barra de vida.
-- Cofre: le dará al jugador una pócima o un arma secundaria aleatoria.
+- Armero: le dará al jugador un arma secundaria aleatoria.
+- Curandero: le regenerará al jugador una cantidad de HP predefinida.
+- Cofre: le dará al jugador un arma secundaria aleatoria.
 
 Estos elementos servirán como ventajas para el jugador ya que, el arma secundaria podrá causar más daño que el arma base de cada clase. Habrá 4 armas secundarias diferentes:
+
 - Hacha de guerra: Un hacha que provocará gran daño, pero reduce la velocidad del jugador.
+A continuación se muestra una imagen de cómo quedó la version final:
+- agregar imagen
+
+  
 - Lanza: Una lanza que tendrá mucho daño, pero tendrá un corto alcance.
+A continuación se muestra una imagen de cómo quedó la version final:
+- agregar imagen
+
+
 - Ballesta: Una ballesta que tendrá el daño de un arco cargado, pero un rango menor.
+A continuación se muestra una imagen de cómo quedó la version final:
+- agregar imagen
+
 - Daga: Una daga que permitirá que las clases de rango lejano puedan acercarse a combate cuerpo a cuerpo.
+A continuación se muestra una imagen de cómo quedó la version final:
+- agregar imagen
 
-En cuanto al armero, este podrá aparecer en una sala única que no tendrá enemigos, en el momento en el que el jugador interactúe con él, se asignará un arma temporal aleatoria al jugador.
+En cuanto al armero, este podrá aparecer en una sala aleatoria con enemigos, en el momento en el que el jugador interactúe con él, se asignará un arma temporal aleatoria al jugador.
 
-En cuanto a la curandera, también aparecerá en una sala única que no tendrá enemigos, en el momento en el que el jugador interactúe con ella, se  le asignará una pócima al jugador, la cuál le regenerará vida, más no maldición.
+En cuanto a la curandera, también aparecerá en una sala aleatoria con enemigos, en el momento en el que el jugador interactúe con ella, se le asignará una regeneración de HP al jugador, la cuál le regenerará vida, más no maldición.
 
-A continuación se muestran bocetos de la Curandera y del Armero:
+A continuación se muestran las imágenes finales de la Curandera y del Armero:
 
 <img src="Images/CuranderaTheCursedReturn.jpg" alt="Curandera" width="600">
 
-*Boceto de la Curandera*
+*Imagen final de la Curandera*
 
 ![Arm](Images/ArmeroTheCursedReturn.jpg)
 
-*Boceto del Armero*
+*Imagen final del Armero*
 
 ![Cof](Images/CofreTheCursedReturn.jpg)
 
-*Boceto de cómo se verán los cofres abiertos y cerrados respectivamente* 
+*Imagen final de cómo se verán los cofres abiertos y cerrados respectivamente* 
 
 6. **Armas secundarias**
 
@@ -327,7 +330,7 @@ Previamente ya mencionado, habrá 4 armas secundarias diferentes:
 
 Estas armas se activarán en el momento en el que el jugador la recoja, con una duración de 1 minuto y al terminar ese tiempo, el jugador regresará al arma que le corresponde a la clase que eligió. Esto permitirá que el jugador pueda crear nuevas maneras para pasar niveles y derrotar a enemigos, pero también lo obligará a que piense de manera más crítica.
 
-Si el jugador ya cuenta con un arma secundaria temporal, y encuentra a otros npc o cofre que le dé otra arma secundaria temporal, el jugador deberá considerar su estrategia para lo que le queda del run y escoger el arma con la cual continuar su camino (es decir, si recoger el arma o no).
+Si el jugador ya cuenta con un arma secundaria temporal, y encuentra a otros npc o cofre que le dé otra arma secundaria temporal, el jugador deberá considerar su estrategia para lo que le queda del run y escoger el arma con la cual continuar su camino (es decir, si tomar el arma o no).
 
 
 A continuación se muestra una tabla que contiene información sobre cada arma secundaria:
@@ -384,13 +387,14 @@ Para fomentar la rejugabilidad y la competencia entre jugadores, se añadirá un
             2. Ruinas cubiertas por arena
             3. Esqueletos y restos de armadura
         2. _Interactivo_
-            1. Esqueletos (enemigo - 3 variaciones)
-            2. Cofres
-            3. Armas Secundarias
-            4. Curandero
-            5. Armero
+            1. Esqueletos (enemigo - 2 variaciones)
+            2. Esqueleto (jefe - 1 variación)
+            3. Cofres
+            4. Armas Secundarias
+            5. Curandero
+            6. Armero
 
-Boceto de un nivel del desierto:
+Imagen final de un nivel del desierto:
 
 ![Des](Images/DraftTheCursedReturnDESERTBLANK.png)
 
@@ -404,13 +408,13 @@ Boceto de un nivel del desierto:
             3. Troncos caídos
         2. _Interactivo_
             1. Duendes (enemigo - 2 variaciones)
-            2. Lobos (enemigo - 1 variación)
+            2. Lobos (jefe - 1 variación)
             3. Cofres
             4. Armas Secundarias
             5. Curandero
             6. Armero
 
-Boceto de un nivel del bosque:
+Imagen final de un nivel del bosque:
 
 ![Woo](Images/DraftTheCursedReturnBlank2.png)
 
@@ -424,31 +428,32 @@ Boceto de un nivel del bosque:
             3. Rocas congeladas
             4. Piedras de hielo
         2. _Interactivo_
-            1. Minotauros (enemigo - 1 variación)
-            2. Lagartos (enemigo - 2 variaciones)
+            1. Lagartos (enemigo - 2 variaciones)
+            2. Minotauro (jefe - 1 variaciones)
             3. Cofres
             4. Armas Secundarias
             5. Curandero
             6. Armero
 
 
-Boceto de un nivel de la nieve:
+Imagen final de un nivel de la nieve:
 
 ![Sno](Images/DraftTheCursedReturnSNOWBLANK.png)
 
 ### **Game Flow**
 
 *Inicio del juego*
-1. Aparece un breve texto que da contexto a la historia del juego.
+1. Aparece una breve secuencia de impagenes que dan contexto a la historia del juego.
 2. El jugador comienza en un bioma aleatorio (bosque, desierto o nieve).
-3. HUD aparece: barra de vida, barra de maldición, indicador de clase seleccionada, etc.
+3. HUD aparece: barra de vida, barra de maldición.
 
 *Exploración inicial*
-1. El jugador se encuentra en la primera sala con enemigos aleatorios.
-2. El jugador se da cuenta que la puerta a la siguiente sala está cerrada.
-3. El jugador observa el tipo de enemigos (corta o larga distancia) y toma decisiones sobre cómo proceder.
-4. El jugador observa que la barra de maldición está comenzando a bajar.
-5. La batalla comienza, el jugador comienza a atacar estratégicamente.
+1. El jugador se encuentra en la primera sala con una imagen que indica los controles del juego.
+2. El jugador avanza a la segunda sala y trata de esquivar a todos los enemigos
+3. El jugador se da cuenta que la puerta a la siguiente sala está cerrada.
+4. El jugador observa el tipo de enemigos (fuertes o débiles) y toma decisiones sobre cómo proceder.
+5. El jugador observa que la barra de maldición está comenzando a bajar.
+6. La batalla comienza, el jugador comienza a atacar estratégicamente.
 
 *Movimiento entre Salas*
 1. Una vez derrotados los enemigos, la puerta o entrada a la siguiente sala se desbloquea.
@@ -458,11 +463,11 @@ Boceto de un nivel de la nieve:
 *Encuentro con el Jefe*
 1. El jugador lleva a la cuarta sala, donde se encontrará a un Jefe.
 2. La barra de maldición está a la mitad o menos, lo que genera presión adicional para completar el nivel.
-3. Se activa un corte de sonido o transición para indicar la llegada al jefe.
+3. Comienza el combate.
 
-*Fase del Combate Final*
+*Fase del Combate contra los Jefes*
 1. El jugador se enfrenta al jefe final en una batalla emocionante.
-2. El jefe tiene mecánicas especiales, como fuerza mucho mayor o spawnear enemigos básicos,  el jugador debe adaptarse a su patrón de ataque para sobrevivir.
+2. El jefe tiene mecánicas especiales, como fuerza mucho mayor o con mucha más HP,  el jugador debe adaptarse a su patrón de ataque para sobrevivir.
 3. El combate sucede bajo la presión de la maldición, con el jugador viendo cómo la barra disminuye constantemente.
 
 *Finalización del nivel*
@@ -473,13 +478,15 @@ Boceto de un nivel de la nieve:
 1. Al reiniciar, el jugador comienza de nuevo, pero con una nueva generación de niveles.
 2. Además, el jugador conserva el tamaño alcanzado de la barra (en dado caso de que haya eliminado a un jefe en cierto nivel).
 
+*Combate con el Jefe Final*
+1. Si el jugador completa las 12 salas, llegará a una sala final, donde se encuentra el jefe final, el jugador deberá analizar los ataques del jefe y proceder como considere mejor, en caso de derrotarlo, el jugador será llevado a una pantalla de victoria.
+
 A continuación, mostraremos unas tablas que simulan los valores de enemigos y tiempo en cada nivel (estos valores están sujetos a cambios de ser necesario y se usaron para visualizar el tiempo de sobra que le quedaría al usuario si se dedicara únicamente a eliminar enemigos):
 
 **Nivel 1** 
 
 Parte a): 
 
-Es necesario recordar que se parte de un tiempo total inicial de 600 segundos:
 - En esta tabla se estima un tiempo que toma en eliminar a los enemigos por su fuerza para el primer nivel.
 - Posteriormente, se pone el número de enemigos máximo del nivel (este es el mismo en todos los niveles).
 - Después se obtiene el tiempo total que toma eliminarlos.
@@ -519,54 +526,92 @@ Los cambios son:
 
 ---
 
-El desarrollo del juego se estructurará en una serie de clases base y clases derivadas que encapsulan las mecánicas principales del juego.
+El desarrollo del juego se estructuró en una serie de clases base y clases derivadas que encapsulan las mecánicas principales del juego.
 
 ### **Abstract Classes / Components**
 
-Estas clases proporcionan la estructura más fundamental y básica del juego, se definirán las propiedades y métodos que van a ser heredados por clases más específicas.
+Estos scripts contienen la lógica y propiedades fundamentales del juego:
 
-1. PersonajeBase
-- JugadorBase (Tiene movimiento, ataques y ataque cargado)
-- EnemigoBase (Ataca al jugador con distinto daño dependiendo del tipo)
-- NPCBase (Ofrecen objetos al jugador)
-2. ObjetoBase
-- ObjetoArmaSecundaria (Son temporales y ofrecen ventajas)
-3. ObstaculoBase
-4. ElementosUIBase
+---
 
-### **Derived Classes / Component Compositions**
+- **player.js**  
+  Gestiona movimiento, ataques (melee y a distancia), ataque cargado, dashes, animaciones, muerte del jugador.
 
-1. JugadorBase
-- Soldado (Cuerpo a cuerpo y daño alto)
-- Arquero (Rango de ataque alto y daño bajo)
-- Hechizero (Rango de ataque moderado y daño moderado)
-2. EnemigoBase
-- EnemigoEsqueleto (Comunes y fuertes)
-- EnemigoDuende (Comunes y fuertes)
-- EnemigoLagarto (Comunes y fuertes)
-- EnemigoMinotauro (Fuertes)
-- EnemigoLobo (Fuertes)
-3. NPCBase
-- NPCCurandera (Ofrece una poción al jugador)
-- NPCCArmero (Ofrece un arma secundaria al jugador)
-4. ObjetoBase
-- ObjectoCofre (Ofrece un arma secundaria o una poción al jugador)
-- Objeto pócima (Regenera vida al jugador)
-5. ObjetoArmaSecundaria
-- ArmaHacha (Daño, alcance, velocidad)
-- ArmaLanza(Daño, alcance, velocidad)
-- ArmaBallesta (Daño, alcance, velocidad)
-- ArmaDaga (Daño, alcance, velocidad)
-6. ObstaculoBase
-- ObstaculoPared (Previene que el jugador salga del nivel)
-- ObstaculoPuerta (Previene que el jugador salga de la sala hasta que mate a todos los enemigos)
-7. UIBase
-- BarraMaldicion (Muestra el tiempo restante antes de que la maldición consuma al jugador)
-- BarraVida (Muestra la vida del jugador)
-- Iconos (Muestran la clase del jugador y si es el caso el arma secundaria)
-- Puntaje (Muestra los enemigos eliminados)
-- BotonMenu (Pausa el juego y abre los ajustes)
+- **enemy.js**  
+  Controla el comportamiento de los enemigos (seguimiento al jugador, ataque, muerte, animaciones, daño recibido).
 
+- **healer.js**  
+  Define el comportamiento de la curandera NPC, permite curar al jugador al interactuar.
+
+- **gunsmith.js**  
+  Controla al armero NPC, permite entregar armas secundarias al jugador.
+
+- **chest.js**  
+  Maneja la lógica del cofre, entrega armas secundarias o pociones al abrirse.
+
+- **secondaryWeapon.js** (si aplica, o integrado en `game_classes.js`)  
+  Gestiona las armas secundarias (hacha, lanza, ballesta, daga), su daño, velocidad, alcance y duración.
+
+- **map_manager.js**  
+  Administra mapas, lectura de colisiones desde matriz, generación de salas, validación de posiciones libres.
+
+- **curse.js**  
+  Controla la barra de maldición (temporizador de tiempo límite), extensión al derrotar jefes.
+
+- **tcr.js**  
+  Dibuja la interfaz gráfica del juego: barra de vida, barra de maldición, íconos de clase y arma, puntaje, menú de pausa.
+
+- **game.js**  
+  Orquesta la lógica central del juego: control de niveles, habitaciones, spawns, enemigos, bosses, progreso y condiciones de victoria o derrota.
+
+- **game_classes.js**  
+  Contiene clases auxiliares como proyectiles (flechas, bolas de fuego, hechizos), armas secundarias, orbes mágicos, y animaciones personalizadas.
+
+---
+
+### **Personajes Jugables**
+
+- Caballero → `player.js`  
+- Arquero → `player.js`  
+- Hechicero → `player.js`
+
+---
+
+### **Enemigos**
+
+- Goblin → `enemy.js`  
+- Esqueleto → `enemy.js`  
+- Lagarto → `enemy.js`  
+- Minotauro (jefe) → `enemy.js`  
+- Lobo (jefe) → `enemy.js`  
+- Bruja (jefa final) → `enemy.js` y `game_classes.js` (proyectiles mágicos)
+
+---
+
+### **NPCs**
+
+- Curandera → `healer.js`  
+- Armero → `gunsmith.js`  
+- Cofre → `chest.js`
+
+---
+
+### **Obstáculos y Mapas**
+
+- Paredes y colisiones → `map_manager.js`  
+- Puertas que bloquean salida hasta limpiar enemigos → `game.js`
+
+---
+
+### **UI (Interfaz de Usuario)**
+
+- Barra de maldición → `curse.js`  
+- Barra de vida → `tcr.js`  
+- Íconos de clase y arma → `tcr.js`  
+- Puntaje de enemigos eliminados → `tcr.js`  
+- Botón de menú / pausa → `tcr.js`
+
+---
 
 
 
@@ -588,9 +633,9 @@ Algunos colores que utilizaremos son los siguientes:
 - Para el bioma del desierto: #d7bd4e y #ba8b4a
 - Para el bioma de nieve: #a6b5b5 y #8cadb4
 
-El estilo gráfico es en pixel art en 2D, con una resolución aproximada de 32x32 píxeles por personaje. Queremos que las armas y vestimentas tengan un toque semi-realista. Para los personajes vamos a utilizar contornos negros además de contrastes de color para definir las siluetas y sombras. 
+El estilo gráfico es en pixel art en 2D, con una resolución aproximada de 64x64 píxeles por personaje. Queremos que las armas y vestimentas tengan un toque semi-realista. Para los personajes vamos a utilizar contornos negros además de contrastes de color para definir las siluetas y sombras. 
 
-Para tener una retroalimentación visual efectiva, incorporaremos diferentes efectos, por ejemplo, cuando el jugador o un enemigo recibe daño, se mostrará un frame rojo en el sprite. Al igual que con el jugador, los enemigos también mostrarán un frame rojo en su sprite. 
+Para tener una retroalimentación visual efectiva, incorporaremos diferentes efectos, por ejemplo, cuando el jugador o un enemigo recibe daño, se mostrará un flash rojo en la pantalla. Los enemigos también mostrarán un una barra de vida sobre ellos, que irá bajando conforme el daño que reciban. 
 
 Los cofres y armas secundarias contarán con sus propios efectos y animaciones, también se implementarán animaciones en la barra de vida y maldición, al igual que colocar íconos por si el jugador obtiene el arma secundaria.
 
@@ -627,7 +672,7 @@ Los cofres y armas secundarias contarán con sus propios efectos y animaciones, 
    - Morir (una dirección)
 
 5. *Curandera y Armero*: No tendrá variación, y su diseño será diferente a todos los demás personajes, a su vez, este diseño será exclusivo para cada personaje.
-   - Idle (cuatro direcciones)
+   - Idle (una dirección)
    - Interacción con el jugador (una dirección)
 
 **2. Enemigos Semi-Humanos**
@@ -636,38 +681,28 @@ Los cofres y armas secundarias contarán con sus propios efectos y animaciones, 
    - Idle (cuatro direcciones)
    - Caminar (cuatro direcciones)
    - Atacar (cuatro direcciones)
-   - Recibir daño (cuatro direcciones)
-   - Morir (una dirección)
 
 2. *Duendes*: Habrá tres variaciones en el diseño, que serán cambios en su armadura, los que tienen más armadura harán más daño y tendrán más vida, los que tienen menos armadura son los “comunes” con menos fuerza y menos vida.
    - Idle (cuatro direcciones)
    - Caminar (cuatro direcciones)
    - Atacar (cuatro direcciones)
-   - Recibir daño (cuatro direcciones)
-   - Morir (una dirección)
   
-3. *Minotauro*: No tendrá variación, el daño que tiene es fijo.
+3. *Minotauro*: No tendrá variación.
    - Idle (cuatro direcciones)
    - Caminar (cuatro direcciones)
    - Atacar (cuatro direcciones)
-   - Recibir daño (cuatro direcciones)
-   - Morir (una dirección)
 
 **3. Enemigos No-Humanos**
 
-1. *Lagartos*: Habrá tres variaciones en el diseño, que serán cambios en su armadura, los que tienen más armadura harán más daño y tendrán más vida, los que tienen menos armadura son los “comunes” con menos fuerza y menos vida.
+1. *Lagartos*: Habrá dos variaciones en el diseño, que serán cambios en su armadura, los que tienen más armadura harán más daño y tendrán más vida, los que tienen menos armadura son los “comunes” con menos fuerza y menos vida.
    - Idle (cuatro direcciones)
    - Caminar (cuatro direcciones)
    - Atacar (cuatro direcciones)
-   - Recibir daño (cuatro direcciones)
-   - Morir (una dirección)
   
-2. *Lobo*: No tendrá variación, el daño que tiene es fijo.
+2. *Lobo*: No tendrá variación.
    - Idle (cuatro direcciones)
    - Caminar (cuatro direcciones)
    - Atacar (cuatro direcciones)
-   - Recibir daño (cuatro direcciones)
-   - Morir (una dirección)
 
 **Tiles y Bloques**
 
@@ -697,7 +732,7 @@ Cada bioma tendrá su propio tileset, organizados en 12 salas distribuidas en 3 
    - Huellas
    - Lagos Congelados
 
-Además de estos elementos en los tilesets, planeamos agregar decoraciones que no tengan ningún otro propósito más que ser utilizados como decoración para ayudar a ambientalizar la zona. No tendrán interacción alguna con el personaje.
+Además de estos elementos en los tilesets, agregamos decoraciones que no tenían ningún otro propósito más que ser utilizados como decoración para ayudar a ambientalizar la zona. No tendrán interacción alguna con el personaje.
 
 **Ambiente**
    - Hierba Alta
@@ -708,6 +743,8 @@ Además de estos elementos en los tilesets, planeamos agregar decoraciones que n
    - Raíces que salen de los árboles
    - Árboles
    - Arbustos
+   - Muñecos de nieve
+   - Casas
 
 **Other**
    - Cofres
@@ -719,7 +756,6 @@ Además de estos elementos en los tilesets, planeamos agregar decoraciones que n
 ---
 
 ### **Style Attributes**
-
 La banda sonora de The Cursed Return se compone de una única pieza orquestal ambiental que se reproduce en bucle a lo largo de todo el juego. Aunque inicialmente se contempló un enfoque progresivo, donde la música evolucionara conforme avanzaba el jugador, finalmente se optó por una pista constante que mantiene siempre la misma atmósfera. Esta decisión busca reforzar la identidad del juego a través de una ambientación sonora sólida y uniforme. La pieza elegida tiene una vibra medieval, para lograr una armonía con el juego.
 
 A pesar de que la música no varía según los biomas ni evoluciona con el progreso del jugador, su carácter envolvente y repetitivo fortalece la sensación de estar atrapado en un ciclo sin fin, confirmando el núcleo temático del juego.
