@@ -720,15 +720,9 @@ Además de estos elementos en los tilesets, planeamos agregar decoraciones que n
 
 ### **Style Attributes**
 
-La banda sonora de “The Cursed Return” se basará en un estilo orquestal ambiental que evoque una sensación de estar en una aventura legendaria, pero sin encasillarse en una interpretación medieval o similar al género de nuestros personajes e historia. Deseamos utilizar instrumentos orquestales como cuerdas, metales, percusión, y coros para reforzar la sensación de grandeza y peligro, por lo que también es prudente utilizar un tempo que sea rápido, uno ideal sería 165 BPM, que puede dar pauta a coros sombríos o armonías épicas.
+La banda sonora de The Cursed Return se compone de una única pieza orquestal ambiental que se reproduce en bucle a lo largo de todo el juego. Aunque inicialmente se contempló un enfoque progresivo, donde la música evolucionara conforme avanzaba el jugador, finalmente se optó por una pista constante que mantiene siempre la misma atmósfera. Esta decisión busca reforzar la identidad del juego a través de una ambientación sonora sólida y uniforme. La pieza elegida tiene una vibra medieval, para lograr una armonía con el juego.
 
-El tono general de la música será tenso y opresivo, ya que la mecánica de la maldición genera una presión constante sobre el jugador, esto se puede reflejar con composiciones que tengan:
-- Ritmos y progresiones armónicas que transmiten urgencia y peligro
-- Crescendos dinámicos en combate para aumentar la tensión
-- Uso de cuerdas en secciones más tranquilas para dar un respiro y una sensación de “calma” antes de regresar a los combates.
-- Capas musicales progresivas, que vayan añadiendo más instrumentos conforme el jugador va llegando más lejos.
-
-A la hora de decidir una generación de biomas aleatoria, se deben evitar choques en la música de los biomas, por ello, se optará utilizar una banda sonora unificada, osea, una misma base musical que se reproduzca en todos los niveles, pero que progresivamente vaya evolucionando conforme el jugador también evoluciona, haciéndose más épica con la incorporación de más instrumentos.
+A pesar de que la música no varía según los biomas ni evoluciona con el progreso del jugador, su carácter envolvente y repetitivo fortalece la sensación de estar atrapado en un ciclo sin fin, confirmando el núcleo temático del juego.
 
 ### **Sounds Needed**
 
