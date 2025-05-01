@@ -83,14 +83,14 @@ Promise.all([
         const mouseY = (event.clientY - rect.top) * scaleY;
 
         // === Audio Button ===
-        if (paused && mouseX >= sonidoX && mouseX <= sonidoX + sonidoWidth &&
+        if (paused && !stats_bool && !sonido_bool && mouseX >= sonidoX && mouseX <= sonidoX + sonidoWidth &&
             mouseY >= sonidoY && mouseY <= sonidoY + sonidoHeight) {
             sonido_bool = true;
             drawAudio();
         }
 
         // === Stats Button ===
-        if (paused && mouseX >= statsX && mouseX <= statsX + statsWidth &&
+        if (paused && !stats_bool && !sonido_bool && mouseX >= statsX && mouseX <= statsX + statsWidth &&
             mouseY >= statsY && mouseY <= statsY + statsHeight) {
             stats_bool = true;
             if (typeof window.drawStats === 'function') {
@@ -101,13 +101,13 @@ Promise.all([
         }
 
         // === Save and Exit Button ===
-        if (paused && mouseX >= saveX && mouseX <= saveX + saveWidth &&
+        if (paused && !stats_bool && !sonido_bool && mouseX >= saveX && mouseX <= saveX + saveWidth &&
             mouseY >= saveY && mouseY <= saveY + saveHeight) {
             saveAndExit();
         }
 
         // === Resume Game Button ===
-        if (paused && mouseX >= resumeX && mouseX <= resumeX + resumeWidth &&
+        if (paused && !stats_bool && !sonido_bool && mouseX >= resumeX && mouseX <= resumeX + resumeWidth &&
             mouseY >= resumeY && mouseY <= resumeY + resumeHeight) {
             paused = false;
             cancelAnimationFrame(drawPause);

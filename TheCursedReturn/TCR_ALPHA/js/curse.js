@@ -43,7 +43,7 @@ class Bar extends GameObject {
     // === Change Bar Color Based on Remaining Width ===
     // green → yellow → orange → red as the bar gets lower
     colorTransition() {
-        if (this.width > barwidth / 4 * 3 && this.width < barwidth) {
+        if (this.width > barwidth / 4 * 3) {
             this.color = "rgb(89, 214, 89)"; // green
         }
         else if (this.width > barwidth / 2 && this.width < barwidth / 4 * 3) {
