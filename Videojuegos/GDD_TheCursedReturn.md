@@ -756,14 +756,15 @@ Además de estos elementos en los tilesets, agregamos decoraciones que no tenía
 ---
 
 ### **Style Attributes**
+La banda sonora de The Cursed Return se compone de una única pieza orquestal ambiental que se reproduce en bucle a lo largo de todo el juego. Aunque inicialmente se contempló un enfoque progresivo, donde la música evolucionara conforme avanzaba el jugador, finalmente se optó por una pista constante que mantiene siempre la misma atmósfera. Esta decisión busca reforzar la identidad del juego a través de una ambientación sonora sólida y uniforme. La pieza elegida tiene una vibra medieval, para lograr una armonía con el juego.
 
-La banda sonora de “The Cursed Return” se basará en un estilo ambiental que evoque una sensación de estar en una aventura legendaria, pero sin encasillarse en una interpretación medieval o similar al género de nuestros personajes e historia. Optamos por utilizar una canción que tiene un estilo aventurero, pero mantiene una tonalidad muy videojueguil. Esta canción se repite en loop sin importar la sala o el nivel en el que el jugador se encuentre.
+A pesar de que la música no varía según los biomas ni evoluciona con el progreso del jugador, su carácter envolvente y repetitivo fortalece la sensación de estar atrapado en un ciclo sin fin, confirmando el núcleo temático del juego.
 
 ### **Sounds Needed**
 
 **Effects**
 
-Los efectos de sonido serán retros y estilizados, en lugar de ser realistas, para que así puedan encajar con la identidad visual del juego, ya que si se agregan efectos realistas, el diseño visual del juego no encajará con el realismo que el audio proporciona. Los efectos tendrán una estética similar a los sonidos clásicos de 16 bits, con un diseño de audio claro y fácil de identificar, de esta manera, la inmersión que se proporcionará será mucho mejor a una donde los efectos y sonidos no encajan con lo que uno ve.
+Los efectos de sonido serán retros y estilizados, para que así puedan encajar con la identidad visual del juego. Los efectos tendrán una estética similar a los sonidos clásicos de 16 bits, con un diseño de audio claro y fácil de identificar, de esta manera, la inmersión que se proporcionará será mucho mejor a una donde los efectos y sonidos no encajan con lo que uno ve.
 
 **Efectos de sonidos por interacción**
 
@@ -772,24 +773,33 @@ Los efectos de sonido serán retros y estilizados, en lugar de ser realistas, pa
 
 *Interacción*
 - Cofre abriéndose
-- Sonido de curación
+- Sonido curación
+- Sonido armero
 
 *Armas*
 - Espada cortando
-- Hacha impactando
-- Lanza perforando
-- Daga apuñalando
 - Flecha disparada desde un arco
-- Ballesta disparando
-- Disparo de magia
+- Disparo de energía
+- Impacto general para arma secundaria
 
 **Feedback**
 
-Para reforzar el feedback sin depender de elementos visuales únicamente, implementaremos sonidos de golpes para indicar que el jugador fue golpeado.
+Se contempló la inclusión de elementos sonoros para reforzar el feedback del jugador sin depender únicamente de lo visual. La propuesta consistía en utilizar sonidos secos al recibir daño, un audio fuerte y abrupto seguido de silencio al morir, y un efecto especial al derrotar al jefe final. Sin embargo, por cuestiones de tiempo y alcance del desarrollo, esta implementación no fue realizada en la versión actual del juego.
 
 ### **Music Needed**
 
-Como los niveles serán generados de manera aleatoria, conforme el jugador avanza y cambiarán entre biomas, también aleatorios, la música será unificada, con una sola pista general que va repitiéndose durante todo el juego.
+Como los niveles serán generados de manera aleatoria, conforme el jugador avanza y cambiarán entre biomas, también aleatorios, la música será unificada, con una sola pista general que que engloba la escencia medieval del juego, repitiendose en un loop reiterando una vez más la maldición del jugador. Aunque la música no evoluciona ni se adapta a los cambios en el entorno o la dificultad, su atmósfera envolvente acompaña cada etapa del juego con la misma esencia, creando una identidad sonora coherente y persistente.
+
+*Sonidos Ambientales*
+No se planea incluir efectos de sonidos adicionales en los escenarios, para evitar una saturación de efectos.
+
+Los efectos y música utilizados son los siguientes:
+
+- BATMARIO. (2023, 15 agosto). Sound Effect - Fortnite Chest Opening [Vídeo]. YouTube. https://www.youtube.com/watch?v=-whYIavLM1s
+- Brawl Stars - Sound Effects. (2021, 1 julio). Heal sound effect [Vídeo]. YouTube. https://www.youtube.com/watch?v=uNe6KXJqf48
+- Context luck. (2022, 18 febrero). roblox sword noise [Vídeo]. YouTube. https://www.youtube.com/watch?v=XBtjOSS2byw
+- sndfcx. (2020, 8 agosto). Minecraft Hit - Sound Effect (HD) [Vídeo]. YouTube. https://www.youtube.com/watch?v=19mr-rHALN8
+- TenAthlete Minecraft. (2023, 21 marzo). Minecraft villager sound effect [Vídeo]. YouTube. https://www.youtube.com/watch?v=fiwRZ_j61Dc
 
 
 ## _Schedule_
