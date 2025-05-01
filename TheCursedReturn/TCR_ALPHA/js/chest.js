@@ -68,7 +68,7 @@ class Chest extends AnimatedObject {
 function grantRandomWeapon(player) {
     if (player.pendingWeapon) {
         console.log("Player already has a pending weapon, ignoring new weapon");
-        return; // No sobreescribir si ya hay un arma pendiente
+        return;
     }
 
     const weapons = ['dagger', 'spear', 'crossbow', 'waraxe'];

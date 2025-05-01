@@ -98,15 +98,7 @@ class Enemy extends AnimatedObject {
         else if (type === 'skeleton' && variant === 'strong') {
             this.movementFrames = { up: 53, left: 54, down: 55, right: 56 };
             this.attackRow = { up: 57, left: 58, down: 59, right: 60 };
-        }
-        
-        /*
-        else if (type === 'witch' && variant === 'boss') {
-            this.movementFrames = { up: 8, left: 9, down: 10, right: 11 };
-            this.attackRow = { up: 53, left: 54, down: 55, right: 56 };
-        }
-        */        
-
+        }      
 
         // === Basic Stats ===
         this.maxHealth = 20;
@@ -305,9 +297,9 @@ class Enemy extends AnimatedObject {
     }
     
     draw(ctx) {
-        super.draw(ctx); // Dibuja el enemigo normal (sprite)
+        super.draw(ctx);
     
-        // Si tiene proyectiles (como la Witch), dibujarlos
+        // if the enemy has projectiles (witch exclusive), draw them
         if (this.projectiles) {
             this.projectiles.forEach(projectile => {
                 projectile.draw(ctx);

@@ -1,47 +1,57 @@
 // === Gunsmith Class ===
+// interactive object that gives the player a random secondary weapon
 class Gunsmith extends AnimatedObject {
     constructor(position, spritePath) {
-        super(position, 64, 65, 'rgba(0,0,0,0)', 'gunsmith', 1); // Assuming 4 frames or adjust accordingly
+        // base setup — position, width, height, transparent color, label, frame count
+        super(position, 64, 65, 'rgba(0,0,0,0)', 'gunsmith', 1);
 
-        this.active = true;
-        this.interactionRadius = 50;
-        this.interactionKey = 'f';
-        this.interactionMessage = "Presiona f para interactuar";
+        // === Gunsmith properties ===
+        this.active = true; // can the gunsmith be interacted with?
+        this.interactionRadius = 50; // distance required to trigger interaction
+        this.interactionKey = 'f'; // key to press for interaction
+        this.interactionMessage = "Presiona f para interactuar"; // message displayed to the player
 
-        this.setSprite(spritePath, { x: 0, y: 0, width: 64, height: 65 });
+        // === Sprite setup ===
+        this.setSprite(spritePath, { x: 0, y: 0, width: 64, height: 65 }); // set initial frame
 
-        this.idleRow = 0; // Row of the sprite for idle
+        // === Animation rows ===
+        this.idleRow = 0; // row used when idle
     }
 
+    // === Check if player is close enough to interact ===
     checkPlayerInRange(player) {
-        const dx = player.position.x - this.position.x;
-        const dy = player.position.y - this.position.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        const dx = player.position.x - this.position.x; // horizontal distance
+        const dy = player.position.y - this.position.y; // vertical distance
+        const distance = Math.sqrt(dx * dx + dy * dy); // pythagorean distance
 
-        return distance <= this.interactionRadius;
+        return distance <= this.interactionRadius; // return true if within radius
     }
 
+    // === Handle player interaction ===
     interact(player, keysPressed) {
-        if (!this.active || this.opened) return false;
+        if (!this.active || this.opened) return false; // skip if inactive or already opened
     
+        // if player presses the correct key and is in range
         if (keysPressed[this.interactionKey] && this.checkPlayerInRange(player)) {
-            this.opened = true;
-            console.log("Player opened the chest!");
-            grantRandomWeapon(player);
-            gunsmithSound.play();
-            return true;
+            this.opened = true; // mark as opened to prevent re-use
+            console.log("Player opened the chest!"); // debug message
+            grantRandomWeapon(player); // give a random weapon
+            gunsmithSound.play(); // play interaction sound
+            return true; // interaction was successful
         }
     
         return false;
     }
     
-
+    // === Update gunsmith animation ===
     updateAnimation(gameFrame, staggerFrames) {
-        this.spriteRect.y = this.idleRow;
-        this.spriteRect.x = 0;
+        this.spriteRect.y = this.idleRow; // set to idle row
+        this.spriteRect.x = 0; // static frame (no animation)
     }
 
+    // === Draw 'Press F' prompt above the gunsmith ===
     drawInteractionPrompt(ctx, playerInRange) {
+        // only draw the prompt if active and player is nearby
         if (!this.active || !playerInRange) return;
 
         ctx.font = '12px Arial';
@@ -49,22 +59,25 @@ class Gunsmith extends AnimatedObject {
         ctx.textAlign = 'center';
         ctx.fillText(
             this.interactionMessage, 
-            this.position.x + this.width / 2,  // Horizontal center
-            this.position.y - 43               // Vertical height above head
+            this.position.x + this.width / 2,  // center horizontally
+            this.position.y - 43               // raise above the sprite
          );
     }
 }
 
+// === Grant a random secondary weapon to the player ===
 function grantRandomWeapon(player) {
+    // check if player already has a pending weapon
     if (player.pendingWeapon) {
         console.log("Player already has a pending weapon, ignoring new weapon");
-        return; // No sobreescribir si ya hay un arma pendiente
+        return;
     }
 
-    const weapons = ['dagger', 'spear', 'crossbow', 'waraxe'];
-    const weapon = weapons[Math.floor(Math.random() * weapons.length)];
+    const weapons = ['dagger', 'spear', 'crossbow', 'waraxe']; // list of possible weapons
+    const weapon = weapons[Math.floor(Math.random() * weapons.length)]; // pick random weapon
 
     let spritePath;
+    // set correct sprite sheet based on player class
     if (player.classType === 'knight') {
         spritePath = '../sprites/KnightSecondaryWeapons.png';
     } else if (player.classType === 'archer') {
@@ -75,6 +88,7 @@ function grantRandomWeapon(player) {
 
     let movementFrames, attackRow;
 
+    // assign movement and attack frames depending on weapon type
     if (weapon === 'crossbow') {
         movementFrames = { up: 4, left: 5, down: 6, right: 7 };
         attackRow = { up: 0, left: 1, down: 2, right: 3 };
@@ -89,13 +103,14 @@ function grantRandomWeapon(player) {
         attackRow = { up: 24, left: 25, down: 26, right: 27 };
     }
 
+    // assign weapon details to player
     player.pendingWeapon = {
         name: weapon,
         spritePath: spritePath,
         movementFrames: movementFrames,
         attackRow: attackRow
     };
-    player.pendingIcon = weapon;
+    player.pendingIcon = weapon; // store weapon icon
 
-    console.log(`Player found a secondary weapon: ${weapon}`);
+    console.log(`Player found a secondary weapon: ${weapon}`); // debug log
 }
