@@ -14,6 +14,19 @@ class Portal extends GameObject {
 
     // === Check if player collides with the portal and handle room/level transitions ===
     checkCollision(player, maps, progress, backgroundImage, onPortalTriggered, onNewLevel) {
+        if (!this.active || this.cooldown) return;
+        
+        // Specific logic for the Witch
+        if (progress.level === 3 && progress.visited === 4) {
+            if (window.game && window.game.enemies) {
+                const witchIsAlive = window.game.enemies.some(enemy => 
+                    enemy.type === 'witch' && enemy.variant === 'boss' && enemy.health > 0);
+                if (witchIsAlive) {
+                    return;
+                }
+            }
+        }
+
         const collision =
             player.position.x + (player.width * 0.5) > this.position.x && // right side past portal left
             player.position.x < this.position.x + this.width &&           // left side before portal right

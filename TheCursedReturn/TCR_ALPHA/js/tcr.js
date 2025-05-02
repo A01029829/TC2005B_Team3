@@ -160,6 +160,22 @@ function applyCurseBonus() {
     // we can detect this by checking if there's an "attempt" counter
     const attemptCount = parseInt(localStorage.getItem("gameAttempts") || "0");
     const curseBonus = parseInt(localStorage.getItem("curseBonus") || "0");
+
+    if (localStorage.getItem("resetCurseBonus") === "true") {
+        
+        // Reestart the curse bar to default values
+        if (typeof curse !== 'undefined' && typeof bar !== 'undefined') {
+            barwidth = 100; 
+            cursewidth = 100;
+            bar.width = 100;
+            curse.width = 100;
+        }
+        
+        // Restart the curse bonus to default values
+        localStorage.setItem("curseBonus", "0");
+        localStorage.removeItem("rewardedBossSlots");
+        return;
+    }
     
     // for a fresh game (or when explicitly reset), ensure everything is at default values
     if (attemptCount === 0 || localStorage.getItem("resetCurseBonus") === "true") {
@@ -270,7 +286,6 @@ function registerStart() {
     const classSelected = sessionStorage.getItem('playerClass');
     
     if (!matchID || !classSelected) {
-        //console.error("No se encontró ID de partida o clase en sessionStorage");
         return;
     }
     
@@ -300,10 +315,10 @@ function registerStart() {
     })
     .then(response => response.json())
     .then(result => {
-        console.log("Inicio registrado:", result);
+        console.log("Start registered:", result);
     })
     .catch(error => {
-        console.error("Error al registrar inicio:", error);
+        console.error("Error when saving start:", error);
     });
 }
 
@@ -323,7 +338,7 @@ async function handleRestart() {
     const playerId = localStorage.getItem('currentPlayerId');
     
     if (!playerId) {
-        console.error("No hay ID de jugador disponible para reiniciar");
+        console.error("No ID available to restart");
         window.location.href = "../html/inicio.html"; // redirect to login
         return;
     }
@@ -340,7 +355,7 @@ async function handleRestart() {
         const result = await response.json();
         
         if (result.success) {
-            console.log(`Nueva partida creada con ID: ${result.id_partida}`);
+            console.log(`New match created with id: ${result.id_partida}`);
             localStorage.setItem('currentPartidaId', result.id_partida);
             
             if (window.game) {
@@ -372,11 +387,13 @@ async function handleRestart() {
 // start a completely new game with reset bonuses
 async function startNewGame() {
     localStorage.setItem("resetCurseBonus", "true");
+    localStorage.removeItem("secondaryWeapon");
+    localStorage.removeItem("pendingWeapon");
     // reset the curse bonus
     localStorage.removeItem("curseBonus");
     localStorage.removeItem("rewardedBossSlots");
     localStorage.removeItem("gameAttempts");
-    localStorage.setItem("resetCurseBonus", "100");
+    localStorage.setItem("curseValue", "100");
     
     if (typeof bar !== 'undefined' && typeof curse !== 'undefined') {
         barwidth=100;
@@ -410,3 +427,27 @@ window.addEventListener('DOMContentLoaded', function() {
     // register game start
     registerStart();
 });
+
+// === Handle Page Refresh ===
+// This function will be called when the page is refreshed
+(function cleanupOnRefresh() {
+    // Cleaning up localStorage items related to the game to avoid conflicts
+    localStorage.removeItem("secondaryWeapon");
+    localStorage.removeItem("pendingWeapon");
+    localStorage.removeItem("secondaryWeaponSprite");
+    localStorage.removeItem("secondaryWeaponMovementFrames");
+    localStorage.removeItem("secondaryWeaponAttackRow");
+    localStorage.removeItem("originalSpritePath");
+    localStorage.removeItem("originalAttackRow"); 
+    localStorage.removeItem("originalMovementFrames");
+    localStorage.removeItem("selectedWeapon");
+    localStorage.removeItem("weaponIcon");
+    localStorage.removeItem("usingSecondaryWeapon");
+    localStorage.removeItem("switchingWeapon");
+    
+    setTimeout(() => {
+        if (window.game && window.game.player) {
+            window.game.player.reset();
+        }
+    }, 1000);
+})();

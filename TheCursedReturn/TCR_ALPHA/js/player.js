@@ -76,6 +76,8 @@ class Player extends AnimatedObject {
         this.secondarySpritePath = null; // sprite of secondary weapon if equipped
 
         this.equipPressedLastFrame = false; // prevent golding 'o' to trigger infinitely
+        this.switchingWeapon = false; // flag for weapon switching
+        this.usingSecondaryWeapon = false; // flag for using secondary weapon
     }
 
     // === Handle Input and Move Player ===
@@ -152,6 +154,55 @@ class Player extends AnimatedObject {
             } 
         }
         this.equipPressedLastFrame = keysPressed['o']; // save state of 'o' for next frame
+
+        // === Switch weapon logic ===
+
+        if (keysPressed['o'] && !this.switchingWeapon) {
+            this.switchingWeapon = true;
+
+            if (this.secondaryWeapon !== null) {
+                let currentSprite;
+                try {
+                    currentSprite = this.sprite ? this.sprite.src : this.originalSpritePath;
+                } catch (e) {
+                    console.warn("Couldn't access sprite.src, using fallback");
+                    currentSprite = this.originalSpritePath || '../sprites/KnightSpriteSheetFINAL.png';
+                }
+                
+                // Safely clone the objects with fallbacks
+                const currentMovementFrames = JSON.parse(JSON.stringify(this.movementFrames || {}));
+                const currentAttackRow = JSON.parse(JSON.stringify(this.attackRow || {}));
+
+                // Save current state and switch to secondary weapon
+                this.originalSpritePath = currentSprite;
+                this.originalMovementFrames = currentMovementFrames;
+                this.originalAttackRow = currentAttackRow;
+
+                // Load secondary weapon
+                if (this.secondaryWeapon && this.secondaryWeapon.spritePath) {
+                    try {
+                        this.setSprite(this.secondaryWeapon.spritePath, {
+                            x: 0, y: 0, width: 64, height: 65
+                        });
+                        this.movementFrames = this.secondaryWeapon.movementFrames || this.movementFrames;
+                        this.attackRow = this.secondaryWeapon.attackRow || this.attackRow;
+                        
+                        // Mark as using secondary weapon
+                        this.usingSecondaryWeapon = true;
+                    } catch (e) {
+                        console.error("Error applying secondary weapon:", e);
+                        this.reset();
+                    }
+                }
+            } else {
+                this.reset();
+            }
+
+            // Timer to prevent rapid switching
+            setTimeout(() => {
+                this.switchingWeapon = false;
+            }, 500);
+        }
 
         //ambienceSound.play(); // play background sound
         
@@ -468,6 +519,59 @@ class Player extends AnimatedObject {
         this.spriteRect.y = 20; // set death animation row
         this.spriteRect.x = 2; // start from frame 2
     }
-    
 
+    // Reset method after ctrl+r
+    reset() {
+        // Reset player health
+        this.health = this.maxHealth;
+        
+        // Reset states
+        this.attacking = false;
+        this.moving = false;
+        this.dashing = false;
+        
+        // Reset weapon data
+        this.secondaryWeapon = null;
+        this.pendingWeapon = null;
+        this.pendingIcon = null;
+        this.secondaryTimer = 0;
+
+        // Make sure classes is defined before accessing it
+        if (typeof classes !== 'undefined' && classes[this.classType]) {
+            // Reset sprite to primary weapon
+            const classSprite = classes[this.classType].sprite || this.originalSpritePath;
+            
+            try {
+                this.setSprite(classSprite, {
+                    x: 0,
+                    y: 0,
+                    width: 64,
+                    height: 65
+                });
+                
+                // Reset animation frames to default for class
+                this.movementFrames = classes[this.classType].movementFrames || {
+                    right: 11, left: 9, up: 8, down: 10
+                };
+                this.attackRow = classes[this.classType].attackRow || {
+                    up: 53, left: 54, down: 55, right: 56
+                };
+                
+                // Reset attack damage based on class
+                if (this.classType === 'knight') this.attackMagnitude = 45;
+                else if (this.classType === 'archer') this.attackMagnitude = 30;
+                else if (this.classType === 'wizard') this.attackMagnitude = 20;
+            } catch (e) {
+                console.warn("Error during player reset, using fallback values:", e);
+                // Fallback to default values if any error occurs
+                this.movementFrames = { right: 11, left: 9, up: 8, down: 10 };
+                this.attackRow = { up: 53, left: 54, down: 55, right: 56 };
+            }
+        } else {
+            console.warn("Unable to reset player: classes not defined or class not found");
+        }
+        
+        // Mark as not using secondary weapon
+        this.usingSecondaryWeapon = false;
+    }
 }
