@@ -612,10 +612,43 @@
 **Prioridad:** 1  
 **Estimación:** -1 hrs
 
+---
+
+## Historia de usuario #8: Implementar fetch para la interacción con la base de datos
+
+**Como** desarrollador web
+**quiero** implementar diferentes funciones fetch en la API
+**para** poder consultar, insertar, actualizar y eliminar datos desde el frontend
+
+### Validación:
+- Crear funciones fetch para operaciones GET, POST, PUT y DELETE.
+- Verificar que cada fetch se conecta correctamente con los endpoints definidos.
+- Probar cada operación con datos reales y validar las respuestas del servidor.
+**Prioridad:** 2
+**Estimación:** 2 hrs
+
+---
+
+## Historia de usuario #9: Crear endpoints para la API
+
+**Como** desarrollador web
+**quiero** definir y crear los endpoints necesarios en la API
+**para** permitir que el frontend interactúe con la base de datos de forma organizada y segura
+
+### Validación:
+- Crear endpoints para las operaciones CRUD principales.
+- Asegurar que los endpoints manejen correctamente los parámetros y respuestas.
+- Validar que los endpoints respondan y se conecten con la Base de datos.
+**Prioridad:** 2
+**Estimación:** 2 hrs
+
+---
+
 ## Total
 - 12 historias de jugador
 - 9 historias de desarrollador
 - 8 historias de base de datos
-- 7 de desarrollo web
-- Total de historias: 36 historias de usuario
+- 9 de desarrollo web
+- Total de historias: 38 historias de usuario
+
 
