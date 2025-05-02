@@ -281,21 +281,20 @@ Estos elementos servirán como ventajas para el jugador ya que, el arma secundar
 
 - Hacha de guerra: Un hacha que provocará gran daño, pero reduce la velocidad del jugador.
 A continuación se muestra una imagen de cómo quedó la version final:
-- agregar imagen
+![Waraxe](Images/weapons/waraxe.png)
 
   
 - Lanza: Una lanza que tendrá mucho daño, pero tendrá un corto alcance.
 A continuación se muestra una imagen de cómo quedó la version final:
-- agregar imagen
-
+![Spear](Images/weapons/spear.png)
 
 - Ballesta: Una ballesta que tendrá el daño de un arco cargado, pero un rango menor.
 A continuación se muestra una imagen de cómo quedó la version final:
-- agregar imagen
+![Crossbow](Images/weapons/crossbow.png)
 
 - Daga: Una daga que permitirá que las clases de rango lejano puedan acercarse a combate cuerpo a cuerpo.
 A continuación se muestra una imagen de cómo quedó la version final:
-- agregar imagen
+![Gadder](Images/weapons/dagger.png)
 
 En cuanto al armero, este podrá aparecer en una sala aleatoria con enemigos, en el momento en el que el jugador interactúe con él, se asignará un arma temporal aleatoria al jugador.
 
