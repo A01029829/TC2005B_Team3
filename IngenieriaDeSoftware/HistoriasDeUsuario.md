@@ -1,4 +1,4 @@
-## Jugador
+## Videojuego
 ## Historia de usuario #1: Expandir barra de maldición
 
 **Como** jugador  
@@ -23,9 +23,9 @@
 **para** poder jugar en ecosistemas diferentes y aleatorios.
 
 ### Validación:
-- Niveles: Mínimo 3 niveles en el juego
+- Niveles: 3 niveles en el juego
 - Ecosistemas: Desierto, bosque y nieve
-- Aleatoriedad: Los niveles (ecosistemas) se generan aleatoriamente entre los 3 niveles
+- Aleatoriedad: Los salas se eligen aleatoriamente entre los 3 niveles, habiendo 4 salas por nivel
 
 **Prioridad:** 4  
 **Estimación:** 20 hrs
@@ -58,7 +58,7 @@
 - Comprobar que los eventos de cada partida cambien de manera aleatoria.
 - Asegurarse de que los eventos tengan un impacto positivo y/o negativo en el jugador
 - Asegurar que los eventos representen un desafío y añadan variedad al gameplay.
-- Entre los eventos deben de haber cofres, una curandera y armas secundarias.
+- Entre los eventos deben de haber cofres, una curandera, un armero y armas secundarias.
 
 **Prioridad:** 5  
 **Estimación:** 15 hrs
@@ -73,10 +73,9 @@
 
 ### Validación:
 - Armas: Mínimo 3 diferentes
-- Las armas aparecen aleatoriamente en lugares del mapa y al eliminar enemigos.
-- Verificar que con la tecla “F” el jugador puede recoger estas armas y con la tecla “K” o con “click izquierdo” se pueda hacer daño.
-- Daño: Estas armas hacen diferente daño, tienen movimientos únicos y pueden tener desventajas.
-- Desventajas: De ser necesario, validar que como desventaja se afecte la barra de maldición como corresponde.
+- Las armas aparecen se obtienen al abrir un cofre o al interactuar con el armero.
+- Verificar que con la tecla “F” el jugador puede interactuar con los objetos y con la tecla “K” se pueda hacer daño.
+- Daño: Estas armas hacen diferente daño, tienen movimientos únicos.
 
 **Prioridad:** 6  
 **Estimación:** 10 hrs
@@ -92,17 +91,7 @@
 ### Validación:
 - Validar que se puede atacar a un enemigos y este recibe daño.
 - Verificar que al recibir cierta cantidad de daño el enemigo muere.
-- Aumentar el puntaje cuando el enemigo muere (estadísticas)
-- Aumentar tiempo de maldición con enemigos y jefes (estos valores pueden adaptarse, pero deben de seguir esta mecánica):
-  - Enemigos comunes: 
-    - Aumento base: 30%
-    - Aumento extra: 0.1 - 0.3% del tiempo restante
-  - Enemigos fuertes: 
-    - Aumento base: 20%
-    - Aumento extra: Aumento de enemigos comunes*9
-  - Jefes:
-    - Aumento base: 10%
-    - Aumento extra: Aumento de enemigos comunes*36
+- Aumentar el puntaje cuando el enemigo muere (estadísticas) y mostrarlo en la pantalla.
 
 **Prioridad:** 4  
 **Estimación:** 10 hrs
@@ -117,7 +106,7 @@
 
 ### Validación:
 - Al morir antes de completar el último nivel, el usuario regresa al nivel 1.
-- Validar que no mantenga el puntaje de la partida anterior (kills), pero sí el tamaño de la barra de maldición.
+- Validar que mantenga el tamaño de la barra de maldición.
 - Verificar que no mantiene armas secundarias.
 
 **Prioridad:** 2  
@@ -148,7 +137,7 @@
 **para** poder aumentar mi puntaje y obtener ventajas
 
 ### Validación:
-- Validar que al presionar una tecla se hace el movimiento para atacar a un jugador.
+- Validar que al presionar la tecla K se hace el movimiento para atacar a un jugador.
 - Validar que al hacer el movimiento el enemigo recibe daño.
 - Obtener y mantener puntaje cuando se ataque.
 
@@ -157,24 +146,7 @@
 
 ---
 
-## Historia de usuario #10: Atacar con movimiento especial a enemigos
-
-**Como** jugador  
-**quiero** atacar a enemigos con mi ataque especial  
-**para** poder hacer más daño a los enemigos y aumentar mi puntaje
-
-### Validación:
-- Validar que al presionar una tecla se hace el movimiento para atacar a un jugador.
-- Validar que al hacer el movimiento el enemigo recibe daño.
-- Obtener y mantener puntaje cuando se ataque.
-- El ataque especial tarda en cargarse 1 segundo y 5 segundos para poder volverse a usar.
-
-**Prioridad:** 5  
-**Estimación:** 15 hrs
-
----
-
-## Historia de usuario #11: Generación aleatoria de enemigos
+## Historia de usuario #10: Generación aleatoria de enemigos
 
 **Como** jugador  
 **quiero** que la posición y cantidad de enemigos sea aleatoria  
@@ -194,7 +166,7 @@
 
 ---
 
-## Historia de usuario #12: Sonidos
+## Historia de usuario #11: Sonidos
 
 **Como** jugador  
 **quiero** que el juego tenga música de fondo y sonidos de batalla  
@@ -202,30 +174,30 @@
 
 ### Validación:
 - Música de fondo: 
-  - Género rock/epic
+  - Estilo medieval
 - Sonidos mínimos:
   - Golpe de espada
   - Tiro con arco
   - Disparo con la bola de fuego
-  - Sonidos de golpes cargados
+  - Sonidos de golpes arma secundaria
   - Dash
-  - Sonido al correr
-  - Recoger objeto/abrir cofre
-  - Tomar pócima
+  - Sonido interaccion armero
+  - Abrir cofre
+  - Sonido interacción curandera
 
 **Prioridad:** 7  
 **Estimación:** 5 hrs
 
 ---
 
-## Historia de usuario #13: Dash
+## Historia de usuario #12: Dash
 
 **Como** jugador  
 **quiero** tener un dash  
-**para** poder atacar y moverme más rápido
+**para** moverme más rápido
 
 ### Validación:
-- Uso con tecla “L” o click derecho
+- Uso con tecla “espacio”
 - Tiempo de recarga: 1 segundo
 - Movimiento hacia la última dirección del personaje
 - Animación del movimiento
@@ -273,12 +245,11 @@
 **para** poder cargar una partida nueva o ya existente  
 
 ### Validación:
-- Pantalla con logo del juego, música de fondo y logo del estudio.
+- Pantalla con logo del juego, menú y logo del estudio.
 - Opción "start" para elegir partida.
-- Verificar que se pueden tener varios perfiles con progresos y estadísticas propias.
-- Se puede reanudar una partida al cargar la partida.
-- Se puede crear una nueva partida e ingresar el nombre del usuario.
-- Cargar la partida rápidamente.
+- Verificar que se puede inciciar sesión con varios correos y usuarios con progresos y estadísticas propias.
+- Se puede ir a la página de créditos.
+- Se puede ir a la página de estadísticas.
 
 **Prioridad:** 2  
 **Estimación:** 10 hrs
@@ -298,11 +269,8 @@
     - 25% - 50%: Naranja
     - 0% - 25%: Rojo
 - **Puntaje:**
-  - Total eliminados
-  - Enemigos comunes derrotados
-  - Enemigos fuertes derrotados
-  - Jefes derrotados
-- **Iconos de estado:** Notificaciones visuales que informan sobre mejoras temporales o penalizaciones activas.
+  - Puntaje total dependiendo de los enemigos que se han eliminado.
+- **Iconos de estado:** Elementos visuales que informan sobre las armas secundarias.
 - El jugador no puede avanzar a la siguiente sala hasta haber eliminado a todos los enemigos.
 
 **Prioridad:** 1  
@@ -316,10 +284,12 @@
 **para** poder ajustar el volumen, ir al menú, etc.  
 
 ### Validación:
-- Poder acceder a esta pantalla presionando “Tab”.
+- Poder acceder a esta pantalla presionando “esc”.
 - Verificar que se puede cambiar el volumen del juego.
 - Se puede activar/desactivar el sonido (golpes, recoger objetos, etc.).
 - Se puede activar/desactivar la música de fondo.
+- Se pueden ver estadísticas especificas de la partida
+- Se puede ir al menú principal o de regreso a la partida
 
 **Prioridad:** 2  
 **Estimación:** 15 hrs
@@ -545,7 +515,6 @@
 - Implementar el HTML básico.
 - Crear y adjuntar la hoja CSS.
 - Implementar el script JS.
-- Publicar y probar en Pages.
 
 **Prioridad:** 1  
 **Estimación:** 5 hrs
@@ -630,21 +599,7 @@
 
 ---
 
-## Historia de usuario #7: Capacidad de la página
-**Como** desarrollador web  
-**quiero** una página web que aguante a 100 usuarios a la vez  
-**para** poder garantizar una experiencia estable  
-
-### Validación:
-- Optimizar el rendimiento del servidor y del cliente.
-- Monitorear el rendimiento.
-
-**Prioridad:** 5  
-**Estimación:** 2 hrs
-
----
-
-## Historia de usuario #8: Configurar el entorno de desarrollo
+## Historia de usuario #7: Configurar el entorno de desarrollo
 **Como** desarrollador web  
 **quiero** configurar mi entorno de desarrollo correctamente  
 **para** poder desarrollar de manera eficiente y organizada  
@@ -658,9 +613,9 @@
 **Estimación:** -1 hrs
 
 ## Total
-- 13 historias de jugador
+- 12 historias de jugador
 - 9 historias de desarrollador
 - 8 historias de base de datos
-- 8 de desarrollo web
-- Total de historias: 38 historias de usuario
+- 7 de desarrollo web
+- Total de historias: 36 historias de usuario
 
