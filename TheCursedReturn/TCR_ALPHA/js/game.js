@@ -1063,6 +1063,10 @@ class Game {
         localStorage.removeItem("rewardedBossSlots");
         localStorage.removeItem("gameAttempts");
         localStorage.setItem("resetCurseBonus", "true");
+
+        //Also clear secondary weapon data
+        localStorage.removeItem("secondaryWeapon");
+        localStorage.removeItem("pendingWeapon");
         
         // set default curse values
         localStorage.setItem("curseValue", "100");
@@ -1121,6 +1125,11 @@ class Game {
         this.player.projectiles = [];
         this.player.dying = false;
         this.player.finishedDying = false;
+
+        if (this.player) {
+            console.log("Reseting player state");
+            this.player.reset();
+        }
         
         // store new match ID
         localStorage.setItem('currentPartidaId', newMatchId);
@@ -1922,7 +1931,13 @@ loop() {
 
         // === Activate Portal When All Enemies Are Gone ===
         if (this.enemies.length === 0 && !this.portal.active) {
-            this.portal.active = true; // enable portal so player can move to the next room
+            if (this.progress.level === 3 && this.progress.visited >= 4) {
+                const witchBossExists = this.enemies.some(enemy => 
+                    enemy.type === 'witch' && enemy.variant === 'boss');
+                this.portal.active = !witchBossExists;
+            } else {
+                this.portal.active = true;
+            }
         }
 
         // === Draw Enemy ===

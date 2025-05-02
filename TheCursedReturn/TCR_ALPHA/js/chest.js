@@ -71,6 +71,14 @@ function grantRandomWeapon(player) {
         return;
     }
 
+    if (player.secondaryWeapon !== null) {
+        player.secondaryWeapon = null;
+        localStorage.removeItem("secondaryWeapon");
+        localStorage.removeItem("secondaryWeaponSprite");
+        localStorage.removeItem("secondaryWeaponMovementFrames");
+        localStorage.removeItem("secondaryWeaponAttackRow");
+    }
+
     const weapons = ['dagger', 'spear', 'crossbow', 'waraxe'];
     const weapon = weapons[Math.floor(Math.random() * weapons.length)];
 
