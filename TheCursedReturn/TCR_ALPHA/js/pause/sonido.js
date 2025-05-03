@@ -87,7 +87,7 @@ window.addEventListener('click', (event) => {
     const mouseX = (event.clientX - rect.left) * scaleX;
     const mouseY = (event.clientY - rect.top) * scaleY;
 
-    if (mouseX > minusVolumeX && mouseX < minusVolumeX + minusVolumeWidth &&
+    if (!stats_bool && mouseX > minusVolumeX && mouseX < minusVolumeX + minusVolumeWidth &&
         mouseY > minusVolumeY && mouseY < minusVolumeY + minusVolumeHeight) {
             if (volumeRectangles.length > 1) {
             volumeRectangles.pop();
@@ -96,7 +96,7 @@ window.addEventListener('click', (event) => {
         }
     }
 
-    if (mouseX > plusVolumeX && mouseX < plusVolumeX + plusVolumeWidth &&
+    if (!stats_bool && mouseX > plusVolumeX && mouseX < plusVolumeX + plusVolumeWidth &&
         mouseY > plusVolumeY && mouseY < plusVolumeY + plusVolumeHeight) {
         if (volumeRectangles.length < 10) {
             // Add a new rectangle at the appropriate position
@@ -109,11 +109,11 @@ window.addEventListener('click', (event) => {
     }
 
     // Check if the mute sounds or mute music buttons are clicked
-    if (mouseX > muteVolumeX && mouseX < muteVolumeX + muteVolumeWidth &&
+    if (!stats_bool && mouseX > muteVolumeX && mouseX < muteVolumeX + muteVolumeWidth &&
         mouseY > muteVolumeY && mouseY < muteVolumeY + muteVolumeHeight) {
         soundsMute();
     }
-    if (mouseX > muteMusicX && mouseX < muteMusicX + muteMusicWidth &&
+    if (!stats_bool && mouseX > muteMusicX && mouseX < muteMusicX + muteMusicWidth &&
         mouseY > muteMusicY && mouseY < muteMusicY + muteMusicHeight) {
         console.log("Mute music clicked");
         musicMute();
