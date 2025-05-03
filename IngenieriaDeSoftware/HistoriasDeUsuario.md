@@ -388,8 +388,9 @@
 
 ### Validación:
 - Crear una base de datos con MySQL Workbench.
-- Establecer clases relacionadas con el juego.
-- Dentro de estas clases crear propiedades y relaciones.
+- Establecer tablas principales: Jugador, Partida y Log_Partida.
+- Crear las relaciones entre tablas mediante claves foráneas.
+- Implementar restricciones adecuadas mediante CHECK constraints.
 
 **Prioridad:** 1  
 **Estimación:** 5 hrs
@@ -398,17 +399,17 @@
 
 ## Historia de usuario #2: Guardar el progreso del jugador
 **Como** administrador de base de datos  
-**quiero** que el sistema guarde el progreso del jugador  
-**para** poder permitirle al jugador reanudar su partida donde la dejó  
+**quiero** que el sistema registre cada evento relevante del juego  
+**para** mantener un historial del progreso y acciones del jugador  
 
 ### Validación:
-- Crear una tabla que guarde datos del progreso del jugador.
-- Verificar que guarde cosas como el ID del jugador, la cantidad de maldición que le queda, las armas que tiene, la clase que tiene, y en qué lugar se quedó.
-- Validar que haya un autoguardado cada vez que se supera un checkpoint (ej. sala, escenario o jefe derrotado).
-- Verificar que los datos se carguen correctamente al reiniciar la partida.
+- Crear una tabla Log_Partida que registre eventos como: inicio, pausas, checkpoints, muertes, salidas y victorias.
+- Verificar que cada evento incluya datos como: tiempo de partida, puntuación, nivel actual y sala actual.
+- Implementar el campo biomaActual para saber en qué área del juego ocurrió el evento.
+- Asegurar que se registran correctamente valores de rankM (maldición) y vida en cada evento.
 
-**Prioridad:** 4  
-**Estimación:** 10 hrs
+**Prioridad:** 1  
+**Estimación:** 15 hrs
 
 ---
 
@@ -418,86 +419,90 @@
 **para** que las habilidades y progresión se ajusten correctamente durante el juego.  
 
 ### Validación:
-- Verificar que la clase elegida se guarde correctamente al inicio de la partida. 
-- Asegurar que las habilidades y estadísticas de la clase se carguen y apliquen correctamente. 
+- Verificar que la clase elegida (guerrero, arquero, hechicero) se guarde correctamente en la tabla Log_Partida, al inicio de la partida. 
+- Asegurar que el campo claseElegida tenga restricciones de tipo ENUM para validar los valores permitidos.
+- Confirmar que la clase elegida se registra correctamente al iniciar una nueva partida.
 - Confirmar que el jugador no pueda cambiar de clase durante la partida.
 
 **Prioridad:** 1  
-**Estimación:** 10 hrs
+**Estimación:** 5 hrs
 
 ---
 
-## Historia de usuario #4: Gestionar las habilidades obtenidas por armas
+## Historia de usuario #4: Gestionar la cuenta del jugador
 **Como** administrador de base de datos  
-**quiero** que el sistema gestione el progreso de niveles y habilidades de cada clase  
-**para** que el jugador desbloquee nuevas habilidades a medida que consigue nuevas armas.  
+**quiero** almacenar los datos de los jugadores de forma segura  
+**para** que puedan acceder a sus partidas y estadísticas  
 
 ### Validación:
-- Crear una tabla con los campos: armas y powerups obtenidos.
-- Al conseguir una nueva arma secundaria, se desecha el arma secundaria anterior.
+- Crear una tabla Jugador con campos para nombre de usuario, correo y contraseña.
+- Implementar validaciones para el formato de correo electrónico y nombre de usuario.
+- Asegurar que los nombres de usuario y correos sean únicos en la base de datos.
+- Implementar restricciones para la contraseña (mínimo 8 caracteres, mayúsculas, minúsculas, números y caracteres especiales).
+
+**Prioridad:** 2  
+**Estimación:** 8 hrs
+
+---
+
+## Historia de usuario #5: Registro de enemigos derrotados
+**Como** administrador de base de datos  
+**quiero** que el sistema registre los diferentes tipos de enemigos derrotados  
+**para** ofrecer estadísticas detalladas al jugador  
+
+### Validación:
+- Añadir en Log_Partida campos para registrar enemigos comunes, fuertes y jefes derrotados.
+- Verificar que estos contadores se actualicen correctamente a lo largo de la partida.
+- Asegurar que los valores no puedan ser negativos mediante restricciones.
 
 **Prioridad:** 3  
-**Estimación:** 10 hrs
-
----
-
-## Historia de usuario #5: Almacenar habilidades desbloqueadas
-**Como** administrador de base de datos  
-**quiero** que el sistema almacene las habilidades desbloqueadas por el jugador para cada clase  
-**para** que estas estén disponibles en la partida  
-
-### Validación:
-- Crear una tabla de habilidades con el identificador único del jugador, y un identificador único de la habilidad.
-- Verificar que las habilidades se inserten correctamente en la tabla de habilidades al desbloquearse. 
-- Asegurar que las habilidades desbloqueadas se carguen correctamente al reanudarse la partida.
-
-**Prioridad:** 4  
-**Estimación:** 10 hrs
+**Estimación:** 8 hrs
 
 ---
 
 ## Historia de usuario #6: Recopilar estadísticas de la partida
 **Como** administrador de base de datos  
 **quiero** que el sistema recopile estadísticas de las partidas (enemigos derrotados, tiempo jugado, muertes, etc.)  
-**para** analizar el rendimiento del jugador y mejorar la experiencia de juego  
+**para** analizar que el jugador pueda ver su rendimiento
 
 ### Validación:
-- Crear una tabla con campos que puedan interesarle al jugador para que pueda analizarlos al final de cada intento.
-- Comprobar que las estadísticas se actualicen en tiempo real.
-- Asegurar que los datos puedan ser accesados sin restricción alguna.
+- Crear una vista Estadisticas que compile los datos más relevantes de cada partida.
+- Incluir métricas como: puntuación final, nivel alcanzado, sala alcanzada, enemigos derrotados y causa de muerte.
+- Calcular totales como "TotalEnemigosEliminados" para simplificar las consultas.
+- Verificar que la vista se actualice correctamente al finalizar cada partida.
 
 **Prioridad:** 4  
 **Estimación:** 15 hrs
 
 ---
 
-## Historia de usuario #7: Almacenar datos del enemigo
+## Historia de usuario #7: Registro de objetos encontrados
 **Como** administrador de base de datos  
-**quiero** que el sistema almacene los datos de los enemigos (salud, daño, posición, etc.)  
-**para** que estos se generen y gestionen correctamente en cada nivel.  
+**quiero** registrar los objetos que el jugador encuentra durante la partida  
+**para** rastrear su progresión e interacción con elementos del juego  
 
 ### Validación:
-- Crear una tabla con el identificador único del enemigo, la salud del enemigo, el daño que inflige y la posición en el nivel. 
-- Verificar que los datos de los enemigos se guarden correctamente al generarse en un nivel. 
-- Asegurar que los enemigos se eliminen correctamente después de ser derrotados.
+- Añadir en Log_Partida un campo de objetosEncontrados que registre elementos como curandero, armero o cofre.
+- Implementar restricciones de tipo ENUM para validar los tipos de objetos permitidos.
+- Asegurar que la información del último objeto encontrado esté disponible en la vista de Estadisticas.
 
 **Prioridad:** 3  
-**Estimación:** 10 hrs
+**Estimación:** 6 hrs
 
 ---
 
-## Historia de usuario #8: Gestionar el nivel de la clase elegida por el jugador
+## Historia de usuario #8: Visualización de estadísticas globales
 **Como** administrador de base de datos  
-**quiero** que el sistema gestione la *puntuación ganada por el jugador  
-**para** que esta se traduzca en habilidades desbloqueadas.  
+**quiero** que el sistema muestre estadísticas globales de todos los jugadores  
+**para** identificar tendencias y preferencias de juego  
 
 ### Validación:
-- Crear un campo de *puntuación en la tabla del progreso del jugador. 
-- Verificar que la *puntuación se acumule correctamente al derrotar enemigos o completar objetivos. 
-- Asegurar que los niveles y habilidades se desbloqueen según la *puntuación acumulada.
+- Crear consultas para obtener datos como la clase más popular, porcentaje de jugadores por nivel alcanzado, y tipo de muerte más común.
+- Verificar que las consultas funcionen correctamente con un volumen significativo de datos.
+- Asegurar que los resultados puedan ser representados gráficamente en la interfaz de usuario.
 
 **Prioridad:** 4  
-**Estimación:** 15 hrs
+**Estimación:** 6 hrs
 
 
 
